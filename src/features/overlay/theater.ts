@@ -19,6 +19,11 @@ const ANCESTOR_ATTR = 'data-jp-theater-el';
 const SCROLL_ATTR = 'data-jp-theater-scroll';
 const STYLE_ID = 'jp-theater-style';
 const FRAME_MESSAGE = 'jp-sub-theater';
+/** Set on the pinned roots while the transcript shares the viewport with the player. */
+const SPLIT_ATTR = 'data-jp-theater-split';
+const SPLIT_VAR = '--jp-split-size';
+
+export type SplitMode = 'side' | 'bottom';
 
 /** Above page content, below the subtitle overlay host (2147483646). */
 const LAYER_Z = 2147483645;
@@ -52,6 +57,20 @@ const CSS = `
   will-change: auto !important;
   contain: none !important;
   isolation: auto !important;
+}
+/* Split layout: the pinned player keeps the whole viewport minus the transcript strip. Sizing is
+   expressed as width/height rather than right/bottom because <video> is itself a pinned root, and
+   an absolutely positioned replaced element with width:auto falls back to its intrinsic size
+   instead of honouring right, so the player would paint over the transcript.
+   max-width/max-height clamp the used size even when the site pins width/height at 100% with
+   !important and an id-scoped selector that outranks these rules (common in embed players). */
+[${ROOT_ATTR}][${SPLIT_ATTR}='side'] {
+  width: calc(100% - var(${SPLIT_VAR}, 380px)) !important;
+  max-width: calc(100% - var(${SPLIT_VAR}, 380px)) !important;
+}
+[${ROOT_ATTR}][${SPLIT_ATTR}='bottom'] {
+  height: calc(100% - var(${SPLIT_VAR}, 38vh)) !important;
+  max-height: calc(100% - var(${SPLIT_VAR}, 38vh)) !important;
 }
 [${ROOT_ATTR}] video {
   width: 100% !important;
@@ -142,6 +161,9 @@ export class Theater {
   private roots: HTMLElement[] = [];
   private ancestors: HTMLElement[] = [];
   private on = false;
+  /** Desired split, independent of `on`: `sync()` exits and re-enters, and must not lose it. */
+  private splitMode: SplitMode | null = null;
+  private splitPx = 0;
 
   constructor(private readonly video: HTMLVideoElement) {}
 
@@ -153,6 +175,50 @@ export class Theater {
     if (this.on) this.exit();
     else this.enter();
     return this.on;
+  }
+
+  /** True when the player lives inside an iframe; the transcript cannot share space with it. */
+  framed(): boolean {
+    return isFramed();
+  }
+
+  /**
+   * Reserves a strip of the viewport for the transcript. `null` clears it: the player keeps the
+   * whole viewport and stays pinned.
+   */
+  setSplit(mode: SplitMode | null, px = 0): void {
+    this.splitMode = mode;
+    this.splitPx = px;
+    if (mode) this.applySplit();
+    else this.clearSplitDom();
+  }
+
+  /** Drag path: resize the strip without touching the attribute. */
+  setSplitSize(px: number): void {
+    if (!this.splitMode) return;
+    this.splitPx = px;
+    this.applySplitSize();
+  }
+
+  private applySplit(): void {
+    const mode = this.splitMode;
+    if (!mode) return;
+    for (const node of this.roots) node.setAttribute(SPLIT_ATTR, mode);
+    this.applySplitSize();
+  }
+
+  private applySplitSize(): void {
+    // An empty custom property would invalidate the whole `calc()` at computed-value time.
+    if (this.splitPx > 0) {
+      document.documentElement.style.setProperty(SPLIT_VAR, `${Math.round(this.splitPx)}px`);
+    } else {
+      document.documentElement.style.removeProperty(SPLIT_VAR);
+    }
+  }
+
+  private clearSplitDom(): void {
+    for (const node of this.roots) node.removeAttribute(SPLIT_ATTR);
+    document.documentElement.style.removeProperty(SPLIT_VAR);
   }
 
   enter(): void {
@@ -170,6 +236,7 @@ export class Theater {
       this.ancestors.push(node);
     }
     lockScroll();
+    this.applySplit();
 
     this.on = true;
     // Lifting the iframe is the top window's job; inside it we can only fill our own viewport.
@@ -178,6 +245,8 @@ export class Theater {
 
   exit(): void {
     if (!this.on) return;
+    // Only the DOM half: the desired split survives so `sync()` can re-enter with it intact.
+    this.clearSplitDom();
     for (const node of this.roots) node.removeAttribute(ROOT_ATTR);
     for (const node of this.ancestors) node.removeAttribute(ANCESTOR_ATTR);
     unlockScrollIfUnused();
@@ -214,6 +283,7 @@ export class Theater {
       active: this.on,
       framed: isFramed(),
       roots: this.roots.map((node) => `${node.tagName.toLowerCase()}${node.id ? `#${node.id}` : ''}`),
+      split: this.splitMode ? [this.splitMode, this.splitPx] : null,
       video: [Math.round(rect.left), Math.round(rect.top), Math.round(rect.width), Math.round(rect.height)],
       viewport: [window.innerWidth, window.innerHeight],
     };
@@ -234,7 +304,14 @@ export class Theater {
  * documents without frames simply never receive the message.
  */
 export const installFrameTheater = (): (() => void) => {
-  const lifted = new Set<HTMLIFrameElement>();
+  /** Frame -> the ancestors neutralised so the fixed frame resolves against the viewport. */
+  const lifted = new Map<HTMLIFrameElement, HTMLElement[]>();
+
+  const release = (frame: HTMLIFrameElement): void => {
+    frame.removeAttribute(ROOT_ATTR);
+    for (const node of lifted.get(frame) ?? []) node.removeAttribute(ANCESTOR_ATTR);
+    lifted.delete(frame);
+  };
 
   const onMessage = (event: MessageEvent): void => {
     const data = event.data as { type?: string; active?: boolean } | null;
@@ -243,15 +320,22 @@ export const installFrameTheater = (): (() => void) => {
     if (!frame) return;
 
     if (data.active) {
+      if (lifted.has(frame)) return;
       ensureStyle();
       frame.setAttribute(ROOT_ATTR, '');
+      // A transformed/filtered ancestor would become the containing block and keep the frame in
+      // its old box; local theater neutralises the same properties for the video's ancestors.
+      const ancestors: HTMLElement[] = [];
+      for (let node = frame.parentElement; node && node !== document.documentElement; node = node.parentElement) {
+        node.setAttribute(ANCESTOR_ATTR, '');
+        ancestors.push(node);
+      }
+      lifted.set(frame, ancestors);
       lockScroll();
-      lifted.add(frame);
       return;
     }
 
-    frame.removeAttribute(ROOT_ATTR);
-    lifted.delete(frame);
+    release(frame);
     unlockScrollIfUnused();
     removeStyleIfUnused();
   };
@@ -259,8 +343,7 @@ export const installFrameTheater = (): (() => void) => {
   window.addEventListener('message', onMessage);
   return () => {
     window.removeEventListener('message', onMessage);
-    for (const frame of lifted) frame.removeAttribute(ROOT_ATTR);
-    lifted.clear();
+    for (const frame of [...lifted.keys()]) release(frame);
     removeStyleIfUnused();
   };
 };

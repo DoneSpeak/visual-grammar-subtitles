@@ -1,9 +1,11 @@
 import type { DictEntry } from '@/shared/dictionary';
-import type { PosColors } from '@/shared/posColors';
+import { underlineOffset, type ElementStyle } from '@/shared/elementStyle';
+import { READING_ELEMENT } from '@/shared/studyFeatures';
+import type { StudyPreset } from '@/shared/subtitleStyle';
 import type { Token } from '@/shared/types';
-import { colorFor, isInflected, posGroupOf } from './colors';
+import { tokenStyle } from './style';
 
-const KANJI = /[㐀-䶿一-鿿豈-﫿]/;
+const KANJI = /[㐀-䶿一-鿿豈-﫿]/;
 const KANA = /[ぁ-ゖァ-ヺ]/;
 
 const toHiragana = (s: string): string =>
@@ -44,31 +46,69 @@ export type DictRender = {
   levels: Record<number, boolean>;
 };
 
-export type RenderOpts = { colorize: boolean; furigana: boolean; colors?: PosColors; dict?: DictRender };
+export type RenderStyle = { preset: StudyPreset; elements: Record<string, ElementStyle> };
+
+export type RenderOpts = { colorize: boolean; furigana: boolean; style: RenderStyle; dict?: DictRender };
+
+/** Rounds only the outer corners of a chunk block, so adjacent tokens meet flush. */
+const applyRadius = (el: HTMLElement, style: ElementStyle): void => {
+  if (!style.radiusPx || !style.backgroundColor) return;
+  const r = `${style.radiusPx}px`;
+  const sides = style.radiusSides ?? 'all';
+  el.style.borderStartStartRadius = sides === 'end' ? '0' : r;
+  el.style.borderEndStartRadius = sides === 'end' ? '0' : r;
+  el.style.borderStartEndRadius = sides === 'start' ? '0' : r;
+  el.style.borderEndEndRadius = sides === 'start' ? '0' : r;
+};
+
+const applyStyle = (el: HTMLElement, style: ElementStyle | undefined): void => {
+  if (!style) return;
+  if (style.color) el.style.color = style.color;
+  if (style.backgroundColor) el.style.backgroundColor = style.backgroundColor;
+  if (style.opacity !== undefined) el.style.opacity = String(style.opacity);
+  if (style.fontScale && style.fontScale !== 1) el.style.fontSize = `${style.fontScale}em`;
+  applyRadius(el, style);
+  const underline = style.underline;
+  if (!underline) return;
+  el.style.textDecoration = underline.enabled ? 'underline' : 'none';
+  if (!underline.enabled) return;
+  el.style.textDecorationStyle = underline.style ?? 'solid';
+  if (underline.color) el.style.textDecorationColor = underline.color;
+  if (underline.thicknessPx) el.style.textDecorationThickness = `${underline.thicknessPx}px`;
+  el.style.textUnderlineOffset = `${underlineOffset(underline)}px`;
+};
+
+/** Ruby keeps its 0.48em base from the stylesheet; fontScale multiplies that, not the parent. */
+const applyRubyStyle = (rt: HTMLElement, style: ElementStyle | undefined): void => {
+  if (!style) return;
+  if (style.color) rt.style.color = style.color;
+  if (style.opacity !== undefined) rt.style.opacity = String(style.opacity);
+  if (style.fontScale) rt.style.fontSize = `${0.48 * style.fontScale}em`;
+};
 
 export const renderTokens = (container: HTMLElement, tokens: Token[], opts: RenderOpts): void => {
   container.textContent = '';
-  for (const token of tokens) {
-    if (!token.surface) continue;
+  const { preset, elements } = opts.style;
+  const reading = preset.features.includes('reading') ? elements[READING_ELEMENT] : undefined;
+  // Switching the furigana element off hides the ruby entirely; its style carries nothing else.
+  const readingOff = elements[READING_ELEMENT]?.enabled === false;
+  tokens.forEach((token, index) => {
+    if (!token.surface) return;
     if (!/\S/.test(token.surface)) {
       container.appendChild(document.createTextNode(token.surface));
-      continue;
+      return;
     }
-    const group = posGroupOf(token);
     const span = document.createElement('span');
-    span.style.color = colorFor(group, opts.colorize, opts.colors);
-    if (opts.colorize && group === 'verb' && isInflected(token)) {
-      span.style.opacity = '0.78';
-      span.style.textDecoration = 'underline';
-      span.style.textDecorationThickness = '1px';
-      span.style.textUnderlineOffset = '3px';
-    }
-    const ruby = opts.furigana && token.reading ? alignRuby(token.surface, token.reading) : null;
+    if (opts.colorize) applyStyle(span, tokenStyle(tokens, index, preset, elements));
+    if (token.grammar?.length) span.title = token.grammar.join(' · ');
+    const ruby =
+      !readingOff && opts.furigana && token.reading ? alignRuby(token.surface, token.reading) : null;
     if (ruby) {
       const r = document.createElement('ruby');
       r.appendChild(document.createTextNode(ruby.base));
       const rt = document.createElement('rt');
       rt.textContent = ruby.ruby;
+      if (opts.colorize && reading) applyRubyStyle(rt, reading);
       r.appendChild(rt);
       span.append(document.createTextNode(ruby.prefix), r, document.createTextNode(ruby.suffix));
     } else {
@@ -81,7 +121,7 @@ export const renderTokens = (container: HTMLElement, tokens: Token[], opts: Rend
       span.dataset.dictIdx = String(token.dictIdx);
     }
     container.appendChild(span);
-  }
+  });
 };
 
 export const renderPlain = (container: HTMLElement, text: string): void => {

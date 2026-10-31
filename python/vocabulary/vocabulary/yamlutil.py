@@ -1,6 +1,21 @@
+import re
 from pathlib import Path
 
 import yaml
+
+
+# OpenMoji hexcodes such as "26E9" are strings, but YAML 1.1 parsers (and the
+# JS `yaml` package used by scripts/build-vocabulary.ts) read them as either
+# numbers or exponent notation unless they are explicitly quoted.
+_HEX_LIKE = re.compile(r"^[0-9][0-9A-F]*$")
+
+
+def _represent_str(dumper: yaml.SafeDumper, data: str):
+    style = '"' if _HEX_LIKE.match(data) else None
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data, style=style)
+
+
+yaml.SafeDumper.add_representer(str, _represent_str)
 
 
 def load_yaml(path: Path):

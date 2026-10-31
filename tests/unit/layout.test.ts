@@ -128,6 +128,28 @@ describe('optimizeLayout', () => {
 
     expect(ruby.fontPx).toBeLessThan(plain.fontPx);
   });
+
+  it('paints every cue at the fixed font, reflowing only the lines', () => {
+    const long = [chars('我想陪你走过每个春夏秋冬')];
+    const short = [chars('短い')];
+    const longResult = run({ paragraphs: long, width: 200, height: 200, fixedFont: 40 });
+    const shortResult = run({ paragraphs: short, width: 200, height: 200, fixedFont: 40 });
+
+    expect(longResult.fontPx).toBe(40);
+    expect(shortResult.fontPx).toBe(40);
+    const { widths } = measure(longResult, long);
+    for (const w of widths) expect(w).toBeLessThanOrEqual(200.5);
+  });
+
+  it('never shrinks a fixed font below the requested size to fit the box', () => {
+    const paragraphs = [[unit('supercalifragilistic', 500)]];
+    const free = run({ paragraphs, width: 100, height: 100, minFont: 10, maxFont: 200 });
+    const fixed = run({ paragraphs, width: 100, height: 100, minFont: 10, maxFont: 200, fixedFont: 10 });
+
+    expect(free.fontPx).toBeLessThan(10);
+    expect(fixed.fontPx).toBe(10);
+    expect(fixed.lineStarts).toEqual([[0]]);
+  });
 });
 
 describe('segmentPlain', () => {

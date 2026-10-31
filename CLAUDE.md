@@ -11,7 +11,7 @@ Chrome MV3 扩展：在任意网页视频上叠加本地字幕，日语词性着
 5. **`--primary` ≠ `--accent`。** 本项目的 `--primary` 是实心按钮底色（原 `--accent` 改名而来），`--accent` 是 shadcn 语义的浅底悬停色。混用会导致按钮与 hover 全部错色。
 6. **暗色靠 `data-theme`，不是 `prefers-color-scheme`。** Tailwind 的 `dark` 变体已在 `themes.css` 用 `@custom-variant` 改写；主题读写只经 `src/shared/theme.ts`。
 7. **不要手写 `manifest.json`。** 它由 `wxt.config.ts` 的 `manifest` 字段生成（`srcDir: 'src'`，`public/` 留在仓库根）。改权限、content script 匹配范围、`options_ui` 都改 `wxt.config.ts`。
-8. **`public/dict/` 是生成物。** kuromoji 词典由 `scripts/sync-dict.mjs` 在 `predev`/`prebuild` 复制，已 gitignore；提交前不要把它塞进版本库。
+8. **`public/dict/` 是生成物。** kuromoji 词典由 `scripts/sync-dict.mjs` 在 `predev`/`prebuild` 复制，已 gitignore；提交前不要把它塞进版本库。`public/dict/vocabulary.json` 与 `public/vocab/` 由 `pnpm vocab:build` 从 `python/vocabulary/dist/` 生成，产物已提交，不要手改。
 9. **用户可见文案只走 `src/shared/i18n/`。** 新增文案加到 `messages/<section>.ts`，`defineMessages(en, zh)` 会强制两种语言键一致；运行时用 `t(key, params)`，禁止在组件/overlay 里写死中文或英文。写入 `chrome.storage` 的哨兵值（`src/shared/persistedText.ts`）保持规范中文，只在渲染时经 `i18n/display.ts` 翻译。Chrome 清单文案在 `public/_locales/{en_GB,zh_CN}`，由浏览器语言决定，与应用内 `ui:language` 无关。
 
 ## 验证门槛

@@ -1,7 +1,7 @@
 export type PictureRect = { left: number; top: number; width: number; height: number };
 
-const MIN_WIDTH = 320;
-const MIN_HEIGHT = 180;
+export const MIN_WIDTH = 320;
+export const MIN_HEIGHT = 180;
 /** Ancestor levels searched for a wrapping link; feed cards nest the preview this deep. */
 const LINK_DEPTH = 8;
 

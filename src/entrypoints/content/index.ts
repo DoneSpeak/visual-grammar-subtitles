@@ -1,5 +1,7 @@
+import { TrackAnalysis } from '@/nlp/client';
+import { NLP_SETTINGS_KEY } from '@/nlp/settings';
 import { defineContentScript } from 'wxt/utils/define-content-script';
-import type { AdSlot, Cue, LayerCfg, LayerId, PageCfg } from '@/shared/types';
+import type { AdSlot, Cue, LayerCfg, LayerId, PageCfg, Token } from '@/shared/types';
 import { buildLabel } from '@/shared/buildInfo';
 import type { DictLine } from '@/shared/dictionary';
 import { isDictSettingsKey, loadDictSettings, type DictSettings } from '@/shared/dictSettings';
@@ -12,7 +14,17 @@ import {
   t,
   type Language,
 } from '@/shared/i18n';
-import { isPosColorsKey, loadPosColors, type PosColors } from '@/shared/posColors';
+import {
+  activePreset,
+  isSubtitleStyleKey,
+  loadSubtitleStyle,
+  localOnlyPreset,
+  presetRequiresRemote,
+  type StudyPreset,
+  type SubtitleStyle,
+} from '@/shared/subtitleStyle';
+import { annotateLocal } from '@/features/overlay/tokenize/local';
+import { localFeatures } from '@/shared/studyFeatures';
 import { UNFILED_TITLE } from '@/shared/persistedText';
 import {
   isPlaybackSettingsKey,
@@ -50,6 +62,8 @@ import {
   type SiteRules,
 } from '@/shared/siteRules';
 import { Overlay, type AdState, type LibraryOption, type LibraryRow, type LibraryTarget } from '@/features/overlay/overlay';
+import { TranscriptPanel, type TranscriptLayout } from '@/features/overlay/transcript';
+import { canSplit, clampSplitSize, defaultSplitSize, type SplitMode } from '@/features/overlay/split';
 import { Theater, installFrameTheater } from '@/features/overlay/theater';
 import type { SeriesDir, SubFile } from '@/features/scraper/kitsunekko';
 import { parseSubtitles } from '@/features/overlay/subtitles/parse';
@@ -89,10 +103,27 @@ const pickFile = (): Promise<File | null> =>
     input.click();
   });
 
+/** One cue resolved into rows for either the subtitle layer or the transcript drawer. */
+type CueRender = {
+  lines: string[];
+  rows: (DictLine | null)[];
+  preset: StudyPreset;
+  /** Tokens came from the remote analysis, so only dictionary entries can still be missing. */
+  remote: boolean;
+  tokensReady: boolean;
+  dictReady: boolean;
+};
+
 class Session {
+  private analysis: Record<LayerId, TrackAnalysis> = { a: new TrackAnalysis(), b: new TrackAnalysis() };
   private overlay: Overlay;
   private theater: Theater;
   private timelines: Record<LayerId, Timeline> = { a: new Timeline(), b: new Timeline() };
+  private transcript: TranscriptPanel;
+  /** The transcript entered theater itself, so closing it must hand the page back. */
+  private splitOwnsTheater = false;
+  /** Enriched rows for cues rendered from the remote analysis; the dictionary lookup lands here. */
+  private cueDict = new WeakMap<Cue, DictLine[]>();
   private shownCue: Record<LayerId, Cue | null> = { a: null, b: null };
   /** Video time at which the current cue started being displayed; displayCapMs counts from here
    *  in start-anchored mode. End-anchored mode counts back from the cue's end instead. */
@@ -123,7 +154,7 @@ class Session {
     private save: () => void,
     private tokenizer: TokenizerClient,
     private dict: DictSettings,
-    private posColors: PosColors,
+    private subtitleStyle: SubtitleStyle,
     private adMap: AdMap,
     private onSubtitlePicked: (
       layer: LayerId,
@@ -153,10 +184,6 @@ class Session {
           this.cfg.layers[layer].maxWidth = width;
           this.save();
         },
-        onBoxHeightChange: (layer, height) => {
-          this.cfg.layers[layer].boxH = height;
-          this.save();
-        },
         onPickFile: (target) => void this.loadFile(target),
         onLibraryPick: (target, key) => void this.pickLibraryRow(target, key),
         onOnlineSearch: (query) => void this.searchOnline('pack', query),
@@ -166,6 +193,8 @@ class Session {
         onClearSubtitle: (target) => {
           this.cfg.subs[target] = { name: '', text: '' };
           this.timelines[target].setCues([]);
+          if (target === 'a') this.transcript.setCues([]);
+          this.analysis[target].stop();
           this.shownCue[target] = null;
           this.overlay.clear(target);
           this.overlay.syncPanel();
@@ -188,11 +217,34 @@ class Session {
           if (!this.video.paused) this.video.pause();
         },
         onTheaterToggle: () => this.toggleTheater(),
+        onTranscriptToggle: () => this.toggleTranscript(),
+        onPanelOpen: () => this.closeTranscript(),
+      },
+    );
+    this.transcript = new TranscriptPanel(
+      this.overlay.transcriptRoot(),
+      {
+        // The transcript mirrors layer A: same preset, same annotator, same dictionary state.
+        render: (cue) => this.cueRender('a', cue),
+        prime: (cue, done) => this.primeCue('a', cue, done),
+        options: () => ({
+          colorize: this.cfg.layers.a.colorize,
+          furigana: this.cfg.layers.a.furigana,
+          dict: this.dictRender(),
+        }),
+      },
+      {
+        onSeek: (cue) => this.seekToCue(cue),
+        onLine: (line, entries) => this.overlay.registerDictLine(line, entries),
+        onClose: () => this.closeTranscript(),
+        onLayout: (layout) => this.setTranscriptLayout(layout),
+        onResize: (size) => this.theater.setSplitSize(size),
+        onResizeEnd: (size) => this.saveTranscriptSize(size),
       },
     );
     this.overlay.mount();
     this.overlay.setDictSettings(this.dict);
-    this.overlay.setPosColors(this.posColors);
+    this.overlay.setSubtitleStyle(this.subtitleStyle);
     this.overlay.setAdState(this.adHooks.state());
     this.overlay.setAutoSkip(this.autoSkipAds);
     this.overlay.updateRect(pictureRect(this.video));
@@ -201,6 +253,7 @@ class Session {
 
     if (this.cfg.subs.a.text) this.applySubtitle('a', this.cfg.subs.a.name, this.cfg.subs.a.text);
     if (this.cfg.subs.b.text) this.applySubtitle('b', this.cfg.subs.b.name, this.cfg.subs.b.text);
+    window.addEventListener('resize', this.onViewportResize);
 
     document.addEventListener('mousemove', this.onMouseMove, true);
     document.addEventListener('keydown', this.onKeyDown, true);
@@ -210,13 +263,22 @@ class Session {
     this.loop();
   }
 
+  async refreshNlpSettings(): Promise<void> {
+    await Promise.all([this.analysis.a.refreshSettings(), this.analysis.b.refreshSettings()]);
+    this.shownCue.a = null; this.shownCue.b = null;
+    this.transcript.refresh();
+  }
+
   destroy(): void {
+    this.analysis.a.stop(); this.analysis.b.stop();
     cancelAnimationFrame(this.raf);
     document.removeEventListener('mousemove', this.onMouseMove, true);
     document.removeEventListener('keydown', this.onKeyDown, true);
     document.removeEventListener('dragover', this.onDragOver, true);
     document.removeEventListener('drop', this.onDrop, true);
+    window.removeEventListener('resize', this.onViewportResize);
     this.video.removeEventListener('seeking', this.onSeeking);
+    this.transcript.destroy();
     this.theater.destroy();
     this.overlay.destroy();
   }
@@ -227,9 +289,17 @@ class Session {
 
   /** Player pinned to the viewport instead of the page's layout box. */
   toggleTheater(): boolean {
-    const active = this.theater.toggle();
-    this.overlay.setTheater(active);
-    return active;
+    // The split layout rides on the pinning, so closing the transcript first must not be undone
+    // by a toggle that re-reads the now-inactive state and enters theater again.
+    const wasActive = this.theater.active();
+    if (this.transcript.isOpen()) this.closeTranscript();
+    if (wasActive) {
+      if (this.theater.active()) this.theater.exit();
+    } else {
+      this.theater.enter();
+    }
+    this.overlay.setTheater(this.theater.active());
+    return this.theater.active();
   }
 
   private loop = (): void => {
@@ -294,12 +364,14 @@ class Session {
     if (!cue) {
       this.overlay.setOpacity(id, false);
       this.shownCue[id] = null;
+      if (id === 'a') this.transcript.setActive(null);
       return;
     }
     if (this.shownCue[id] !== cue) {
       this.shownCue[id] = cue;
       this.shownAt[id] = t;
       this.renderCue(id, cue, lc);
+      if (id === 'a') this.transcript.setActive(cue);
     }
     const cap = lc.displayCapMs;
     const visible =
@@ -322,21 +394,256 @@ class Session {
     }
   }
 
-  /** Paint plain text first, then upgrade to colored tokens — awaiting the tokenizer would leave
-   *  the previous cue on screen for the whole round trip. */
-  private renderCue(id: LayerId, cue: Cue, lc: LayerCfg): void {
-    const lines = cue.text.split('\n').filter((l) => l.trim() !== '');
+  /**
+   * Remote features only exist after syntax analysis; until then the same preset renders with its
+   * local features, so the rest of the user's configuration stays on screen.
+   */
+  private effectivePreset(id: LayerId): StudyPreset {
+    const preset = activePreset(this.subtitleStyle);
+    return presetRequiresRemote(preset) && !this.analysis[id].ready() ? localOnlyPreset(preset) : preset;
+  }
+
+  /** Local annotations for the preset's local features; grammar labels look identical either way. */
+  private annotate(lines: DictLine[], preset: StudyPreset): DictLine[] {
+    const features = localFeatures(preset.features);
+    if (!features.length) return lines;
+    return lines.map((line) => ({
+      ...line,
+      tokens: annotateLocal(line.tokens, line.entries ?? [], this.dict.levels, features),
+    }));
+  }
+
+  /** Splits the remote analysis' flat token stream back into per-line rows. */
+  private splitRemote(lines: string[], remote: Token[]): DictLine[] {
+    let offset = 0;
+    return lines.map((line) => {
+      const start = offset;
+      offset += line.length + 1;
+      let at = 0;
+      const tokens = remote.flatMap((token) => {
+        const a = at;
+        at += token.surface.length;
+        const left = Math.max(start, a);
+        const right = Math.min(start + line.length, at);
+        return left < right
+          ? [{
+              ...token,
+              surface: token.surface.slice(left - a, right - a),
+              reading: left === a && right === at ? token.reading : '',
+            }]
+          : [];
+      });
+      return { tokens, entries: [] };
+    });
+  }
+
+  /** One cue painted exactly like the on-video subtitle: same preset, annotations and dictionary. */
+  private cueRender(id: LayerId, cue: Cue): CueRender {
+    const preset = this.effectivePreset(id);
+    const remote = preset.features.length === 0 ? null : this.analysis[id].tokens(cue);
+    if (remote) {
+      const lines = cue.text.split('\n');
+      const cached = this.cueDict.get(cue);
+      return {
+        lines,
+        rows: this.annotate(cached ?? this.splitRemote(lines, remote), preset),
+        preset,
+        remote: true,
+        tokensReady: true,
+        dictReady: !this.dict.enabled || cached !== undefined,
+      };
+    }
+    const lines = cue.text.split('\n').filter((line) => line.trim() !== '');
     const cached = lines.map((line) => this.tokenizer.peek(line));
     const ready = cached.every((line): line is DictLine => line !== undefined);
-    this.overlay.render(id, lines, ready ? cached : lines.map(() => null), lc, this.dictRender());
-    if (ready || id !== 'a' || (!lc.colorize && !this.dict.enabled)) return;
-    void Promise.all(lines.map((line) => this.tokenizer.tokenizeLine(line)))
-      .then((parsed) => {
-        if (this.shownCue[id] !== cue) return;
-        this.overlay.render(id, lines, parsed, lc, this.dictRender());
-      })
-      .catch((e) => log('tokenize failed', e));
+    return {
+      lines,
+      rows: ready ? this.annotate(cached, preset) : lines.map(() => null),
+      preset,
+      remote: false,
+      tokensReady: ready,
+      dictReady: ready,
+    };
   }
+
+  /**
+   * Resolves the parts `cueRender` is still missing. `done` fires only when a repeat call would
+   * return a complete row, so callers can re-render without deciding which path was taken.
+   */
+  private primeCue(id: LayerId, cue: Cue, done: () => void): void {
+    const preset = this.effectivePreset(id);
+    const remote = preset.features.length === 0 ? null : this.analysis[id].tokens(cue);
+    if (remote) {
+      if (!this.dict.enabled || this.cueDict.has(cue)) {
+        done();
+        return;
+      }
+      const parsed = this.splitRemote(cue.text.split('\n'), remote);
+      void chrome.runtime.sendMessage({ type: 'lookupTokens', tokens: parsed.flatMap((line) => line.tokens) })
+        .then((result: DictLine) => {
+          if (!result?.tokens) return;
+          let offset = 0;
+          const enriched = parsed.map((line) => {
+            const tokens = result.tokens.slice(offset, offset + line.tokens.length);
+            offset += line.tokens.length;
+            return { tokens, entries: result.entries };
+          });
+          this.cueDict.set(cue, enriched);
+          done();
+        })
+        .catch((error) => log('dictionary lookup failed', error));
+      return;
+    }
+    const lines = cue.text.split('\n').filter((line) => line.trim() !== '');
+    const missing = [...new Set(lines)].filter((line) => !this.tokenizer.peek(line));
+    if (!missing.length) {
+      done();
+      return;
+    }
+    void Promise.all(missing.map((line) => this.tokenizer.tokenizeLine(line)))
+      .then(() => done())
+      .catch((error) => log('tokenize failed', error));
+  }
+
+  private renderCue(id: LayerId, cue: Cue, lc: LayerCfg): void {
+    const first = this.cueRender(id, cue);
+    this.overlay.render(id, first.lines, first.rows, lc, this.dictRender(), first.preset);
+    const needsTokens = !first.tokensReady && id === 'a' &&
+      (lc.colorize || first.preset.features.length > 0 || this.dict.enabled);
+    const needsDict = first.remote && !first.dictReady && this.dict.enabled;
+    if (!needsTokens && !needsDict) return;
+    this.primeCue(id, cue, () => {
+      if (this.shownCue[id] !== cue) return;
+      const next = this.cueRender(id, cue);
+      this.overlay.render(id, next.lines, next.rows, lc, this.dictRender(), next.preset);
+    });
+  }
+
+  private seekToCue(cue: Cue): void {
+    // Cue times live on the subtitle timeline; the ad map restores the player's own clock.
+    const playerTime = Math.max(0, this.adMap.toPlayer(cue.start + this.cfg.offset));
+    this.video.currentTime = this.video.duration > 0 ? Math.min(playerTime, this.video.duration) : playerTime;
+    this.resetShown();
+  }
+
+  private toggleTranscript(): void {
+    if (this.transcript.isOpen()) this.closeTranscript();
+    else this.openTranscript();
+  }
+
+  /** Layout remembered for this page; the split modes also shrink the player to make room. */
+  private transcriptLayout(): TranscriptLayout {
+    const mode = this.cfg.transcriptSplit;
+    return mode === 'overlay' || mode === 'bottom' ? mode : 'side';
+  }
+
+  private transcriptSize(mode: SplitMode): number {
+    const saved = mode === 'side' ? this.cfg.transcriptSide : this.cfg.transcriptBottom;
+    const size = saved ?? defaultSplitSize(mode, window.innerWidth, window.innerHeight);
+    return clampSplitSize(mode, size, window.innerWidth, window.innerHeight);
+  }
+
+  /**
+   * Split needs a player we can pin and room for both panes. A framed player is lifted to the top
+   * window's viewport by `installFrameTheater`, so its own (pre-lift) size must not veto the split:
+   * the resize fired by the lift re-clamps it. A fullscreen `<video>` paints above the overlay and
+   * keeps the on-picture drawer.
+   */
+  private canSplitTranscript(mode: SplitMode): boolean {
+    if (document.fullscreenElement?.tagName === 'VIDEO') return false;
+    if (this.theater.framed()) return true;
+    return canSplit(mode, window.innerWidth, window.innerHeight);
+  }
+
+  /**
+   * Pins the player and reserves a strip for the transcript. False means the player cannot be
+   * split right now; the caller falls back to the on-picture drawer.
+   */
+  private ensureSplit(mode: SplitMode): boolean {
+    if (!this.canSplitTranscript(mode)) return false;
+    if (!this.theater.active()) {
+      this.theater.enter();
+      // `enter()` declines when the video is already gone.
+      if (!this.theater.active()) return false;
+      this.splitOwnsTheater = true;
+    }
+    const size = this.transcriptSize(mode);
+    this.theater.setSplit(mode, size);
+    this.transcript.setLayout(mode, size);
+    this.overlay.setTheater(this.theater.active());
+    return true;
+  }
+
+  /**
+   * Removes the strip and floats the drawer over the picture. A pin the split entered stays: the
+   * user asked for the floating layout, not for the page to come back, so 悬浮 keeps covering the
+   * lifted player. `dropSplit` releases it on close.
+   */
+  private clearSplit(): void {
+    this.theater.setSplit(null);
+    this.transcript.setLayout('overlay');
+    this.overlay.setTheater(this.theater.active());
+  }
+
+  /** Undoes the split and any pin the transcript owns; closing it must hand the page back. */
+  private dropSplit(): void {
+    this.theater.setSplit(null);
+    if (this.splitOwnsTheater && this.theater.active()) this.theater.exit();
+    this.splitOwnsTheater = false;
+    this.transcript.setLayout('overlay');
+    this.overlay.setTheater(this.theater.active());
+  }
+
+  private openTranscript(): void {
+    this.transcript.setCues(this.timelines.a.cues);
+    const layout = this.transcriptLayout();
+    if (layout === 'overlay' || !this.ensureSplit(layout)) this.clearSplit();
+    this.transcript.setOpen(true);
+    this.overlay.setTranscriptOpen(true);
+    this.overlay.setTheater(this.theater.active());
+  }
+
+  private closeTranscript(): void {
+    if (!this.transcript.isOpen()) return;
+    this.dropSplit();
+    this.transcript.setOpen(false);
+    this.overlay.setTranscriptOpen(false);
+  }
+
+  /**
+   * Applies a layout picked in the transcript header: floating drawer, right strip or bottom strip.
+   * Pressing the current layout after the drawer fell back (small viewport, lift not applied) must
+   * retry the split, so this compares against the applied layout, not the remembered one.
+   */
+  private setTranscriptLayout(layout: TranscriptLayout): void {
+    if (this.transcript.isOpen() && this.transcript.getLayout() === layout) return;
+    this.cfg.transcriptSplit = layout;
+    this.save();
+    if (!this.transcript.isOpen()) return;
+    // Sizes are direction-specific, so a new orientation starts from its own saved default.
+    if (layout === 'overlay' || !this.ensureSplit(layout)) this.clearSplit();
+  }
+
+  private saveTranscriptSize(size: number): void {
+    const layout = this.transcript.getLayout();
+    if (layout === 'side') this.cfg.transcriptSide = size;
+    else if (layout === 'bottom') this.cfg.transcriptBottom = size;
+    else return;
+    this.save();
+  }
+
+  /** Re-clamp the strip after a window resize; the video must stay above the candidate floor. */
+  private onViewportResize = (): void => {
+    const mode = this.transcript.getLayout();
+    if (mode === 'overlay') return;
+    if (!canSplit(mode, window.innerWidth, window.innerHeight)) {
+      this.dropSplit();
+      return;
+    }
+    const size = this.transcriptSize(mode);
+    this.theater.setSplitSize(size);
+    this.transcript.setSize(size);
+  };
 
   private dictRender(): DictRender {
     return { entries: [], enabled: this.dict.enabled, levels: this.dict.levels };
@@ -347,13 +654,15 @@ class Session {
     this.overlay.setDictSettings(settings);
     this.shownCue.a = null;
     this.shownCue.b = null;
+    this.transcript.refresh();
   }
 
-  setPosColors(colors: PosColors): void {
-    this.posColors = colors;
-    this.overlay.setPosColors(colors);
+  setSubtitleStyle(style: SubtitleStyle): void {
+    this.subtitleStyle = style;
+    this.overlay.setSubtitleStyle(style);
     this.shownCue.a = null;
     this.shownCue.b = null;
+    this.transcript.refresh();
   }
 
   setAdMap(adMap: AdMap): void {
@@ -378,6 +687,7 @@ class Session {
     this.onlineStatus = { a: '', b: '', pack: '' };
     this.onlineBack = { a: [], b: [], pack: [] };
     this.overlay.setAdState(this.adHooks.state());
+    this.transcript.refresh();
     void this.refreshLibrary();
   }
 
@@ -385,6 +695,11 @@ class Session {
     return {
       overlay: this.overlay.diag(),
       theater: this.theater.diagnose(),
+      transcript: {
+        open: this.transcript.isOpen(),
+        layout: this.transcript.getLayout(),
+        ownsTheater: this.splitOwnsTheater,
+      },
       cuesA: this.timelines.a.cues.length,
       cuesB: this.timelines.b.cues.length,
       offset: this.cfg.offset,
@@ -562,6 +877,12 @@ class Session {
   private applySubtitle(target: LayerId, name: string, text: string): void {
     const cues = parseSubtitles(text);
     this.timelines[target].setCues(cues);
+    if (target === 'a') this.transcript.setCues(cues);
+    void this.analysis[target].select(cues).then(() => {
+      this.overlay.setNlpStatus(this.analysis[target].status);
+      if (this.video.paused) this.shownCue[target] = null;
+      if (target === 'a') this.transcript.refresh();
+    });
     this.shownCue[target] = null;
     log(`loaded ${cues.length} cues into layer ${target}`, name);
     if (target === 'a' && cues.length) {
@@ -847,7 +1168,7 @@ const start = async (): Promise<void> => {
   let state = await loadState(await resolvePageKey(), site, siteRules);
   log('page key', state.key);
   let dictSettings = await loadDictSettings();
-  let posColors = await loadPosColors();
+  let subtitleStyle = await loadSubtitleStyle();
   let playback = await loadPlaybackSettings();
 
   let video: HTMLVideoElement | null = null;
@@ -937,7 +1258,7 @@ const start = async (): Promise<void> => {
       state.save,
       tokenizer,
       dictSettings,
-      posColors,
+      subtitleStyle,
       buildAdMap(site?.slots ?? []),
       (layer, source) => {
         void setAssoc(state.key, layer, source ? { id: source.id, name: source.name, at: Date.now() } : null);
@@ -983,6 +1304,7 @@ const start = async (): Promise<void> => {
     changes: Record<string, chrome.storage.StorageChange>,
     area: string,
   ): void => {
+    if (area === 'local' && changes[NLP_SETTINGS_KEY]) void session?.refreshNlpSettings();
     if (area === 'local' && changes[LANGUAGE_KEY]) {
       void loadLanguage().then((next) => {
         applyLanguage(next);
@@ -996,10 +1318,10 @@ const start = async (): Promise<void> => {
         session?.setDictSettings(next);
       });
     }
-    if (area === 'local' && Object.keys(changes).some(isPosColorsKey)) {
-      void loadPosColors().then((next) => {
-        posColors = next;
-        session?.setPosColors(next);
+    if (area === 'local' && Object.keys(changes).some(isSubtitleStyleKey)) {
+      void loadSubtitleStyle().then((next) => {
+        subtitleStyle = next;
+        session?.setSubtitleStyle(next);
       });
     }
     if (area === 'local' && Object.keys(changes).some(isPlaybackSettingsKey)) {

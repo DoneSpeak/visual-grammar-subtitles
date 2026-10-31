@@ -1,11 +1,20 @@
-# 字幕学习增强技术设计 V2
+# 字幕学习增强技术设计 V2.1
 
 日期：2026-10-31  
-状态：设计方案；未读取项目源码、未实施、未实测  
+状态：设计方案；已核对现有 `src/features/options`、`src/features/overlay/tokenize` 实现；未实施、未实测  
 目标项目：`/Users/ygr/Code/mygithub/chrome-extension-video-subtitles-language`  
 建议位置：`docs/japanese-subtitle-nlp-design.md`
 
 本版取代 V1 的单句远程调用方案，细化整份字幕解析、分析文件、缓存与学习模式渲染。本文“选择字幕”指选择字幕文件/字幕轨；点击某个字词仅用于查看解释，不触发整份文件上传。
+
+V2.1 相对 V2 的审核结论：
+
+- 新增“元素”作为唯一配色单位（词性、语法角色、语块、表达、读音），每个元素可配色、透明度、大小、下划线、文字背景色；V2 的 `rules[]` 只覆盖颜色与字号，且按全局选择器组织，无法表达上述五项。
+- 学习模式从“渲染开关”升级为“元素族 + 独立调色板”：不同模式的信息通道不同（前景色 / 下划线 / 背景块 / ruby 字号），共用一套颜色会把名词蓝误读为主题蓝。
+- 配色页并入导航“学习”分组下的“学习模式”页：顶部模式卡片画廊（每张带真实渲染预览），下方当前模式的预览 + 元素配置；`#colors` 作为别名重定向。
+- 语法解析服务配置按模式能力条件渲染：只有需要 Remote 的模式才展开 URL/token/检测，本地模式不显示该区块。
+- 现有实现与本文冲突，按本文为准：`src/features/overlay/tokenize/render.ts:66-70` 硬编码角色色与模式分支；`src/shared/posColors.ts` 只有 8 个词性颜色；`src/features/options/pages/ColorsPage.tsx` 只有一个全局调色板；`src/features/options/pages/NlpSettings.tsx` 在配色页内承载模式选择且文案硬编码中英双语。
+- 学习模式归属需纠正：它是渲染配置，不是 NLP 参数，应从 `NLP_SETTINGS_KEY` 移出到样式存储。
 
 ## 1. 最终架构决定
 
@@ -18,7 +27,7 @@
 | 分析文件 | 自包含的 `.sanno.json` 文件：文本、时间轴、token、标注与版本 |
 | 渲染 | 始终在浏览器插件执行；服务端返回结构化数据 |
 | 缓存 | 扩展 IndexedDB 持久保存分析文件；可导入/导出 JSON |
-| 学习模式 | 按标注标签匹配的样式规则集合 |
+| 学习模式 | 一组“元素”及其独立调色板；切换只重编译视图 |
 | 用户配置 | 独立于分析文件；修改样式、切换模式不触发 NLP |
 
 Remote 是调用方式，不意味着云服务。默认示例为 `http://127.0.0.1:8765`。插件不会自动启动电脑上的 Python 进程；用户独立启动服务，插件负责检测和调用。
@@ -62,11 +71,11 @@ Offscreen 使用 `WORKERS` reason，并复用同一文档。宿主重建后从 I
 | --- | --- | --- | --- |
 | `token.pos` | 分词与词性 | 支持 | 支持 |
 | `token.reading` | 词条读音/假名 | 尽力支持 | 尽力支持 |
-| `chunk.heuristic` | 规则辅助分组 | 支持 | 可选 |
-| `chunk.bunsetsu` | 文节 | 不承诺 | GiNZA |
+| `chunk.bunsetsu` | 文节 | 规则切分（近似） | GiNZA |
 | `syntax.dependency` | 依存关系 | 不承诺 | GiNZA |
 | `syntax.role` | 教学语法成分 | 不承诺 | 模型 + 映射规则 |
 | `expression.grammar` | 语法表达 | 规则 | 规则 |
+| `token.level` | 学习计划级别词 | 词典 `lv` | 词典 `lv` |
 | `speech.observed` | 视频真实发音 | 不支持 | 本期不支持 |
 
 能力同时记录在 provider 和分析单元中；文档级能力表示“存在这种能力”，不表示每句成功。读音字段允许缺失；模型推断与人工校验状态分开记录。
@@ -239,22 +248,25 @@ analysisKey = SHA256(JSON([
     "autoRefreshCachedAnalysis": false,
     "apiToken": "<stored-separately>"
   },
-  "analysisSourcePreference": "prefer-remote",
-  "activeProfileId": "pos-basic"
+  "analysisSourcePreference": "prefer-remote"
 }
 ```
+
+`activeProfileId` 不在 NLP 配置里，移至样式存储（§9.4）。
 
 Token 单独保存在扩展本地设置，不同步、不导出进分析文件、不传递给页面。更换 URL 使进行中的任务与新 endpoint 隔离；不会将旧任务 ID 发给新服务。
 
 ### 6.2 接口列表
 
+路由约定：`/api/v1/` 为后端接口，`/ui/` 为浏览器设置页。
+
 | 方法 | 路径 | 语义 |
 | --- | --- | --- |
-| GET | `/v1/capabilities` | 返回 API/schema 版本、provider 指纹、支持格式、语言、能力、大小限制 |
-| POST | `/v1/analyses` | multipart 上传字幕并创建后台任务，返回 202 |
-| GET | `/v1/analyses/{jobId}` | 状态与进度 |
-| GET | `/v1/analyses/{jobId}/result` | 成功后返回完整 `.sanno.json` |
-| DELETE | `/v1/analyses/{jobId}` | 尽力取消任务；不是删除浏览器缓存 |
+| GET | `/api/v1/capabilities` | 返回 API/schema 版本、provider 指纹、支持格式、语言、能力、大小限制 |
+| POST | `/api/v1/analyses` | multipart 上传字幕并创建后台任务，返回 202 |
+| GET | `/api/v1/analyses/{jobId}` | 状态与进度 |
+| GET | `/api/v1/analyses/{jobId}/result` | 成功后返回完整 `.sanno.json` |
+| DELETE | `/api/v1/analyses/{jobId}` | 尽力取消任务；不是删除浏览器缓存 |
 
 创建请求：
 
@@ -313,18 +325,149 @@ Local 与 Remote 分词可能不同，**不要合并两套 token ID**。按 cue 
 
 ## 8. 学习模式：结构数据的不同视图
 
-| 内置模式 | 主要标签 | 默认表现 |
+### 8.1 预设 = 功能点组合
+
+学习模式不是 NLP 参数，而是一组“功能点”的预设组合。内置预设只是初始值：**内置预设可直接编辑**（改后标记 `customized`，可恢复默认），也可以新建自定义预设（`custom:<uuid>`），并按功能点自由搭配。任意预设都能**复制**：副本是自定义预设，完整继承源预设的功能点、`base` 与全部元素覆盖（含下划线子对象深拷贝），且不继承 `customized`，因此复制内置预设后再改不会污染源预设。
+
+| 内置预设 | 功能点 | 默认表现 |
 | --- | --- | --- |
-| `plain` 原文 | 无 | 原始字幕 |
-| `pos-basic` 词性 | NOUN/VERB/ADJ/ADV 等 | 前景色 + 图例 |
-| `syntax-focus` 语法成分 | topic/subject/object/predicate | 颜色与下划线 |
-| `chunk-focus` 语块 | bunsetsu 或 heuristic | 间隔/背景分组，区分辅助分组 |
-| `expression-focus` 表达 | expression.grammar | 背景强调，点击解释 |
-| `reading-assist` 读音 | token.reading | ruby 假名 |
+| `plain` 原文 | — | 原始字幕 |
+| `pos-basic` 词性 | `pos` | 前景色 + 图例 |
+| `syntax-focus` 语法成分 | `syntax` | 颜色与下划线 |
+| `chunk-focus` 语块 | `chunk-rule` | 半透明背景块 + 下划线，首/中/尾只圆外侧角 |
+| `expression-focus` 表达 | `expression` | 背景强调 |
+| `reading-assist` 读音 | `reading` | ruby 假名字号/颜色 |
 
-模式声明 `requiredCapabilities`、可选能力和 fallbackProfileId。`syntax-focus` 缺少语法角色时显示“当前使用本地词性模式，语法分析完成后可切换”，有效模式回退到 `pos-basic`，同时保留用户所选模式 ID。数据更新后重新计算有效模式。
+`chunk-focus` 默认用**本地规则**切分，不依赖语法服务；GiNZA 文节作为独立功能点 `chunk` 提供，与 `chunk-rule` 互斥。能力标签与回退行为由功能点的 `requires` 推导，不按预设 id 硬编码。需要 Remote 功能点而服务未就绪时，有效预设只保留其本地功能点（`localOnlyPreset`），用户选择不变。
 
-用户可由内置模式复制自定义模式；内置配置只读，用户覆盖独立存储。恢复默认只删除覆盖；内置模式升级保留用户修改。模式不是 NLP 参数，不应加入分析缓存键。
+预设不是分析缓存键的一部分；切换预设只重编译视图。
+
+### 8.1.1 功能点注册表
+
+| 功能点 | 分组 | 来源 | 依赖 | 互斥 | 元素 |
+| --- | --- | --- | --- | --- | --- |
+| `pos` | token | 本地分词 | — | — | `token.pos:*` |
+| `nouns` | token | 本地分词 | `pos` | — | 复用 `token.pos:NOUN` |
+| `reading` | token | 本地分词 | — | — | `token.reading:ruby` |
+| `expression` | rule | 本地规则 | — | — | `expression.grammar:all` |
+| `level` | rule | 本地规则 | — | — | `token.level:plan` |
+| `chunk-rule` | rule | 本地规则 | — | `chunk` | `chunk.bunsetsu:{first,middle,last,only}` |
+| `syntax` | remote | 语法解析 | — | — | `syntax.role:*` |
+| `chunk` | remote | 语法解析 | — | `chunk-rule` | 同 `chunk-rule` |
+
+规则（`src/shared/studyFeatures.ts`）：
+
+- 启用某功能点会拉入其依赖，并挤掉互斥对手（点击总能生效）；关闭依赖时，依赖它的功能点一并关闭。
+- 来源分组固定为「本地分词 / 本地规则 / 语法解析」，设置页按此分组呈现，组头标注能力徽标。
+- `nouns` 不新增元素：它把 `base.focusElement` 设为 `token.pos:NOUN`、`dimOpacity` 设为 0.35，非名词整体变淡。
+
+本地规则标注（`tokenize/local.ts`）在 content script 内完成：文节切分以助詞/助動詞/動詞/形容詞/記号/接続詞/感動詞 为边界；固定表达按 `src/shared/grammarPatterns.ts` 的模式跨 token 匹配；计划级别词按内联词典条目的 `lv` 与 `dictSettings.levels` 命中。三者写入与远程分析相同的 `grammar` / `groups` 字段，渲染层不区分来源。
+
+### 8.2 元素
+
+“元素”是本功能唯一的样式单位：可被规则命中、可被单独配色的一段语义文本。词性、词组、短语、语法成分、读音一律建模为元素，不设并行概念。
+
+元素 id 为 `<layer>:<label>`，与标注层同名，避免两套词汇：
+
+| 功能点 | 元素 id | 数量 |
+| --- | --- | --- |
+| `pos` | `token.pos:NOUN` … `token.pos:X` | 8 |
+| `syntax` | `syntax.role:topic` / `subject` / `object` / `predicate` / `modifier` / `adverbial` | 6 |
+| `chunk-rule` / `chunk` | `chunk.bunsetsu:first` / `middle` / `last` / `only` | 4 |
+| `expression` | `expression.grammar:all` | 1 |
+| `level` | `token.level:plan` | 1 |
+| `reading` | `token.reading:ruby`（`rt` 文本） | 1 |
+
+语块位置按标注 id 推导：`Token.groups['chunk.bunsetsu']` 相同且下标相邻的 token 属于同一文节，首/中/尾/整块由此决定。本地规则与远程分析写同一个键，两类来源可互换。
+
+`plain` 无元素。一条文字片段可同时命中多个元素（如 `勉強` 是 NOUN、谓语的一部分、又属于某表达），按 §9.3 逐属性合并；元素不等于互斥分类。未命中的文字用基础样式，不被任何元素着色。
+
+### 8.3 每模式独立调色板
+
+显示通道不同，所以调色板必须分模式：
+
+- `pos-basic` 只改前景色，词性之间靠色相区分。
+- `syntax-focus` 靠颜色 + 下划线表达角色，同一颜色在不同角色上可能混淆。
+- `chunk-focus` 靠背景块与首/中/尾衔接表达分组，背景必须半透明以免盖住文字。
+- `expression-focus` 靠背景强调，通常只一个小元素。
+- `reading-assist` 靠 ruby 字号与颜色，基文字基本保持不动。
+
+**语块块间距只能用圆角 + 半透明背景 + 下划线表达**，不能用 margin/padding：字幕换行依赖 `unitsOf()` 对 token 宽度的测量，任何插入的空白都会让测量失真。相邻 token 因 ruby 与词典点击保持独立 span，观感上的连续靠相同的背景色与内侧不圆角实现。
+
+任何元素都可切换到「仅下划线」：此时解析结果删除 `color`，文字继承基础色，只绘制下划线（`textColorMode: 'underline-only'`）。
+
+把一套 POS 颜色套进语法模式，会把“名词蓝”误读成“主题蓝”。因此：
+
+- 调色板 = 该模式的元素列表 + 每个元素的 `ElementStyle`（§9.1）+ 该模式的基础样式；切换模式同时切换预览、元素列表与配色。
+- 内置调色板只读；用户修改只存覆盖；恢复默认只清当前模式的覆盖。
+- 支持“从其他模式复制配色”：只复制 id 相同的元素，缺失的元素跳过并提示，不做模糊映射。
+- 切换模式只重跑 View Compiler，不触发 NLP、不使分析缓存失效。
+
+### 8.4 例句预览
+
+- 预览必须复用播放页的 View Compiler 与 `renderTokens`，不得另写预览渲染器；同一函数、同一数据形状。
+- 所有预设共用**一条**静态已标注 fixture（`lib/study-fixtures.ts`）：词性、语法角色、一个三 token 文节（含中位）、固定表达、计划级别词与读音齐全，随包内置，不调用 NLP、不读页面 DOM。fixture 由真实的本地标注器生成，而不是手写标签，避免预览与播放不一致。
+- 预览按预设的功能点裁剪：启用什么就显示什么，因此新增/切换功能点会立即反映在卡片与主预览上。元素行另用 `SAMPLE_TOKENS` 提供示例词；确实覆盖不到的元素显示占位，不用默认样式冒充已配置效果。
+- 预览容器模拟字幕框：基础字号 32px、深/浅两种底色可切换（颜色要在任意画面上可读），下方显示图例 chips。
+- 修改任一元素属性后立即重渲染预览；不写缓存、不派发任务。
+- 有效模式发生回退时，预览上方显示回退说明，预览内容按回退后的模式渲染。
+
+### 8.5 导航与信息架构
+
+“词性配色”不再单独成页，并入新的“学习模式”页（`#modes`），放在导航“学习”分组，与词典、词汇并列：
+
+| 分组 | 页面 |
+| --- | --- |
+| 学习 | 词典、词汇、**学习模式**（`modes`） |
+| 外观 | 移除 `colors` |
+
+理由：每模式有独立调色板后，`colors` 与 `modes` 会编辑同一份数据，形成双源；`pos-basic` 只是六个模式之一。
+
+`#colors` 保留为深链别名，重定向到 `#modes` 并默认选中 `pos-basic`。旧书签不失效，也不留下第二个入口。
+
+### 8.6 学习模式页布局
+
+```text
+┌ 学习模式 ─────────────────────────────────────────────────────┐
+│ 模式卡片（每张：名称 + 一行真实渲染预览 + 能力标签）            │
+│ ┌原文──┐ ┌词性✓─┐ ┌语法成分┐ ┌语块──┐ ┌表达──┐ ┌读音──┐      │
+│ │ 字幕 │ │ああ… │ │ 本地需 │ │ 语块 │ │ 表达 │ │ かな │      │
+│ └──────┘ └──────┘ └────────┘ └──────┘ └──────┘ └──────┘      │
+├────────────────────────────────┬──────────────────────────────┤
+│ 当前模式预览（sticky，深/浅底） │ 元素（当前模式）               │
+│  ┌ 16:9 字幕框 ─────────────┐  │ ▸ 名词  ●#1E90FF  ●背景       │
+│  │ ああ、しかし彼は…        │  │ ▸ 动词  ●#E5533D  ●背景       │
+│  └──────────────────────────┘  │ ▸ 助词  …                     │
+│  图例 chips                     │ 展开：不透明度/大小/下划线/    │
+│  基础字号 · 字幕底色 · 恢复默认 │ 文字背景色/重置                │
+├────────────────────────────────┴──────────────────────────────┤
+│ ▸ 语法解析服务（仅当前模式需要 Remote 时渲染）                  │
+└───────────────────────────────────────────────────────────────┘
+```
+
+- 模式卡片即模式选择器，选中态用边框 + 对勾，不只靠颜色；支持方向键切换与 `aria-selected`。
+- 卡片上的能力标签由预设所含功能点的 `requires` 计算，不按预设 id 硬编码：`syntax`、`chunk`（GiNZA 文节）需要 Remote；`pos`、`nouns`、`reading`、`expression`、`level`、`chunk-rule` 本地即可。
+- 宽屏两列（预览 5/12、元素 7/12）；窄屏单列，模式卡片两列网格，预览吸顶。不做嵌套滚动。
+- 元素行默认折叠，只露名称、示例、字色、背景色；展开后是五项控制。滑杆用原生 `range`，命中区高度 ≥44px。
+- 控件复用 `design-system` 的 swatch/toggle；新增滑杆、可折叠行须补 `*.stories.tsx`。预览面板依赖 overlay 渲染器，留在 `src/features/options/`，不进 design-system。
+- 不引入新字体或新色板，全部走现有 CSS 变量与 `data-theme`；图标用 Lucide，不用 emoji。
+- 所有文案加到 `src/shared/i18n/messages/options-colors.ts`；删除 `NlpSettings.tsx` 里的硬编码中英双语字符串。
+
+### 8.7 语法解析配置的条件展开
+
+“语法解析服务”（现 `NlpSettings` 的内容）只在当前模式需要 Remote 时出现：
+
+| 当前模式 | 是否显示 | 形态 |
+| --- | --- | --- |
+| 需要 Remote 且未配置 | 显示，自动展开 | 提示“该模式需要语法解析服务”，URL/token/检测按钮直接可见 |
+| 需要 Remote 且已配置 | 显示，收起为一行 | `已连接 · <engine> <version>` + 展开箭头 + 状态点 |
+| 需要 Remote 且服务不可用 | 显示，展开 | 错误原因 + 重试；预览按回退模式渲染并标注 |
+| 本地模式 | 不渲染整块 | 一行说明“本地分词即可，无需服务”，仅在有连接配置时提供入口 |
+
+- 展开条件由模式能力推导（`requiresRemote`），不使用模式名列表；新增模式自动获得正确行为。
+- 未配置时不在页面顶部弹错误，只在模式卡片与该区块内提示，避免打断配色。
+- 检测连接使用 loading → 成功/失败状态，结果 `aria-live="polite"`；保存自动进行，无需单独“保存”按钮。
+- 服务配置与样式配置分属不同存储（§9.4），清空连接不影响已选模式与配色。
 
 ## 9. 用户样式配置与冲突规则
 
@@ -332,72 +475,109 @@ Local 与 Remote 分词可能不同，**不要合并两套 token ID**。按 cue 
 
 ```json
 {
-  "format": "subtitle-style-profile",
-  "schemaVersion": "1.0.0",
-  "id": "my-pos",
-  "basePresetId": "pos-basic",
-  "baseStyle": {
-    "fontFamilyId": "system-sans",
-    "fontSizePx": 32,
-    "color": "#FFFFFF",
-    "backgroundColor": "#000000CC"
-  },
-  "rules": [
-    {
-      "id": "noun-style",
-      "selector": { "layer": "token.pos", "labels": ["NOUN", "PROPN"] },
-      "priority": 10,
-      "style": { "color": "#60A5FA", "fontScale": 1.05 }
+  "version": 3,
+  "activePresetId": "pos-basic",
+  "presets": {
+    "pos-basic": {
+      "id": "pos-basic",
+      "features": ["pos"],
+      "base": { "dimOpacity": 1, "focusElement": null },
+      "elements": {
+        "token.pos:NOUN": { "color": "#60A5FA", "fontScale": 1.05 },
+        "token.pos:VERB": {
+          "color": "#FB923C",
+          "opacity": 0.95,
+          "fontScale": 1.1,
+          "backgroundColor": "#431407AA",
+          "underline": { "enabled": true, "style": "solid", "color": "#FB923C", "thicknessPx": 2, "offsetPx": 4 }
+        }
+      },
+      "customized": true
     },
-    {
-      "id": "verb-style",
-      "selector": { "layer": "token.pos", "labels": ["VERB", "AUX"] },
-      "priority": 20,
-      "style": {
-        "color": "#FB923C",
-        "backgroundColor": "#431407AA",
-        "underline": { "enabled": true, "style": "solid", "color": "#FB923C", "thicknessPx": 2 }
+    "custom:4d1f": {
+      "id": "custom:4d1f",
+      "name": "名词 + 计划词",
+      "features": ["pos", "nouns", "level"],
+      "base": { "dimOpacity": 0.35, "focusElement": "token.pos:NOUN" },
+      "elements": {
+        "token.level:plan": { "textColorMode": "underline-only", "underline": { "enabled": true, "color": "#FBBF24", "thicknessPx": 3, "offsetPx": 5 } }
       }
     }
-  ]
+  }
 }
 ```
 
-### 9.2 可配置属性
+未列出的元素沿用 `defaultElementsFor(features)` 的内置调色板；未列出的属性沿用低层值。`presets[*].elements` 只保存用户覆盖，不保存内置默认值。`base` 由功能点推导（`baseForFeatures`），`nouns` 会把它设为聚焦名词。
+
+### 9.2 元素可配置属性
 
 | 属性 | 约定 |
 | --- | --- |
-| 字体 | `fontFamilyId` 指向插件白名单字体/本机字体集合 |
-| 字号 | 基础字号 `fontSizePx`；分类使用 `fontScale` 相对缩放 |
-| 字色/背景色 | `#RRGGBB` 或 `#RRGGBBAA`；允许显式透明 |
-| 下划线 | enabled、solid/dashed/dotted/wavy、颜色与厚度 |
+| `enabled` | 元素默认生效；只有 `false` 会被保存。关闭的元素不参与合并（任何属性都不贡献），未命中的 token 保持默认颜色。聚焦元素被关闭时不施加变暗 |
+| `color` | 文字颜色，`#RRGGBB` 或 `#RRGGBBAA` |
+| `opacity` | 0–1，作用于该元素生成的整个片段（文字、背景、下划线）；缺省继承 1 |
+| `fontScale` | 相对缩放 0.5–2.0；最终字号 = 基础字号 × 胜出值 |
+| `underline` | `enabled`、`solid/dashed/dotted/wavy`、`color`、`thicknessPx` 1–6、`offsetPx`（与文字的间距）0–12 |
+| `backgroundColor` | 文字背景色，`#RRGGBBAA`；`#00000000` 表示显式透明 |
+| `radiusPx` / `radiusSides` | 背景块圆角 0–16；`all` / `start` / `end` 决定圆哪几边，语块首尾只圆外侧 |
+| `textColorMode` | `color`（默认）或 `underline-only`；后者删除 `color`，文字保持基础色 |
+| 基础样式 | `dimOpacity` 0–1、`focusElement`，按预设各存一份 |
 | 可扩展项 | 字重、斜体、描边等通过版本化字段新增 |
 
-建议边界：基础字号 12–96px，分类缩放 0.5–2.0，下划线厚度 1–4px；作为配置校验起点。不得接受任意 CSS、CSS selector、`url()` 或服务端下发样式。selector 是有限 JSON 条件，首期不支持执行表达式。
+边界：基础字号 12–96px，分类缩放 0.5–2.0，下划线厚度 1–6px、间距 0–12px，圆角 0–16px，透明度 0–1；越界值夹紧，不接受任意 CSS、CSS selector、`url()` 或服务端下发样式。
 
-分类规则不设置绝对字号；最终字号 = 基础字号 × 胜出的 fontScale。若未来提供分类绝对字号，应增加显式互斥字段，不能让两种计算方式隐式叠加。自动适应字幕框时，对整行再施加统一缩放，保留词类之间的比例；限制最小可读字号并允许换行。
+分类元素不设置绝对字号；最终字号 = 基础字号 × 胜出的 fontScale。未来若提供绝对字号，必须增加显式互斥字段，不让两种算法隐式叠加。自动适应字幕框时对整行统一缩放，保留元素间比例，限制最小可读字号并允许换行。
 
-### 9.3 样式层级
+透明度低于 0.35 时在预览与设置页给出可读性警告，但不阻止保存。字色与背景色相对亮度对比度低于 3:1 时同样警告；这两项都是建议，不是硬校验。
 
-从低到高：应用默认 → 当前内置模式 → 用户全局规则 → 当前模式用户覆盖 → 临时选中/悬停状态。
+### 9.3 样式层级与合并
 
-- 逐属性合并；更高层只覆盖它明确设置的属性，未设置的保留。
-- 同一层按 priority 从小到大应用；相同 priority 按规则数组顺序应用，后者胜出。
-- 字号倍率采用胜出值，不能把多个命中规则相乘。
-- `underline.enabled: false` 明确关闭；`backgroundColor: #00000000` 明确清空；缺省字段表示继承。
-- 取消某项用户覆盖时删除该字段，不用 null 同时表达“继承”和“清除”。
+从低到高：
 
-例：`勉強` 可同时是 NOUN、predicate 的一部分和某个表达的一部分。语法模式默认用角色色；用户若设置了全局 NOUN 字色，会按上述层级覆盖。设置页注明覆盖来源，并允许把规则限定到某个模式，避免隐藏的优先级。
+1. 应用默认（基础色、透明度）
+2. `defaultElementsFor(features)` 的内置调色板
+3. 当前预设的 `elements` 用户覆盖
+4. 预设 `base` 的聚焦/变淡
+
+同一片段会命中多个功能点时，按功能点优先级逐属性取值（`src/shared/studyFeatures.ts:FEATURE_ORDER`，低 → 高）：`pos` → `nouns` → `reading` → `chunk-rule` → `chunk` → `level` → `expression` → `syntax`。
+
+- 逐属性合并；高优先级只覆盖它明确设置的属性，未设置的保留。
+- 一个片段命中多个元素时（如 NOUN + predicate + 表达），`color`、`backgroundColor`、`underline`、`fontScale`、`opacity`、`radiusPx` 各自独立取胜出值，**不得连乘或叠加**。
+- 由此得到稳定的最终顺序：背景「固定表达 › 计划词汇 › 语块」，颜色「语法成分 › 词性」，下划线「语法成分 › 计划词汇 › 语块」。
+- `underline.enabled: false` 明确关闭；`backgroundColor: "#00000000"` 明确清空；缺省字段表示继承。
+- 取消某项用户覆盖时删除该字段，不用 `null` 同时表达“继承”和“清除”。
+- 互斥只发生在功能点之间（`chunk` vs `chunk-rule`），元素之间从不互斥。
+
+例：`勉強` 可同时是 NOUN、predicate 的一部分、计划级别词和某表达的一部分。设置页在每个元素行上标出「被 X 覆盖」，并给出完整的优先级说明，避免隐藏优先级。
+
+### 9.4 存储与迁移
+
+| 键 | 内容 |
+| --- | --- |
+| `ui:subtitleStyle` | `{ version: 3, activePresetId, presets }`，即 §9.1 结构 |
+| `ui:posColors`（旧） | v1 迁移源；读取后写入 `presets['pos-basic'].elements`，迁移完成后保留只读一个版本，不再写入 |
+
+迁移 v2 → v3：`activeProfileId` → `activePresetId`，每个 profile 的元素覆盖原样搬入同名预设并标记 `customized`；旧的单一元素 `chunk.bunsetsu:all` 复制到 `first/middle/last/only` 四个位置 id。迁移幂等，旧值非法时回退内置预设，不阻断启动。
+
+`activePresetId` 从 `NLP_SETTINGS_KEY` 移出：学习模式是渲染配置，清空或重置 NLP 连接不应改变显示模式。内置预设被编辑后 `customized: true`；当编辑被全部撤销（功能点回到内置值且无元素覆盖）时该标记自动清除，可恢复默认。
+
+样式配置不写入 `.sanno.json`，不参与 `analysisKey`，导出样式文件时也不包含字幕正文。
 
 ## 10. 渲染算法与重叠区间
 
 1. 根据播放时间取得 cue；按来源选择规则获得有效 unit 与标注。
 2. 将 token、role、chunk、expression 区间映射为 cue 内偏移。
 3. 收集所有起止边界，加上 0 和 text.length，排序去重。
-4. 生成不重叠原子片段，每片保留覆盖它的标签及 annotation ID。
-5. 匹配当前模式与用户规则，逐属性计算样式。
-6. 相邻且样式、交互身份一致的片段合并，再创建文本节点与受控 span。
-7. mode/style 更新只重跑视图编译，不重跑分词或重新上传。
+4. 生成不重叠区间，每段保留覆盖它的标签及 annotation ID。
+5. 按 token 计算命中元素（含文节首/中/尾位置），用当前预设的功能点列表按 §9.3 逐属性解析出 `ElementStyle`。
+6. 每个 token 生成一个受控 span（ruby 与词典点击需要独立命中区）；同一文节内相邻 token 共享背景色，只由 `radiusSides` 决定外侧圆角，从而连成一块，不插入任何影响换行测量的空白。
+7. 预设/style 更新只重跑视图编译，不重跑分词或重新上传；切换时 `shownCue` 置空，rAF 循环在暂停状态下也会重绘。
+
+元素样式在 token 上解析：角色、文节、表达都可跨 token，命中判定读取 `grammar` / `groups` 标注，不看 token 属于哪个模式；渲染层没有硬编码颜色与 `studyProfile` 分支，全部由功能点与调色板数据驱动。
+
+`opacity` 直接设置在片段的 span 上，一个片段只应用一个胜出值，因此不会出现嵌套透明度连乘；`backgroundColor` 与 `textDecoration` 同 span，互不覆盖。ruby 的 `rt` 使用 `token.reading:ruby` 元素样式，基文字使用片段自己的样式；片段需要不同颜色时把细分 span 放入同一个 ruby 的基文字部分，读音只显示一次。
+
+预览页与播放页共用同一编译器：预览传入内置 fixture 与同一份调色板，禁止在 options 侧复制样式计算逻辑。
 
 交叉的角色/表达区间不能直接按任意顺序嵌套 span；使用原子区间避免非法 DOM 和文本丢失。语块背景用 annotation ID 计算首/中/尾样式；详情选择保留完整表达身份。
 
@@ -441,7 +621,7 @@ services/nlp-api/contracts/    构建时同步协议 schema/fixtures
 | P1 | Local → 同一文档结构 + 词性模式 | 无服务可用、关闭 Popup 继续工作、失败保留原文 |
 | P2 | IndexedDB + 导入/导出 | 重启命中、原子写入、损坏/错轨拒绝、配额降级 |
 | P3 | Python 文件任务 + Remote 自动分析 | 整份上传、进度、幂等、恢复、取消、失败回退 |
-| P4 | 学习模式与自定义样式 | 切换无需 NLP；规则冲突、字号、交叉区间、ruby 正确 |
+| P4 | 学习模式页、元素调色板与例句预览 | 模式切换只重编译；每模式配色隔离；五项属性生效；语法解析配置按能力条件展开；交叉区间与 ruby 正确；预览与播放一致 |
 | P5 | 语块/语法角色/表达扩充 | 真实日语字幕评估误报漏报，保留未知结果 |
 
 核心测试场景：
@@ -452,7 +632,13 @@ services/nlp-api/contracts/    构建时同步协议 schema/fixtures
 - 无缓存、服务关闭：Local 正常；任务进行时换字幕：旧结果只入旧缓存。
 - 多标签页同时选同一轨：只创建一个幂等任务；响应丢失重试不重复计算。
 - Remote/Local token 边界不同：按 cue 来源切换，不混用 ID；失败单元回退。
-- 修改名词色、动词大小、下划线：画面更新，无 NLP 任务或缓存失效。
+- 修改名词色、动词大小、下划线、透明度、文字背景色：预览与播放同时更新，无 NLP 任务或缓存失效。
+- 在 `pos-basic` 改 `token.pos:NOUN` 不改变 `syntax-focus`、`chunk-focus` 的显示；从其他模式复制配色只命中相同元素 id。
+- 同一片段命中 NOUN 与 predicate：逐属性合并且 fontScale/opacity 不连乘；`underline.enabled: false` 与 `#00000000` 能显式关闭。
+- 旧 `ui:posColors` 迁移后 `pos-basic` 颜色不变，重复迁移幂等；清空 NLP 设置后模式不重置。
+- 例句预览与播放页对同一 fixture 输出一致（同一渲染函数的快照测试）。
+- 选中本地模式时页面不渲染 NLP 配置块；选中 `syntax-focus` 且未配置服务时自动展开并提示；切换模式不发起任何网络请求。
+- `#colors` 深链落到 `#modes` 且选中 `pos-basic`；模式卡片可用键盘切换并有选中态。
 - Token 不进入导出文件；错误 origin、超大输入、错误 schema 与越界 span 被拒绝。
 
 性能目标待实测：预热后 200 字符以内 Local 分析 P95 ≤ 100ms；原始字幕不等待分析；无 >50ms 的 NLP 主线程长任务。整片解析单独记录耗时、内存峰值、产物大小及失败单元数，不套用单句延迟预算。先用 30–50 条真实字幕评估，再用完整长片评估资源上限。

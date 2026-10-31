@@ -2,7 +2,7 @@ PNPM ?= pnpm
 
 .DEFAULT_GOAL := help
 
-.PHONY: help install dev build zip typecheck test test-watch storybook storybook-build e2e check verify clean distclean
+.PHONY: help install dev build zip typecheck test test-watch storybook storybook-build e2e check verify publish publish-dry clean distclean
 
 help: ## 列出可用命令
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "} {printf "  %-16s %s\n", $$1, $$2}'
@@ -39,6 +39,10 @@ e2e: build ## 先构建再跑 Playwright（依赖 .output/chrome-mv3）
 
 check: typecheck test ## 类型检查 + 单元测试，提交前最低门槛
 verify: check build e2e ## 全量验证
+publish: zip ## 构建并上传 Chrome Web Store 提交审核（需 CWS_* 凭据，见 DEVOPS.md）
+	node scripts/publish-cws.mjs
+publish-dry: ## 只校验凭据与条目状态，不上传
+	node scripts/publish-cws.mjs --dry-run
 clean: ## 删除构建与测试产物
 	rm -rf .output .wxt storybook-static test-results playwright-report
 
@@ -46,9 +50,47 @@ distclean: clean ## 连 node_modules 一起删除
 	rm -rf node_modules
 
 UV ?= uv
+NLP_PORT ?= 8765
+NLP_PYTHON ?= .venv/bin/python
+LOG ?= 0
+ifneq ($(origin NLP_ALLOWED_ORIGINS),undefined)
+export NLP_ALLOWED_ORIGINS
+endif
+ifneq ($(origin NLP_DATA_DIR),undefined)
+export NLP_DATA_DIR
+endif
+ifneq ($(origin NLP_API_TOKEN),undefined)
+export NLP_API_TOKEN
+endif
+.PHONY: nlp-install nlp-serve nlp-serve-log npl-serve-log nlp-stop nlp-token nlp-test nlp-check --log vocab-install vocab-fetch vocab-match vocab-build vocab-validate vocab-test vocab-check
+nlp-install: ## 安装 Python 3.12、本机 NLP 服务及 GiNZA 模型
+	cd python/server && $(UV) sync --python 3.12
+
+nlp-serve: ## 后台启动 NLP，显示 Token 和配置步骤；LOG=1 同时查看日志
+	@cd python/server && command -v $(NLP_PYTHON) >/dev/null || { echo '请先执行 make nlp-install 安装 NLP 服务。'; exit 1; }
+	@cd python/server && $(NLP_PYTHON) service.py start --port $(NLP_PORT) $(if $(filter 1 true yes,$(LOG))$(filter --log,$(MAKECMDGOALS)),--log,)
+
+nlp-serve-log: ## 查看 NLP 日志；Ctrl-C / Ctrl-Z 退出，后台继续运行
+	@cd python/server && $(NLP_PYTHON) service.py logs
+
+npl-serve-log: nlp-serve-log ## nlp-serve-log 的兼容别名
+
+nlp-stop: ## 停止后台 NLP 服务
+	@cd python/server && $(NLP_PYTHON) service.py stop
+
+--log:
+	@:
+
+nlp-token: ## 显示 API Token，供复制到插件设置（首次自动生成）
+	@cd python/server && $(NLP_PYTHON) -m config
+
+nlp-test: ## Python 协议与 HTTP 接口测试
+	cd python/server && $(NLP_PYTHON) -m pytest -q
+
+nlp-check: check nlp-test ## 前后端联合检查
+
 VOCAB_DIR ?= python/vocabulary
 VOCAB_PYTHON ?= .venv/bin/python
-.PHONY: vocab-install vocab-fetch vocab-match vocab-build vocab-validate vocab-test vocab-check
 vocab-install: ## 安装视觉词汇构建器（uv，Python 3.12）
 	cd $(VOCAB_DIR) && $(UV) sync --python 3.12
 

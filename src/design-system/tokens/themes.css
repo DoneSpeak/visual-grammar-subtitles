@@ -32,6 +32,7 @@
   --color-switch-track: var(--switch-track);
   --color-switch-knob: var(--switch-knob);
   --color-switch-knob-on: var(--switch-knob-on);
+  --color-image-tile: var(--image-tile);
 }
 
 @layer base {

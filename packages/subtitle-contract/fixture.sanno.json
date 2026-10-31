@@ -1,0 +1,339 @@
+{
+  "format": "subtitle-annotation",
+  "schemaVersion": "1.0.0",
+  "documentId": "798efe99-b0d5-412a-81b9-3c9da99eaef6",
+  "createdAt": "2026-10-31T08:29:48.688657+00:00",
+  "source": {
+    "format": "srt",
+    "rawSha256": "1e7849ad7cf907835e776e55e6ab1f47bf0fbdf8f54468dd41c7d67adb55d647",
+    "normalizationVersion": "track-v1",
+    "trackHash": "379997ef58d9227c94a23c78f5c47f2a2dd32d3de2d207696c8988d9e780f54d"
+  },
+  "track": {
+    "language": "ja",
+    "cues": [
+      {
+        "id": "c000001",
+        "startMs": 1000,
+        "endMs": 2000,
+        "text": " 😀私は"
+      },
+      {
+        "id": "c000002",
+        "startMs": 2000,
+        "endMs": 3000,
+        "text": "日本語を勉強します。"
+      }
+    ]
+  },
+  "providers": [
+    {
+      "id": "p-remote",
+      "kind": "remote",
+      "engine": "ginza",
+      "engineVersion": "5.2.1",
+      "modelVersion": "5.2.0",
+      "dictionaryVersion": "20260723",
+      "ruleVersion": "ja-rules-1",
+      "configHash": "424cee9dfe5ba2de87ade76a60f313b7aa0a9cd4d18b0262d49f2e858a246d6f",
+      "capabilities": [
+        "token.pos",
+        "token.reading",
+        "chunk.bunsetsu",
+        "syntax.dependency",
+        "syntax.role",
+        "expression.grammar"
+      ]
+    }
+  ],
+  "units": [
+    {
+      "id": "u000001",
+      "providerId": "p-remote",
+      "status": "complete",
+      "capabilities": [
+        "token.pos",
+        "token.reading",
+        "chunk.bunsetsu",
+        "syntax.dependency",
+        "syntax.role",
+        "expression.grammar"
+      ],
+      "text": " 😀私は\n日本語を勉強します。",
+      "offsetEncoding": "utf16",
+      "mappings": [
+        {
+          "unitStart": 0,
+          "unitEnd": 5,
+          "cueId": "c000001",
+          "cueStart": 0,
+          "cueEnd": 5
+        },
+        {
+          "unitStart": 6,
+          "unitEnd": 16,
+          "cueId": "c000002",
+          "cueStart": 0,
+          "cueEnd": 10
+        }
+      ],
+      "tokens": [
+        {
+          "id": "t0",
+          "start": 0,
+          "end": 1,
+          "surface": " ",
+          "pos": "PUNCT",
+          "rawPos": "空白",
+          "lemma": " ",
+          "reading": ""
+        },
+        {
+          "id": "t1",
+          "start": 1,
+          "end": 3,
+          "surface": "😀",
+          "pos": "NOUN",
+          "rawPos": "補助記号-一般",
+          "lemma": "😀",
+          "reading": "😀"
+        },
+        {
+          "id": "t2",
+          "start": 3,
+          "end": 4,
+          "surface": "私",
+          "pos": "PRON",
+          "rawPos": "代名詞",
+          "lemma": "私",
+          "reading": "ワタクシ"
+        },
+        {
+          "id": "t3",
+          "start": 4,
+          "end": 5,
+          "surface": "は",
+          "pos": "ADP",
+          "rawPos": "助詞-係助詞",
+          "lemma": "は",
+          "reading": "ハ"
+        },
+        {
+          "id": "t4",
+          "start": 5,
+          "end": 6,
+          "surface": "\n",
+          "pos": "NUM",
+          "rawPos": "空白",
+          "lemma": "\n",
+          "reading": ""
+        },
+        {
+          "id": "t5",
+          "start": 6,
+          "end": 9,
+          "surface": "日本語",
+          "pos": "NOUN",
+          "rawPos": "名詞-普通名詞-一般",
+          "lemma": "日本語",
+          "reading": "ニホンゴ"
+        },
+        {
+          "id": "t6",
+          "start": 9,
+          "end": 10,
+          "surface": "を",
+          "pos": "ADP",
+          "rawPos": "助詞-格助詞",
+          "lemma": "を",
+          "reading": "ヲ"
+        },
+        {
+          "id": "t7",
+          "start": 10,
+          "end": 12,
+          "surface": "勉強",
+          "pos": "VERB",
+          "rawPos": "名詞-普通名詞-サ変可能",
+          "lemma": "勉強",
+          "reading": "ベンキョウ"
+        },
+        {
+          "id": "t8",
+          "start": 12,
+          "end": 13,
+          "surface": "し",
+          "pos": "AUX",
+          "rawPos": "動詞-非自立可能",
+          "lemma": "する",
+          "reading": "シ"
+        },
+        {
+          "id": "t9",
+          "start": 13,
+          "end": 15,
+          "surface": "ます",
+          "pos": "AUX",
+          "rawPos": "助動詞",
+          "lemma": "ます",
+          "reading": "マス"
+        },
+        {
+          "id": "t10",
+          "start": 15,
+          "end": 16,
+          "surface": "。",
+          "pos": "PUNCT",
+          "rawPos": "補助記号-句点",
+          "lemma": "。",
+          "reading": "。"
+        }
+      ],
+      "annotations": [
+        {
+          "id": "u000001-a0",
+          "layer": "chunk.bunsetsu",
+          "label": "bunsetsu",
+          "quality": "model",
+          "spans": [
+            {
+              "start": 0,
+              "end": 3
+            }
+          ]
+        },
+        {
+          "id": "u000001-a1",
+          "layer": "chunk.bunsetsu",
+          "label": "bunsetsu",
+          "quality": "model",
+          "spans": [
+            {
+              "start": 3,
+              "end": 5
+            }
+          ]
+        },
+        {
+          "id": "u000001-a2",
+          "layer": "syntax.role",
+          "label": "topic",
+          "quality": "model",
+          "spans": [
+            {
+              "start": 3,
+              "end": 5
+            }
+          ]
+        },
+        {
+          "id": "u000001-a3",
+          "layer": "chunk.bunsetsu",
+          "label": "bunsetsu",
+          "quality": "model",
+          "spans": [
+            {
+              "start": 5,
+              "end": 10
+            }
+          ]
+        },
+        {
+          "id": "u000001-a4",
+          "layer": "syntax.role",
+          "label": "object",
+          "quality": "model",
+          "spans": [
+            {
+              "start": 5,
+              "end": 10
+            }
+          ]
+        },
+        {
+          "id": "u000001-a5",
+          "layer": "chunk.bunsetsu",
+          "label": "bunsetsu",
+          "quality": "model",
+          "spans": [
+            {
+              "start": 10,
+              "end": 16
+            }
+          ]
+        },
+        {
+          "id": "u000001-a6",
+          "layer": "syntax.role",
+          "label": "predicate",
+          "quality": "model",
+          "spans": [
+            {
+              "start": 10,
+              "end": 16
+            }
+          ]
+        }
+      ],
+      "dependencies": [
+        {
+          "dependentTokenId": "t0",
+          "headTokenId": "t7",
+          "relation": "dep"
+        },
+        {
+          "dependentTokenId": "t1",
+          "headTokenId": "t0",
+          "relation": "dep"
+        },
+        {
+          "dependentTokenId": "t2",
+          "headTokenId": "t7",
+          "relation": "nsubj"
+        },
+        {
+          "dependentTokenId": "t3",
+          "headTokenId": "t2",
+          "relation": "case"
+        },
+        {
+          "dependentTokenId": "t4",
+          "headTokenId": "t5",
+          "relation": "compound"
+        },
+        {
+          "dependentTokenId": "t5",
+          "headTokenId": "t7",
+          "relation": "obj"
+        },
+        {
+          "dependentTokenId": "t6",
+          "headTokenId": "t5",
+          "relation": "case"
+        },
+        {
+          "dependentTokenId": "t7",
+          "headTokenId": null,
+          "relation": "ROOT"
+        },
+        {
+          "dependentTokenId": "t8",
+          "headTokenId": "t7",
+          "relation": "aux"
+        },
+        {
+          "dependentTokenId": "t9",
+          "headTokenId": "t7",
+          "relation": "aux"
+        },
+        {
+          "dependentTokenId": "t10",
+          "headTokenId": "t7",
+          "relation": "punct"
+        }
+      ]
+    }
+  ],
+  "diagnostics": [],
+  "extensions": {}
+}

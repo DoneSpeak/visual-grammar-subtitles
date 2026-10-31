@@ -12,7 +12,9 @@ export type IconName =
   | 'layers'
   | 'skip'
   | 'expand'
-  | 'collapse';
+  | 'collapse'
+  | 'columns'
+  | 'rows';
 
 const PATHS: Record<IconName, string> = {
   close: 'M4.5 4.5l7 7M11.5 4.5l-7 7',
@@ -30,6 +32,9 @@ const PATHS: Record<IconName, string> = {
   // Four corners: expand lifts the player to the viewport, collapse puts it back.
   expand: 'M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10',
   collapse: 'M6 2.5V6H2.5M13.5 6H10V2.5M10 13.5V10h3.5M2.5 10H6v3.5',
+  // Two panes side by side / stacked: the transcript split directions.
+  columns: 'M2.5 2.5h4.5v11H2.5zM9 2.5h4.5v11H9z',
+  rows: 'M2.5 2.5h11v4.5h-11zM2.5 9h11v4.5h-11z',
 };
 
 export type IconOptions = {

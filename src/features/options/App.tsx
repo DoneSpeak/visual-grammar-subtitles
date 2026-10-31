@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   BookOpen,
   Keyboard,
+  Images,
   Layers3,
   Link2,
   Palette,
@@ -15,16 +16,16 @@ import { useTheme } from '@/features/theme/use-theme';
 import { setLanguage, t, type Language, type MessageKey } from '@/shared/i18n';
 import { useDictSettings } from './hooks/use-dict-settings';
 import { useLibrary } from './hooks/use-library';
-import { usePosColors } from './hooks/use-pos-colors';
 import { useSiteRules } from './hooks/use-site-rules';
 import { BindsPage } from './pages/BindsPage';
-import { ColorsPage } from './pages/ColorsPage';
 import { DictPage } from './pages/DictPage';
 import { KeysPage } from './pages/KeysPage';
+import { ModesPage } from './pages/ModesPage';
 import { PacksPage } from './pages/PacksPage';
 import { RulesPage } from './pages/RulesPage';
+import { VocabPage } from './pages/VocabPage';
 
-type PageId = 'packs' | 'dict' | 'rules' | 'binds' | 'keys' | 'colors';
+type PageId = 'packs' | 'dict' | 'vocab' | 'rules' | 'binds' | 'keys' | 'modes';
 
 type GroupId = 'content' | 'study' | 'site' | 'actions' | 'appearance';
 
@@ -39,10 +40,11 @@ type NavEntry = {
 const NAV: NavEntry[] = [
   { id: 'packs', labelKey: 'options.nav.packs', group: 'content', icon: Layers3, count: 'packs' },
   { id: 'dict', labelKey: 'options.nav.dict', group: 'study', icon: BookOpen },
+  { id: 'vocab', labelKey: 'options.nav.vocab', group: 'study', icon: Images },
+  { id: 'modes', labelKey: 'options.nav.modes', group: 'study', icon: Palette },
   { id: 'rules', labelKey: 'options.nav.rules', group: 'site', icon: SlidersHorizontal, count: 'rules' },
   { id: 'binds', labelKey: 'options.nav.binds', group: 'site', icon: Link2, count: 'binds' },
   { id: 'keys', labelKey: 'options.nav.keys', group: 'actions', icon: Keyboard },
-  { id: 'colors', labelKey: 'options.nav.colors', group: 'appearance', icon: Palette },
 ];
 
 const GROUP_ORDER: GroupId[] = ['content', 'study', 'site', 'actions', 'appearance'];
@@ -55,7 +57,8 @@ const GROUP_LABEL_KEYS: Record<GroupId, MessageKey> = {
   appearance: 'options.nav.group.appearance',
 };
 
-const PAGE_ALIAS: Record<string, PageId> = { online: 'packs' };
+/** `colors` was the pre-modes entry point; keep old bookmarks working. */
+const PAGE_ALIAS: Record<string, PageId> = { online: 'packs', colors: 'modes' };
 
 const readPage = (): PageId => {
   const raw = window.location.hash.slice(1);
@@ -83,7 +86,6 @@ export function App() {
   const library = useLibrary();
   const sites = useSiteRules();
   const dict = useDictSettings();
-  const posColors = usePosColors();
 
   React.useEffect(() => {
     const onHash = () => {
@@ -175,6 +177,9 @@ export function App() {
           <section className={page === 'dict' ? 'block' : 'hidden'}>
             <DictPage dict={dict} />
           </section>
+          <section className={page === 'vocab' ? 'block' : 'hidden'}>
+            <VocabPage />
+          </section>
           <section className={page === 'rules' ? 'block' : 'hidden'}>
             <RulesPage sites={sites} />
           </section>
@@ -184,8 +189,8 @@ export function App() {
           <section className={page === 'keys' ? 'block' : 'hidden'}>
             <KeysPage />
           </section>
-          <section className={page === 'colors' ? 'block' : 'hidden'}>
-            <ColorsPage posColors={posColors} />
+          <section className={page === 'modes' ? 'block' : 'hidden'}>
+            <ModesPage />
           </section>
         </div>
       </main>

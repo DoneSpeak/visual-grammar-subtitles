@@ -59,9 +59,9 @@ test('options page renders and shares the theme', async () => {
   await expect(options.getByRole('heading', { level: 1, name: '字幕包' })).toBeVisible();
   await expect(options.getByRole('navigation', { name: '设置页面' })).toBeVisible();
 
-  await options.getByRole('link', { name: '词性配色' }).click();
-  await expect(options.getByRole('heading', { level: 1, name: '词性配色' })).toBeVisible();
-  await expect(options).toHaveURL(/#colors$/);
+  await options.getByRole('link', { name: '学习模式' }).click();
+  await expect(options.getByRole('heading', { level: 1, name: '学习模式' })).toBeVisible();
+  await expect(options).toHaveURL(/#modes$/);
 
   await expect(options.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
@@ -84,7 +84,7 @@ test('language control switches live, persists, and switches back', async () => 
 
   await expect(options.locator('html')).toHaveAttribute('lang', 'en-GB');
   await expect(options.getByRole('heading', { level: 1, name: 'Learning dictionary' })).toBeVisible();
-  await expect(options.getByRole('link', { name: 'Part-of-speech colours' })).toBeVisible();
+  await expect(options.getByRole('link', { name: 'Study modes' })).toBeVisible();
   expect(
     await worker.evaluate(async () => (await chrome.storage.local.get('ui:language'))['ui:language']),
   ).toBe('en-GB');
@@ -96,4 +96,62 @@ test('language control switches live, persists, and switches back', async () => 
   await options.getByRole('group', { name: 'Language' }).getByRole('button', { name: '中文' }).click();
   await expect(options.locator('html')).toHaveAttribute('lang', 'zh-CN');
   await expect(options.getByRole('heading', { level: 1, name: '学习词典' })).toBeVisible();
+});
+
+test('study modes compose features and paint a visible chunk block', async () => {
+  const options = await context.newPage();
+  await options.goto(`chrome-extension://${extensionId}/options.html#modes`);
+  await expect(options.getByRole('heading', { level: 1, name: '学习模式' })).toBeVisible();
+
+  // Chunk mode is local and must paint a block, not white text with no mark.
+  await options.getByRole('button', { name: /^语块/ }).click();
+  await expect(options.getByRole('button', { name: '设置语块中' })).toBeVisible();
+  const chunkBackground = await options.evaluate(() => {
+    const span = [...document.querySelectorAll('[data-preview="main"] span')].find(
+      (el) => el.textContent === '静か' && getComputedStyle(el).backgroundColor !== 'rgba(0, 0, 0, 0)',
+    );
+    return span ? getComputedStyle(span).backgroundColor : '';
+  });
+  expect(chunkBackground).not.toBe('');
+
+  // Features are composable: adding the expression feature adds its element row in place.
+  await options.getByRole('button', { name: /^原文/ }).click();
+  await expect(options.getByRole('button', { name: '设置语法表达' })).toHaveCount(0);
+  const expressionPill = options
+    .locator('label')
+    .filter({ has: options.getByRole('checkbox', { name: '固定表达', exact: true }) });
+  await expressionPill.click();
+  await expect(options.getByRole('button', { name: '设置语法表达' })).toBeVisible();
+  await expressionPill.click();
+
+  // An element row switches off inline: the token it styled falls back to the default colour.
+  await options.getByRole('button', { name: /^词性/ }).click();
+  await expect(options.getByRole('button', { name: '设置形容' })).toBeVisible();
+  const adjectiveColor = () =>
+    options.evaluate(() => {
+      const span = [...document.querySelectorAll('[data-preview="main"] span')].find(
+        (el) => el.textContent === '静か',
+      );
+      return span ? getComputedStyle(span).color : '';
+    });
+  const WHITE = 'rgb(255, 255, 255)';
+  expect(await adjectiveColor()).not.toBe(WHITE);
+  await options.getByRole('switch', { name: '显示形容' }).click();
+  await expect.poll(adjectiveColor).toBe(WHITE);
+  await expect(options.getByRole('switch', { name: '显示形容' })).not.toBeChecked();
+
+  // A built-in can be copied; the copy becomes active with everything carried over.
+  await options.getByRole('button', { name: '复制', exact: true }).click();
+  await expect(options.getByRole('button', { name: /^词性 副本/ })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(options.getByRole('switch', { name: '显示形容' })).not.toBeChecked();
+  await expect(options.getByRole('button', { name: '删除', exact: true })).toBeVisible();
+
+  // Only the mode that needs the grammar service carries its symbol, and the symbol opens it.
+  await expect(options.getByRole('button', { name: '需要语法解析' })).toHaveCount(1);
+  await options.getByRole('button', { name: /^语法成分/ }).click();
+  await options.getByRole('button', { name: '需要语法解析' }).click();
+  await expect(options.getByRole('heading', { name: '语法解析服务' })).toBeVisible();
 });
