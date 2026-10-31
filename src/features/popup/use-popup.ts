@@ -112,11 +112,6 @@ export const usePopup = () => {
       if (cancelled) return;
       setSite(resolved);
 
-      const boundId = resolved ? boundPackOf(nextRules, resolved.rule.id, resolved.seriesId) : '';
-      const preferred = boundId ? nextPacks.find((pack) => pack.id === boundId) : undefined;
-      const first = preferred ?? nextPacks[0];
-      if (first) setOpenPacks(new Set([first.id]));
-
       void refreshStatus(id);
     };
     void init();
