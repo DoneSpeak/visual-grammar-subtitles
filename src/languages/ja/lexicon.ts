@@ -2,7 +2,7 @@ import { toHiragana, type DictEntry } from '@/shared/dictionary';
 import type { Token } from '@/shared/types';
 
 /** Japanese participial lookup: these POS values never map to a dictionary entry. */
-export const FUNCTION_WORDS: ReadonlySet<string> = new Set(['助詞', '助動詞', '記号', '空白', '']);
+export const FUNCTION_WORDS: ReadonlySet<string> = new Set(['ADP', 'AUX', 'PUNCT', 'SYM', '']);
 
 /** Lookup candidates in priority order: lemma first, then surface, then reading. */
 export const lookupKeys = (token: Token): string[] => {
@@ -42,7 +42,7 @@ export class DictIndex {
   }
 
   find(token: Token): number | undefined {
-    const reading = toHiragana(token.reading);
+    const reading = token.reading ? toHiragana(token.reading) : '';
     for (const key of lookupKeys(token)) {
       const candidates = this.keys.get(key);
       if (!candidates?.length) continue;

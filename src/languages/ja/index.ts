@@ -2,7 +2,7 @@ import type { LanguagePack } from '@/languages/types';
 
 import { chunks, expressions, levels, local } from './annotators';
 import { FUNCTION_WORDS, lookupKeys } from './lexicon';
-import { isInflected, posGroup } from './pos';
+import { isInflected, posGroup, toPos } from './pos';
 import { alignRuby } from './presentation';
 import { classifyBreak, segment } from './text';
 
@@ -25,6 +25,7 @@ export const ja: LanguagePack = {
   shortLabel: 'JA',
   displayName: '日本語',
   detect,
+  toPos,
   posGroup,
   isInflected,
   functionWords: FUNCTION_WORDS,

@@ -8,16 +8,12 @@ import {
   resolveLanguage,
 } from '@/languages/registry';
 import type { LanguagePack } from '@/languages/types';
-import type { Token } from '@/shared/types';
+import type { Pos, Token } from '@/shared/types';
 
-const token = (surface: string, pos: string): Token => ({
+const token = (surface: string, pos: Pos): Token => ({
   surface,
   pos,
-  posDetail1: '',
-  conjType: '',
-  conjForm: '',
   baseForm: '',
-  reading: '',
 });
 
 const packs: LanguagePack[] = [...Object.values(LANGUAGE_PACKS), plain];
@@ -25,6 +21,7 @@ const packs: LanguagePack[] = [...Object.values(LANGUAGE_PACKS), plain];
 describe('language packs', () => {
   it.each(packs)('$id implements every capability the renderer calls', (pack) => {
     expect(typeof pack.detect).toBe('function');
+    expect(typeof pack.toPos).toBe('function');
     expect(typeof pack.posGroup).toBe('function');
     expect(typeof pack.isInflected).toBe('function');
     expect(pack.functionWords).toBeInstanceOf(Set);

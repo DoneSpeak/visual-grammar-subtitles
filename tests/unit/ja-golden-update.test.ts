@@ -17,6 +17,7 @@ import { it } from 'vitest';
 
 import { annotateLocal } from '@/features/overlay/tokenize/local';
 import { tokenElements, tokenStyle } from '@/features/overlay/tokenize/style';
+import { ja } from '@/languages/ja';
 import { DictIndex } from '@/languages/ja/lexicon';
 import type { DictEntry, DictFile } from '@/shared/dictionary';
 import { defaultPreset, presetElements, type StudyPreset } from '@/shared/subtitleStyle';
@@ -37,7 +38,8 @@ const ANNOTATION_FEATURES = ['pos', 'chunk-rule', 'expression', 'level'] as cons
 
 const toToken = (raw: IpadicFeatures): Token => ({
   surface: raw.surface_form ?? '',
-  pos: raw.pos ?? '',
+  pos: ja.toPos(raw.pos ?? ''),
+  posRaw: raw.pos ?? '',
   posDetail1: raw.pos_detail_1 ?? '',
   conjType: raw.conjugated_type ?? '',
   conjForm: raw.conjugated_form ?? '',

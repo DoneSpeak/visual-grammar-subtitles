@@ -2,6 +2,7 @@ import { nlpMessage } from '@/nlp/background';
 import { defineBackground } from 'wxt/utils/define-background';
 import kuromoji from '@sglkc/kuromoji';
 import type { IpadicFeatures } from '@sglkc/kuromoji';
+import { ja } from '@/languages/ja';
 import type { DictEntry, DictFile } from '@/shared/dictionary';
 import { DictIndex } from '@/languages/ja/lexicon';
 import type { Token } from '@/shared/types';
@@ -71,7 +72,8 @@ const getTokenizer = (): Promise<{ tokenizer: Tokenizer | null; error?: string }
 
 const toToken = (raw: IpadicFeatures): Token => ({
   surface: raw.surface_form ?? '',
-  pos: raw.pos ?? '',
+  pos: ja.toPos(raw.pos ?? ''),
+  posRaw: raw.pos ?? '',
   posDetail1: raw.pos_detail_1 ?? '',
   conjType: raw.conjugated_type ?? '',
   conjForm: raw.conjugated_form ?? '',

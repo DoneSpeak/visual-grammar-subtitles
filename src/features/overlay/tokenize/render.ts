@@ -95,5 +95,5 @@ export const renderPlain = (container: HTMLElement, text: string): void => {
 };
 
 export const plainToken = (text: string): Token[] => [
-  { surface: text, pos: '', posDetail1: '', conjType: '', conjForm: '', baseForm: '', reading: '' },
+  { surface: text, pos: 'X', baseForm: '' },
 ];

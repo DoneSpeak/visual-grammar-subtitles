@@ -11,7 +11,8 @@
       "tokens": [
         {
           "surface": "もう",
-          "pos": "副詞",
+          "pos": "ADV",
+          "posRaw": "副詞",
           "posDetail1": "一般",
           "conjType": "*",
           "conjForm": "*",
@@ -21,7 +22,8 @@
         },
         {
           "surface": "遅い",
-          "pos": "形容詞",
+          "pos": "ADJ",
+          "posRaw": "形容詞",
           "posDetail1": "自立",
           "conjType": "形容詞・アウオ段",
           "conjForm": "基本形",
@@ -31,7 +33,8 @@
         },
         {
           "surface": "よ",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "終助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -40,7 +43,8 @@
         },
         {
           "surface": "、",
-          "pos": "記号",
+          "pos": "PUNCT",
+          "posRaw": "記号",
           "posDetail1": "読点",
           "conjType": "*",
           "conjForm": "*",
@@ -49,7 +53,8 @@
         },
         {
           "surface": "こんな",
-          "pos": "連体詞",
+          "pos": "ADJ",
+          "posRaw": "連体詞",
           "posDetail1": "*",
           "conjType": "*",
           "conjForm": "*",
@@ -59,7 +64,8 @@
         },
         {
           "surface": "時間",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "副詞可能",
           "conjType": "*",
           "conjForm": "*",
@@ -69,7 +75,8 @@
         },
         {
           "surface": "に",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "格助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -78,7 +85,8 @@
         },
         {
           "surface": "何",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "代名詞",
           "conjType": "*",
           "conjForm": "*",
@@ -87,7 +95,8 @@
         },
         {
           "surface": "し",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "自立",
           "conjType": "サ変・スル",
           "conjForm": "連用形",
@@ -96,7 +105,8 @@
         },
         {
           "surface": "てる",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "非自立",
           "conjType": "一段",
           "conjForm": "基本形",
@@ -106,7 +116,8 @@
         },
         {
           "surface": "の",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "終助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -115,7 +126,8 @@
         },
         {
           "surface": "？",
-          "pos": "記号",
+          "pos": "PUNCT",
+          "posRaw": "記号",
           "posDetail1": "一般",
           "conjType": "*",
           "conjForm": "*",
@@ -246,7 +258,8 @@
       "tokens": [
         {
           "surface": "私",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "代名詞",
           "conjType": "*",
           "conjForm": "*",
@@ -256,7 +269,8 @@
         },
         {
           "surface": "は",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "係助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -265,7 +279,8 @@
         },
         {
           "surface": "彼",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "代名詞",
           "conjType": "*",
           "conjForm": "*",
@@ -275,7 +290,8 @@
         },
         {
           "surface": "の",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "連体化",
           "conjType": "*",
           "conjForm": "*",
@@ -284,7 +300,8 @@
         },
         {
           "surface": "こと",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "非自立",
           "conjType": "*",
           "conjForm": "*",
@@ -293,7 +310,8 @@
         },
         {
           "surface": "を",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "格助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -302,7 +320,8 @@
         },
         {
           "surface": "全然",
-          "pos": "副詞",
+          "pos": "ADV",
+          "posRaw": "副詞",
           "posDetail1": "助詞類接続",
           "conjType": "*",
           "conjForm": "*",
@@ -312,7 +331,8 @@
         },
         {
           "surface": "知ら",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "自立",
           "conjType": "五段・ラ行",
           "conjForm": "未然形",
@@ -322,7 +342,8 @@
         },
         {
           "surface": "ない",
-          "pos": "助動詞",
+          "pos": "AUX",
+          "posRaw": "助動詞",
           "posDetail1": "*",
           "conjType": "特殊・ナイ",
           "conjForm": "基本形",
@@ -331,7 +352,8 @@
         },
         {
           "surface": "。",
-          "pos": "記号",
+          "pos": "PUNCT",
+          "posRaw": "記号",
           "posDetail1": "句点",
           "conjType": "*",
           "conjForm": "*",
@@ -442,7 +464,8 @@
       "tokens": [
         {
           "surface": "食べ",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "自立",
           "conjType": "一段",
           "conjForm": "未然形",
@@ -452,7 +475,8 @@
         },
         {
           "surface": "なけれ",
-          "pos": "助動詞",
+          "pos": "AUX",
+          "posRaw": "助動詞",
           "posDetail1": "*",
           "conjType": "特殊・ナイ",
           "conjForm": "仮定形",
@@ -461,7 +485,8 @@
         },
         {
           "surface": "ば",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "接続助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -470,7 +495,8 @@
         },
         {
           "surface": "なら",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "非自立",
           "conjType": "五段・ラ行",
           "conjForm": "未然形",
@@ -480,7 +506,8 @@
         },
         {
           "surface": "ない",
-          "pos": "助動詞",
+          "pos": "AUX",
+          "posRaw": "助動詞",
           "posDetail1": "*",
           "conjType": "特殊・ナイ",
           "conjForm": "基本形",
@@ -489,7 +516,8 @@
         },
         {
           "surface": "。",
-          "pos": "記号",
+          "pos": "PUNCT",
+          "posRaw": "記号",
           "posDetail1": "句点",
           "conjType": "*",
           "conjForm": "*",
@@ -557,7 +585,8 @@
       "tokens": [
         {
           "surface": "静か",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "形容動詞語幹",
           "conjType": "*",
           "conjForm": "*",
@@ -567,7 +596,8 @@
         },
         {
           "surface": "な",
-          "pos": "助動詞",
+          "pos": "AUX",
+          "posRaw": "助動詞",
           "posDetail1": "*",
           "conjType": "特殊・ダ",
           "conjForm": "体言接続",
@@ -576,7 +606,8 @@
         },
         {
           "surface": "夜",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "副詞可能",
           "conjType": "*",
           "conjForm": "*",
@@ -586,7 +617,8 @@
         },
         {
           "surface": "が",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "格助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -595,7 +627,8 @@
         },
         {
           "surface": "続い",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "自立",
           "conjType": "五段・カ行イ音便",
           "conjForm": "連用タ接続",
@@ -605,7 +638,8 @@
         },
         {
           "surface": "て",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "接続助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -614,7 +648,8 @@
         },
         {
           "surface": "い",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "非自立",
           "conjType": "一段",
           "conjForm": "連用形",
@@ -623,7 +658,8 @@
         },
         {
           "surface": "た",
-          "pos": "助動詞",
+          "pos": "AUX",
+          "posRaw": "助動詞",
           "posDetail1": "*",
           "conjType": "特殊・タ",
           "conjForm": "基本形",
@@ -632,7 +668,8 @@
         },
         {
           "surface": "。",
-          "pos": "記号",
+          "pos": "PUNCT",
+          "posRaw": "記号",
           "posDetail1": "句点",
           "conjType": "*",
           "conjForm": "*",
@@ -716,7 +753,8 @@
       "tokens": [
         {
           "surface": "彼女",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "代名詞",
           "conjType": "*",
           "conjForm": "*",
@@ -726,7 +764,8 @@
         },
         {
           "surface": "は",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "係助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -735,7 +774,8 @@
         },
         {
           "surface": "とても",
-          "pos": "副詞",
+          "pos": "ADV",
+          "posRaw": "副詞",
           "posDetail1": "助詞類接続",
           "conjType": "*",
           "conjForm": "*",
@@ -744,7 +784,8 @@
         },
         {
           "surface": "綺麗",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "形容動詞語幹",
           "conjType": "*",
           "conjForm": "*",
@@ -754,7 +795,8 @@
         },
         {
           "surface": "だっ",
-          "pos": "助動詞",
+          "pos": "AUX",
+          "posRaw": "助動詞",
           "posDetail1": "*",
           "conjType": "特殊・ダ",
           "conjForm": "連用タ接続",
@@ -763,7 +805,8 @@
         },
         {
           "surface": "た",
-          "pos": "助動詞",
+          "pos": "AUX",
+          "posRaw": "助動詞",
           "posDetail1": "*",
           "conjType": "特殊・タ",
           "conjForm": "基本形",
@@ -772,7 +815,8 @@
         },
         {
           "surface": "。",
-          "pos": "記号",
+          "pos": "PUNCT",
+          "posRaw": "記号",
           "posDetail1": "句点",
           "conjType": "*",
           "conjForm": "*",
@@ -839,7 +883,8 @@
       "tokens": [
         {
           "surface": "ちょっと",
-          "pos": "副詞",
+          "pos": "ADV",
+          "posRaw": "副詞",
           "posDetail1": "助詞類接続",
           "conjType": "*",
           "conjForm": "*",
@@ -848,7 +893,8 @@
         },
         {
           "surface": "待っ",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "自立",
           "conjType": "五段・タ行",
           "conjForm": "連用タ接続",
@@ -858,7 +904,8 @@
         },
         {
           "surface": "て",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "接続助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -867,7 +914,8 @@
         },
         {
           "surface": "ください",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "非自立",
           "conjType": "五段・ラ行特殊",
           "conjForm": "命令ｉ",
@@ -877,7 +925,8 @@
         },
         {
           "surface": "！",
-          "pos": "記号",
+          "pos": "PUNCT",
+          "posRaw": "記号",
           "posDetail1": "一般",
           "conjType": "*",
           "conjForm": "*",
@@ -938,7 +987,8 @@
       "tokens": [
         {
           "surface": "本当に",
-          "pos": "副詞",
+          "pos": "ADV",
+          "posRaw": "副詞",
           "posDetail1": "一般",
           "conjType": "*",
           "conjForm": "*",
@@ -947,7 +997,8 @@
         },
         {
           "surface": "そう",
-          "pos": "副詞",
+          "pos": "ADV",
+          "posRaw": "副詞",
           "posDetail1": "助詞類接続",
           "conjType": "*",
           "conjForm": "*",
@@ -957,7 +1008,8 @@
         },
         {
           "surface": "思う",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "自立",
           "conjType": "五段・ワ行促音便",
           "conjForm": "基本形",
@@ -967,7 +1019,8 @@
         },
         {
           "surface": "？",
-          "pos": "記号",
+          "pos": "PUNCT",
+          "posRaw": "記号",
           "posDetail1": "一般",
           "conjType": "*",
           "conjForm": "*",
@@ -1030,7 +1083,8 @@
       "tokens": [
         {
           "surface": "東京",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "固有名詞",
           "conjType": "*",
           "conjForm": "*",
@@ -1039,7 +1093,8 @@
         },
         {
           "surface": "に",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "格助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -1048,7 +1103,8 @@
         },
         {
           "surface": "行っ",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "自立",
           "conjType": "五段・カ行促音便",
           "conjForm": "連用タ接続",
@@ -1057,7 +1113,8 @@
         },
         {
           "surface": "た",
-          "pos": "助動詞",
+          "pos": "AUX",
+          "posRaw": "助動詞",
           "posDetail1": "*",
           "conjType": "特殊・タ",
           "conjForm": "基本形",
@@ -1066,7 +1123,8 @@
         },
         {
           "surface": "こと",
-          "pos": "名詞",
+          "pos": "NOUN",
+          "posRaw": "名詞",
           "posDetail1": "非自立",
           "conjType": "*",
           "conjForm": "*",
@@ -1075,7 +1133,8 @@
         },
         {
           "surface": "が",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "格助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -1084,7 +1143,8 @@
         },
         {
           "surface": "あり",
-          "pos": "動詞",
+          "pos": "VERB",
+          "posRaw": "動詞",
           "posDetail1": "自立",
           "conjType": "五段・ラ行",
           "conjForm": "連用形",
@@ -1093,7 +1153,8 @@
         },
         {
           "surface": "ます",
-          "pos": "助動詞",
+          "pos": "AUX",
+          "posRaw": "助動詞",
           "posDetail1": "*",
           "conjType": "特殊・マス",
           "conjForm": "基本形",
@@ -1102,7 +1163,8 @@
         },
         {
           "surface": "か",
-          "pos": "助詞",
+          "pos": "ADP",
+          "posRaw": "助詞",
           "posDetail1": "副助詞／並立助詞／終助詞",
           "conjType": "*",
           "conjForm": "*",
@@ -1111,7 +1173,8 @@
         },
         {
           "surface": "。",
-          "pos": "記号",
+          "pos": "PUNCT",
+          "posRaw": "記号",
           "posDetail1": "句点",
           "conjType": "*",
           "conjForm": "*",

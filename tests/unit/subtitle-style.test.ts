@@ -35,11 +35,11 @@ import {
   type StudyPreset,
   type SubtitleStyle,
 } from '@/shared/subtitleStyle';
-import type { Token } from '@/shared/types';
+import type { Pos, Token } from '@/shared/types';
 
 const token = (
   surface: string,
-  pos: string,
+  pos: Pos,
   extra: Partial<Token> = {},
 ): Token => ({
   surface,
@@ -198,7 +198,7 @@ describe('per-property resolution', () => {
 
 describe('chunk positions', () => {
   const withGroup = (surface: string, group: string): Token =>
-    token(surface, '名詞', { groups: { 'chunk.bunsetsu': group } });
+    token(surface, 'NOUN', { groups: { 'chunk.bunsetsu': group } });
 
   it('derives first, middle, last and only from the group run', () => {
     const tokens = [
@@ -208,7 +208,7 @@ describe('chunk positions', () => {
       withGroup('d', 'g2'),
       withGroup('e', 'g2'),
       withGroup('f', 'g3'),
-      token('g', '名詞'),
+      token('g', 'NOUN'),
     ];
     expect(chunkElementAt(tokens, 0)).toBe('chunk.bunsetsu:first');
     expect(chunkElementAt(tokens, 1)).toBe('chunk.bunsetsu:last');
@@ -221,7 +221,7 @@ describe('chunk positions', () => {
 
   it('marks the middle of a three-token chunk', () => {
     const tokens = ['とても', '静か', 'に'].map((surface) =>
-      token(surface, '名詞', { groups: { 'chunk.bunsetsu': 'g1' } }),
+      token(surface, 'NOUN', { groups: { 'chunk.bunsetsu': 'g1' } }),
     );
     expect(chunkElementAt(tokens, 1)).toBe('chunk.bunsetsu:middle');
   });
@@ -230,13 +230,13 @@ describe('chunk positions', () => {
 describe('local annotations', () => {
   it('groups tokens into rule chunks and splits on particles and punctuation', () => {
     const tokens = [
-      token('私', '代名詞'),
-      token('は', '助詞'),
-      token('静かに', '副詞'),
-      token('、', '記号'),
-      token('本', '名詞'),
-      token('を', '助詞'),
-      token('読んだ', '動詞'),
+      token('私', 'PRON'),
+      token('は', 'ADP'),
+      token('静かに', 'ADV'),
+      token('、', 'PUNCT'),
+      token('本', 'NOUN'),
+      token('を', 'ADP'),
+      token('読んだ', 'VERB'),
     ];
     const groups = annotateChunks(tokens).map((t) => t.groups?.['chunk.bunsetsu']);
     expect(groups).toEqual(['rule-0', 'rule-0', 'rule-1', undefined, 'rule-2', 'rule-2', 'rule-3']);
@@ -244,10 +244,10 @@ describe('local annotations', () => {
 
   it('tags fixed expressions across token boundaries', () => {
     const tokens = [
-      token('食べ', '動詞'),
-      token('なければ', '助動詞'),
-      token('ならない', '動詞'),
-      token('。', '記号'),
+      token('食べ', 'VERB'),
+      token('なければ', 'AUX'),
+      token('ならない', 'VERB'),
+      token('。', 'PUNCT'),
     ];
     const tagged = annotateExpressions(tokens);
     expect(tagged[0].grammar).toBeUndefined();
@@ -260,7 +260,7 @@ describe('local annotations', () => {
       { w: '勉強', r: 'ベンキョウ', lv: 3, p: [], g: [], x: [], id: '勉強' },
       { w: '本', r: 'ホン', lv: 5, p: [], g: [], x: [], id: '本' },
     ];
-    const tokens = [token('勉強', '名詞', { dictIdx: 0 }), token('本', '名詞', { dictIdx: 1 })];
+    const tokens = [token('勉強', 'NOUN', { dictIdx: 0 }), token('本', 'NOUN', { dictIdx: 1 })];
     const tagged = annotateLevels(tokens, entries, { 3: true });
     expect(tagged[0].grammar).toContain(LEVEL_ELEMENT);
     expect(tagged[1].grammar).toBeUndefined();
@@ -351,7 +351,7 @@ describe('presets', () => {
 
 describe('token style', () => {
   it('dims everything outside the focus element', () => {
-    const tokens = [token('本', '名詞'), token('読んだ', '動詞')];
+    const tokens = [token('本', 'NOUN'), token('読んだ', 'VERB')];
     const style: StudyPreset = { ...defaultPreset('pos-basic'), features: ['pos', 'nouns'] };
     style.base = { dimOpacity: 0.35, focusElement: POS_ELEMENT.noun };
     const elements = presetElements(style);
@@ -360,7 +360,7 @@ describe('token style', () => {
   });
 
   it('leaves a token unstyled when its element is switched off', () => {
-    const tokens = [token('本', '名詞'), token('読んだ', '動詞', { conjForm: '連用タ接続' })];
+    const tokens = [token('本', 'NOUN'), token('読んだ', 'VERB', { conjForm: '連用タ接続' })];
     const off = preset(['pos'], {
       [POS_ELEMENT.noun]: { enabled: false },
       [POS_ELEMENT.verb]: { enabled: false },
@@ -372,7 +372,7 @@ describe('token style', () => {
   });
 
   it('does not dim when the focus element itself is switched off', () => {
-    const tokens = [token('本', '名詞'), token('読んだ', '動詞')];
+    const tokens = [token('本', 'NOUN'), token('読んだ', 'VERB')];
     const style: StudyPreset = {
       ...defaultPreset('pos-basic'),
       features: ['pos', 'nouns'],
@@ -383,7 +383,7 @@ describe('token style', () => {
   });
 
   it('keeps the inflected-verb hint unless the element overrides it', () => {
-    const inflected = token('読んだ', '動詞', { conjForm: '連用タ接続' });
+    const inflected = token('読んだ', 'VERB', { conjForm: '連用タ接続' });
     const base = defaultPreset('pos-basic');
     expect(tokenStyle([inflected], 0, base, presetElements(base))?.opacity).toBe(0.78);
     const custom = preset(['pos'], {

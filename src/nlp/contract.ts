@@ -1,5 +1,5 @@
+import { normalizePos, type Cue, type Token } from '@/shared/types';
 import { validateShape } from './schema';
-import type { Cue, Token } from '@/shared/types';
 export type Span = { start: number; end: number };
 export type Annotation = { id: string; layer: string; label: string; quality: string; spans: Span[] };
 export type AnalysisToken = Span & { id: string; surface: string; pos: string; rawPos?: string; lemma?: string; reading?: string };
@@ -50,7 +50,6 @@ export async function validateDocument(input: unknown, expectedHash?: string): P
   return d;
 }
 
-const POS: Record<string, string> = { NOUN: '名詞', PROPN: '名詞', PRON: '代名詞', VERB: '動詞', AUX: '助動詞', ADJ: '形容詞', ADV: '副詞', ADP: '助詞', PART: '助詞', SCONJ: '接続詞', CCONJ: '接続詞', PUNCT: '記号', SYM: '記号' };
 // Compile intersecting annotations into disjoint pieces. A split token retains its reading in details only.
 export function cueTokens(d: AnalysisDocument, cueId: string, profile: string): Token[] | null {
   const cue = d.track.cues.find(c => c.id === cueId);
@@ -78,6 +77,6 @@ export function cueTokens(d: AnalysisDocument, cueId: string, profile: string): 
   if (end !== cue.text.length) return null;
   return parts.map(p => {
     const surface = cue.text.slice(p.start, p.end), t = p.token;
-    return { surface, pos: POS[t?.pos ?? ''] ?? '', posDetail1: '', conjType: '', conjForm: '', baseForm: t?.lemma ?? '', reading: surface === t?.surface ? t.reading ?? '' : '', grammar: p.labels, groups: p.groups, studyProfile: profile };
+    return { surface, pos: normalizePos(t?.pos), posRaw: t?.pos, baseForm: t?.lemma ?? '', reading: surface === t?.surface ? t.reading ?? '' : '', grammar: p.labels, groups: p.groups, studyProfile: profile };
   });
 }
