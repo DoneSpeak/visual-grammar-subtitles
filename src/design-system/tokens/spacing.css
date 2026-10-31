@@ -1,0 +1,10 @@
+@theme {
+  --radius-sm: 5px;
+  --radius-md: 7px;
+  --radius-lg: 9px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  --control-height-sm: 22px;
+  --control-height: 26px;
+}
