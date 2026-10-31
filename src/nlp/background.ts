@@ -14,23 +14,25 @@ async function api(path: string, init: RequestInit = {}) {
   const bytes = new Uint8Array(size); let at = 0; for (const c of chunks) { bytes.set(c, at); at += c.length; }
   return JSON.parse(new TextDecoder().decode(bytes));
 }
-export async function nlpMessage(msg: { action: string; cues?: TrackCue[]; hash?: string; jobId?: string; baseUrl?: string }) {
+export async function nlpMessage(msg: { action: string; cues?: TrackCue[]; hash?: string; jobId?: string; baseUrl?: string; language?: string }) {
   const cfg = await loadNlpSettings();
   if (msg.action === 'settings') return cfg; // Credentials never cross into content scripts.
   if (msg.action === 'capabilities') return api('/api/v1/capabilities');
   if (cfg.sourcePreference === 'local-only') return {};
   if (msg.action === 'start') {
     const cues = msg.cues!;
-    const fingerprint = await trackHash(cues);
+    const language = msg.language ?? 'ja';
+    const fingerprint = await trackHash(cues, language);
     const cached = await readAnalysis(fingerprint).catch(() => null);
     if (cached) return { document: cached };
     if (!cfg.enabled) return {};
     const capabilities = await api('/api/v1/capabilities');
     if (!capabilities.formats.includes('cue-json-v1')) throw Error('Service does not support complete cue tracks');
+    if (!Array.isArray(capabilities.languages) || !capabilities.languages.includes(language)) throw Error('Service does not support this language');
     const file = JSON.stringify({ format: 'cue-json-v1', cues });
     if (new TextEncoder().encode(file).length > 10 * 1024 * 1024) throw Error('Subtitle exceeds 10 MiB');
     const rawSha256 = await hash(file);
-    const metadata = { rawSha256, trackHash: fingerprint, normalizationVersion: 'track-v1', language: 'ja', encoding: 'utf-8', requestedCapabilities: capabilities.capabilities.slice().sort(), schemaMajor: 1 };
+    const metadata = { rawSha256, trackHash: fingerprint, normalizationVersion: 'track-v1', language, encoding: 'utf-8', requestedCapabilities: capabilities.capabilities.slice().sort(), schemaMajor: 1 };
     const form = new FormData(); form.set('file', new Blob([file], { type: 'application/json' }), 'track.json'); form.set('metadata', JSON.stringify(metadata));
     const baseUrl = endpoint(cfg.baseUrl);
     const key = await hash(JSON.stringify([baseUrl, fingerprint, capabilities.providerFingerprint, metadata.requestedCapabilities]));

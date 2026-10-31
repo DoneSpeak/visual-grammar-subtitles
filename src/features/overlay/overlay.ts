@@ -5,6 +5,7 @@ import { createIcon, type IconName } from '@/shared/icons';
 import { applyLanguage, getLanguage, t, type Language } from '@/shared/i18n';
 import {
   activePreset,
+  defaultPresets,
   defaultSubtitleStyle,
   effectiveBox,
   presetDisplayName,
@@ -19,7 +20,7 @@ import { DEFAULT_AD_DURATION } from '@/shared/siteRules';
 import type { AdSlot, LayerCfg, PageCfg, Token } from '@/shared/types';
 import { defaultLayer } from '@/shared/types';
 import { segment } from '@/languages/ja/text';
-import { DEFAULT_LANGUAGE, featuresFor } from '@/languages/registry';
+import { DEFAULT_LANGUAGE, SELECTABLE_LANGUAGES, featuresFor, resolveLanguage } from '@/languages/registry';
 import { renderPlain, renderTokens, type DictRender, type RenderOpts } from './tokenize/render';
 import { TRANSCRIPT_CSS } from './transcript';
 import type { PictureRect } from './video';
@@ -87,6 +88,8 @@ export type OverlayCallbacks = {
   onLibraryPick: (target: LibraryTarget, key: string) => void;
   onOnlineSearch: (query: string) => void;
   onClearSubtitle: (target: LayerId) => void;
+  /** The layer's language select changed; null means auto-detect. */
+  onLayerLanguage: (layer: LayerId, language: string | null) => void;
   onOpenLibrary: () => void;
   onCfgChange: () => void;
   /** Player time → subtitle (content) timeline. */
@@ -108,6 +111,7 @@ export type OverlayCallbacks = {
 const CSS = `
 :host { --card-bg: rgba(18,20,26,.97); --card-fg: #e8eaed; --card-muted: #99a3b0; --card-accent: #7fd3ff; --card-line: rgba(255,255,255,.12); --card-tile-bg: #f6f7f9; --card-radius: 16px; position: fixed; inset: 0; pointer-events: none; z-index: 2147483646; font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif; }
 .stage { position: absolute; overflow: visible; }
+.layer[lang="th"] { font-family: "Noto Sans Thai", "Leelawadee UI", Thonburi, Tahoma, sans-serif; line-height: 1.7; word-break: normal; overflow-wrap: normal; }
 .layer { position: absolute; transform: translate(-50%, -100%); display: flex; align-items: center; justify-content: center; box-sizing: border-box; text-align: center; pointer-events: none; user-select: none; line-height: 1.38; font-weight: 700; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.92), 0 0 2px rgba(0,0,0,.92); transition: opacity 160ms linear; opacity: 0; }
 .layer .body { display: inline-block; max-width: 100%; pointer-events: auto; cursor: grab; }
 /* The subtitle box is a pseudo-element so its padding and bleed never enter the layout measurement. */
@@ -159,6 +163,7 @@ const CSS = `
 .panel select { flex: 1 1 auto; min-width: 0; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: #e8eaed; border-radius: 5px; padding: 2px 4px; font-size: 11px; }
 .panel select:focus { outline: none; border-color: #7FD3FF; }
 .panel select option { background: #181b22; color: #e8eaed; }
+.panel select.lang-select { flex: 0 0 auto; max-width: 82px; }
 .panel button.icon { width: 22px; height: 22px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
 .panel button.icon svg { width: 13px; height: 13px; display: block; }
 .panel .chips { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
@@ -318,6 +323,7 @@ export class Overlay {
   private dictSettings: DictSettings = defaultDictSettings();
   private subtitleStyle: SubtitleStyle = defaultSubtitleStyle();
   private presetSelect: HTMLSelectElement | null = null;
+  private langSelects: Partial<Record<LayerId, HTMLSelectElement>> = {};
   private lineDict = new WeakMap<HTMLElement, DictEntry[]>();
   /** Current cue, kept so a resize can re-run the layout without a new tokenization round trip. */
   private content: Record<LayerId, LayerContent | null> = { a: null, b: null };
@@ -664,19 +670,27 @@ export class Overlay {
     hint.textContent = text;
   }
 
+  /** The layer's content language; each layer is independent. */
+  private languageOf(layer: LayerId): string {
+    return this.getCfg().subs[layer].language ?? DEFAULT_LANGUAGE;
+  }
+
   render(
     layer: LayerId,
     lines: string[],
     tokens: (DictLine | null)[],
     cfg: LayerCfg,
     dict: DictRender,
-    preset: StudyPreset = activePreset(this.subtitleStyle, DEFAULT_LANGUAGE),
+    preset?: StudyPreset,
   ): void {
+    const language = this.languageOf(layer);
+    this.layers[layer].wrap.lang = language;
+    const resolved = preset ?? activePreset(this.subtitleStyle, language);
     if (this.cardLayer === layer && this.dictSettings.duration.mode === 'cue') this.hideCard();
     // A preset is itself a reason to paint tokens: its features carry the styling even when the
     // standalone POS-colour switch is off.
-    const themed = cfg.colorize || preset.features.length > 0;
-    const furigana = cfg.furigana || preset.features.includes('reading');
+    const themed = cfg.colorize || resolved.features.length > 0;
+    const furigana = cfg.furigana || resolved.features.includes('reading');
     // Keep the source, not just the painted DOM: a resize re-runs the layout optimizer and needs
     // the units back. Tokenized lines break at token boundaries, so a slice is still renderable.
     const paragraphs: ParaContent[] = lines.map((line, i) => {
@@ -690,15 +704,16 @@ export class Overlay {
             colorize: themed,
             furigana,
             style: {
-              preset,
-              elements: presetElements(featuresFor(DEFAULT_LANGUAGE), preset),
-              registry: featuresFor(DEFAULT_LANGUAGE),
+              preset: resolved,
+              elements: presetElements(featuresFor(language), resolved),
+              registry: featuresFor(language),
+              language,
             },
             dict: { ...dict, entries: parsed.entries },
           },
         };
       }
-      return { kind: 'plain', segments: segment(line) };
+      return { kind: 'plain', segments: language === 'th' ? resolveLanguage(language).text.segment(line) : segment(line) };
     });
     const ruby = paragraphs.some(
       (para) => para.kind === 'tokens' && furigana && para.tokens.some((token) => !!token.reading),
@@ -706,7 +721,7 @@ export class Overlay {
     this.content[layer] = { paragraphs, ruby };
     this.planKey[layer] = '';
     this.layers[layer].wrap.classList.toggle('empty', paragraphs.length === 0);
-    this.applyBoxStyle(layer, preset);
+    this.applyBoxStyle(layer, resolved);
     this.applyLayout();
   }
 
@@ -797,21 +812,34 @@ export class Overlay {
     this.fillPresetOptions();
   }
 
-  /** Rebuilds the panel's preset list; called on every storage change so edits show up live. */
+  /** Rebuilds the panel's preset list for layer A's language; called on every storage change. */
   private fillPresetOptions(): void {
     const select = this.presetSelect;
     if (!select) return;
     select.textContent = '';
-    const registry = featuresFor(DEFAULT_LANGUAGE);
-    const presets = this.subtitleStyle.presets[DEFAULT_LANGUAGE] ?? {};
-    for (const id of presetOrder(registry, this.subtitleStyle, DEFAULT_LANGUAGE)) {
+    const language = this.languageOf('a');
+    const registry = featuresFor(language);
+    // A selectable language may not have a bucket yet; its seeded built-ins still belong in the
+    // list, and selecting one writes through to storage below.
+    const presets = this.subtitleStyle.presets[language] ?? defaultPresets(registry);
+    for (const id of presetOrder(registry, this.subtitleStyle, language)) {
       const preset = presets[id];
       if (!preset) continue;
       const option = el('option', '', presetDisplayName(registry, preset, t));
       option.value = id;
       select.appendChild(option);
     }
-    select.value = this.subtitleStyle.activePresetId[DEFAULT_LANGUAGE] ?? '';
+    select.value = activePreset(this.subtitleStyle, language).id;
+  }
+
+  /** Language selects reflect the stored per-layer choice; 'auto' when the user has not picked. */
+  private syncLanguageSelects(): void {
+    for (const id of ['a', 'b'] as LayerId[]) {
+      const select = this.langSelects[id];
+      if (!select) continue;
+      const sub = this.getCfg().subs[id];
+      select.value = sub.languageAuto === false && sub.language ? sub.language : 'auto';
+    }
   }
 
   private showCard(entry: DictEntry, anchor: HTMLElement, layer: LayerId | 'doc'): void {
@@ -820,14 +848,19 @@ export class Overlay {
     this.cardLayer = layer;
     this.cardAnchor = anchor;
     const card = this.card;
-    const reading = entry.r && entry.r !== entry.w ? entry.r : '';
-    const roman = this.dictSettings.pronunciation.romaji ? toRomaji(entry.r || entry.w) : '';
+    // Romaji is a Japanese-reading aid; English cards show their IPA instead.
+    const isJa = !entry.lang || entry.lang === 'ja';
+    const speechLang = entry.lang === 'en' ? 'en' : 'ja';
+    const reading = isJa && entry.r && entry.r !== entry.w ? entry.r : '';
+    const roman = isJa && this.dictSettings.pronunciation.romaji ? toRomaji(entry.r || entry.w) : '';
+    const ipa = isJa ? '' : (entry.ipa ?? '');
     const glosses = this.language === 'zh-CN' && entry.z?.length ? entry.z : entry.g;
 
     card.classList.toggle('has-image', !!entry.img);
 
     const top = el('div', 'top');
-    top.appendChild(el('span', 'lv', `N${entry.lv}`));
+    // `lv` is a language-specific band (JLPT); other languages leave it at 0 and get no badge.
+    if (entry.lv > 0) top.appendChild(el('span', 'lv', `N${entry.lv}`));
     const close = this.iconBtn('close', t('overlay.card.close'));
     close.addEventListener('click', () => this.hideCard());
     top.appendChild(close);
@@ -840,19 +873,21 @@ export class Overlay {
     const wordLine = el('div', 'word-line');
     wordLine.append(
       el('span', 'word', entry.w),
-      this.speakButton(entry.w, t('overlay.card.speakWord', { word: entry.w })),
+      this.speakButton(entry.w, t('overlay.card.speakWord', { word: entry.w }), speechLang),
     );
     card.appendChild(wordLine);
 
     const pron = el('div', 'pron');
     if (reading) pron.appendChild(el('span', 'reading', reading));
+    if (ipa) pron.appendChild(el('span', 'reading', ipa));
     if (roman) pron.appendChild(el('span', 'romaji', roman));
     if (pron.childElementCount) card.appendChild(pron);
 
     const meta = el('div', 'meta');
-    if (entry.p.length) {
+    const badges = [...entry.p, ...(entry.tags ?? []).map((tag) => tag.toUpperCase())];
+    if (badges.length) {
       const pos = el('div', 'pos');
-      for (const p of entry.p) pos.appendChild(el('span', '', p));
+      for (const badge of badges) pos.appendChild(el('span', '', badge));
       meta.appendChild(pos);
     }
     if (glosses.length) meta.appendChild(el('span', 'gloss', glosses.join(', ')));
@@ -862,7 +897,10 @@ export class Overlay {
     for (const example of entry.img ? entry.x.slice(0, 1) : entry.x) {
       const box = el('div', 'ex');
       const jp = el('div', 'ex-jp');
-      jp.append(el('span', 'text', example.j), this.speakButton(example.j, t('overlay.card.speakExample')));
+      jp.append(
+        el('span', 'text', example.j),
+        this.speakButton(example.j, t('overlay.card.speakExample'), speechLang),
+      );
       box.append(jp, el('div', 'ex-en', example.e));
       card.appendChild(box);
     }
@@ -951,23 +989,23 @@ export class Overlay {
     return button;
   }
 
-  private speakButton(text: string, label = t('overlay.card.speak')): HTMLButtonElement {
+  private speakButton(text: string, label = t('overlay.card.speak'), lang = 'ja'): HTMLButtonElement {
     const button = this.iconBtn('speaker', label);
     button.addEventListener('click', (event) => {
       event.stopPropagation();
-      this.speak(text);
+      this.speak(text, lang);
     });
     return button;
   }
 
-  private speak(text: string): void {
+  private speak(text: string, lang = 'ja'): void {
     const synth = window.speechSynthesis;
     if (!synth) return;
     synth.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ja-JP';
-    utterance.rate = 0.9;
-    const voice = synth.getVoices().find((v) => v.lang.toLowerCase().startsWith('ja'));
+    utterance.lang = lang === 'en' ? 'en-US' : 'ja-JP';
+    utterance.rate = lang === 'en' ? 0.95 : 0.9;
+    const voice = synth.getVoices().find((v) => v.lang.toLowerCase().startsWith(lang));
     if (voice) utterance.voice = voice;
     synth.speak(utterance);
   }
@@ -1675,6 +1713,8 @@ export class Overlay {
     this.controls.enableB.checked = cfg.layers.b.enabled;
     this.syncLayerInput('a');
     this.syncLayerInput('b');
+    this.fillPresetOptions();
+    this.syncLanguageSelects();
     this.renderAds();
   }
 
@@ -1712,9 +1752,10 @@ export class Overlay {
     const presetSelect = el('select', 'preset-select');
     this.presetSelect = presetSelect;
     presetSelect.addEventListener('change', () => {
+      const language = this.languageOf('a');
       this.subtitleStyle = {
         ...this.subtitleStyle,
-        activePresetId: { ...this.subtitleStyle.activePresetId, [DEFAULT_LANGUAGE]: presetSelect.value },
+        activePresetId: { ...this.subtitleStyle.activePresetId, [language]: presetSelect.value },
       };
       void saveSubtitleStyle(this.subtitleStyle);
     });
@@ -1742,14 +1783,32 @@ export class Overlay {
       );
       combo.title = t('overlay.panel.searchTitle');
       this.bindLibrarySearch(id, combo);
+      // Language belongs to the subtitle content, so it sits on the subtitle row, not the
+      // display settings. 'auto' keeps detection running on every load.
+      const lang = el('select', 'lang-select');
+      lang.title = t('overlay.panel.language');
+      lang.setAttribute('aria-label', `${t('overlay.panel.language')} ${this.layerShort(id)}`);
+      const auto = el('option', '', t('overlay.panel.languageAuto'));
+      auto.value = 'auto';
+      lang.appendChild(auto);
+      for (const pack of SELECTABLE_LANGUAGES) {
+        const option = el('option', '', pack.shortLabel || pack.displayName);
+        option.value = pack.id;
+        lang.appendChild(option);
+      }
+      this.langSelects[id] = lang;
+      lang.addEventListener('change', () =>
+        this.cb.onLayerLanguage(id, lang.value === 'auto' ? null : lang.value),
+      );
       const pick = iconButton('file', t('overlay.panel.pickFile'));
       pick.addEventListener('click', () => this.cb.onPickFile(id));
       const clear = iconButton('close', t('overlay.panel.clear'));
       clear.addEventListener('click', () => this.cb.onClearSubtitle(id));
-      row.append(combo, pick, clear);
+      row.append(combo, lang, pick, clear);
       return row;
     };
     panel.append(subRow('a'), subRow('b'), packRow);
+    this.syncLanguageSelects();
 
     const secOffset = el('div', 'sec');
     const offsetRow = el('div', 'row');

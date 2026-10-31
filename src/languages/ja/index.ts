@@ -1,6 +1,7 @@
 import type { LanguagePack } from '@/languages/types';
 
 import { chunks, expressions, levels, local } from './annotators';
+import { JA_BANDS } from './bands';
 import { jaFeatures } from './features';
 import { FUNCTION_WORDS, lookupKeys } from './lexicon';
 import { isInflected, posGroup, toPos } from './pos';
@@ -37,4 +38,5 @@ export const ja: LanguagePack = {
     reading: { layout: 'ruby', align: alignRuby },
   },
   features: jaFeatures,
+  bands: JA_BANDS,
 };

@@ -25,7 +25,7 @@ import {
 } from '@/shared/subtitleStyle';
 import { annotateLocal } from '@/features/overlay/tokenize/local';
 import { localFeatures } from '@/shared/studyFeatures';
-import { DEFAULT_LANGUAGE, featuresFor } from '@/languages/registry';
+import { DEFAULT_LANGUAGE, detectLanguageId, featuresFor } from '@/languages/registry';
 import { UNFILED_TITLE } from '@/shared/persistedText';
 import {
   isPlaybackSettingsKey,
@@ -202,6 +202,17 @@ class Session {
           this.onSubtitlePicked(target, null);
           this.save();
         },
+        onLayerLanguage: (target, language) => {
+          const sub = this.cfg.subs[target];
+          this.cfg.subs[target] = {
+            ...sub,
+            language: language ?? detectLanguageId(sub.text.slice(0, 4000)),
+            languageAuto: language === null,
+          };
+          this.applySubtitle(target, sub.name, sub.text);
+          this.overlay.syncPanel();
+          this.save();
+        },
         onCfgChange: () => {
           this.overlay.updateRect(pictureRect(this.video));
           this.save();
@@ -232,6 +243,7 @@ class Session {
           colorize: this.cfg.layers.a.colorize,
           furigana: this.cfg.layers.a.furigana,
           dict: this.dictRender(),
+          language: this.languageOf('a'),
         }),
       },
       {
@@ -249,11 +261,13 @@ class Session {
     this.overlay.setAdState(this.adHooks.state());
     this.overlay.setAutoSkip(this.autoSkipAds);
     this.overlay.updateRect(pictureRect(this.video));
-    void this.tokenizer.start();
     window.setTimeout(() => log(`diag ${JSON.stringify(this.diag())}`), 3000);
 
     if (this.cfg.subs.a.text) this.applySubtitle('a', this.cfg.subs.a.name, this.cfg.subs.a.text);
     if (this.cfg.subs.b.text) this.applySubtitle('b', this.cfg.subs.b.name, this.cfg.subs.b.text);
+    // `applySubtitle` may have auto-detected a language, so start the tokenizer afterwards.
+    void this.tokenizer.start(this.languageOf('a'));
+    this.overlay.syncPanel();
     window.addEventListener('resize', this.onViewportResize);
 
     document.addEventListener('mousemove', this.onMouseMove, true);
@@ -399,21 +413,27 @@ class Session {
    * Remote features only exist after syntax analysis; until then the same preset renders with its
    * local features, so the rest of the user's configuration stays on screen.
    */
+  /** The layer's content language; the two layers may show different languages at once. */
+  private languageOf(id: LayerId): string {
+    return this.cfg.subs[id].language ?? DEFAULT_LANGUAGE;
+  }
+
   private effectivePreset(id: LayerId): StudyPreset {
-    const registry = featuresFor(DEFAULT_LANGUAGE);
-    const preset = activePreset(this.subtitleStyle, DEFAULT_LANGUAGE);
+    const language = this.languageOf(id);
+    const registry = featuresFor(language);
+    const preset = activePreset(this.subtitleStyle, language);
     return presetRequiresRemote(registry, preset) && !this.analysis[id].ready()
       ? localOnlyPreset(registry, preset)
       : preset;
   }
 
   /** Local annotations for the preset's local features; grammar labels look identical either way. */
-  private annotate(lines: DictLine[], preset: StudyPreset): DictLine[] {
-    const features = localFeatures(featuresFor(DEFAULT_LANGUAGE), preset.features);
+  private annotate(lines: DictLine[], preset: StudyPreset, language: string): DictLine[] {
+    const features = localFeatures(featuresFor(language), preset.features);
     if (!features.length) return lines;
     return lines.map((line) => ({
       ...line,
-      tokens: annotateLocal(line.tokens, line.entries ?? [], this.dict.levels, features),
+      tokens: annotateLocal(line.tokens, line.entries ?? [], this.dict.bands[language] ?? {}, features, language),
     }));
   }
 
@@ -443,6 +463,7 @@ class Session {
 
   /** One cue painted exactly like the on-video subtitle: same preset, annotations and dictionary. */
   private cueRender(id: LayerId, cue: Cue): CueRender {
+    const language = this.languageOf(id);
     const preset = this.effectivePreset(id);
     const remote = preset.features.length === 0 ? null : this.analysis[id].tokens(cue);
     if (remote) {
@@ -450,7 +471,7 @@ class Session {
       const cached = this.cueDict.get(cue);
       return {
         lines,
-        rows: this.annotate(cached ?? this.splitRemote(lines, remote), preset),
+        rows: this.annotate(cached ?? this.splitRemote(lines, remote), preset, language),
         preset,
         remote: true,
         tokensReady: true,
@@ -458,11 +479,11 @@ class Session {
       };
     }
     const lines = cue.text.split('\n').filter((line) => line.trim() !== '');
-    const cached = lines.map((line) => this.tokenizer.peek(line));
+    const cached = lines.map((line) => this.tokenizer.peek(language, line));
     const ready = cached.every((line): line is DictLine => line !== undefined);
     return {
       lines,
-      rows: ready ? this.annotate(cached, preset) : lines.map(() => null),
+      rows: ready ? this.annotate(cached, preset, language) : lines.map(() => null),
       preset,
       remote: false,
       tokensReady: ready,
@@ -475,6 +496,7 @@ class Session {
    * return a complete row, so callers can re-render without deciding which path was taken.
    */
   private primeCue(id: LayerId, cue: Cue, done: () => void): void {
+    const language = this.languageOf(id);
     const preset = this.effectivePreset(id);
     const remote = preset.features.length === 0 ? null : this.analysis[id].tokens(cue);
     if (remote) {
@@ -483,7 +505,11 @@ class Session {
         return;
       }
       const parsed = this.splitRemote(cue.text.split('\n'), remote);
-      void chrome.runtime.sendMessage({ type: 'lookupTokens', tokens: parsed.flatMap((line) => line.tokens) })
+      void chrome.runtime.sendMessage({
+        type: 'lookupTokens',
+        language,
+        tokens: parsed.flatMap((line) => line.tokens),
+      })
         .then((result: DictLine) => {
           if (!result?.tokens) return;
           let offset = 0;
@@ -499,12 +525,12 @@ class Session {
       return;
     }
     const lines = cue.text.split('\n').filter((line) => line.trim() !== '');
-    const missing = [...new Set(lines)].filter((line) => !this.tokenizer.peek(line));
+    const missing = [...new Set(lines)].filter((line) => !this.tokenizer.peek(language, line));
     if (!missing.length) {
       done();
       return;
     }
-    void Promise.all(missing.map((line) => this.tokenizer.tokenizeLine(line)))
+    void Promise.all(missing.map((line) => this.tokenizer.tokenizeLine(language, line)))
       .then(() => done())
       .catch((error) => log('tokenize failed', error));
   }
@@ -650,7 +676,7 @@ class Session {
   };
 
   private dictRender(): DictRender {
-    return { entries: [], enabled: this.dict.enabled, levels: this.dict.levels };
+    return { entries: [], enabled: this.dict.enabled, bands: this.dict.bands };
   }
 
   setDictSettings(settings: DictSettings): void {
@@ -870,7 +896,7 @@ class Session {
       return;
     }
     const label = displayLabel(entry, items);
-    this.cfg.subs[target] = { name: label, text };
+    this.cfg.subs[target] = { ...this.cfg.subs[target], name: label, text };
     this.applySubtitle(target, label, text);
     this.overlay.syncPanel();
     this.onSubtitlePicked(target, { id, name: label, packId: entry.packId });
@@ -879,28 +905,44 @@ class Session {
   }
 
   private applySubtitle(target: LayerId, name: string, text: string): void {
+    const language = this.resolveSubtitleLanguage(target, text);
     const cues = parseSubtitles(text);
     this.timelines[target].setCues(cues);
     if (target === 'a') this.transcript.setCues(cues);
-    void this.analysis[target].select(cues).then(() => {
+    void this.analysis[target].select(cues, language).then(() => {
       this.overlay.setNlpStatus(this.analysis[target].status);
       if (this.video.paused) this.shownCue[target] = null;
       if (target === 'a') this.transcript.refresh();
     });
     this.shownCue[target] = null;
-    log(`loaded ${cues.length} cues into layer ${target}`, name);
+    log(`loaded ${cues.length} cues into layer ${target}`, name, language);
     if (target === 'a' && cues.length) {
-      void this.tokenizer.start().then((ok) => {
-        if (ok) void this.tokenizer.warmup(cues);
+      void this.tokenizer.start(language).then((ok) => {
+        if (ok) void this.tokenizer.warmup(language, cues);
       });
     }
+  }
+
+  /**
+   * Language is content, not display: detect it from the subtitle text unless the user pinned a
+   * language for this layer. The result is written back to the page config.
+   */
+  private resolveSubtitleLanguage(target: LayerId, text: string): string {
+    const sub = this.cfg.subs[target];
+    if (sub.languageAuto === false && sub.language) return sub.language;
+    const language = detectLanguageId(text.slice(0, 4000));
+    if (sub.language !== language) {
+      this.cfg.subs[target] = { ...sub, language };
+      this.save();
+    }
+    return language;
   }
 
   private async loadFile(target: LayerId): Promise<void> {
     const file = await pickFile();
     if (!file) return;
     const text = await file.text();
-    this.cfg.subs[target] = { name: file.name, text };
+    this.cfg.subs[target] = { ...this.cfg.subs[target], name: file.name, text };
     this.applySubtitle(target, file.name, text);
     this.overlay.syncPanel();
     this.onSubtitlePicked(target, { id: '', name: file.name });
@@ -926,7 +968,7 @@ class Session {
     event.stopPropagation();
     const target: LayerId = this.cfg.subs.a.text ? 'b' : 'a';
     void file.text().then((text) => {
-      this.cfg.subs[target] = { name: file.name, text };
+      this.cfg.subs[target] = { ...this.cfg.subs[target], name: file.name, text };
       this.applySubtitle(target, file.name, text);
       this.overlay.syncPanel();
       this.onSubtitlePicked(target, { id: '', name: file.name });
@@ -1025,7 +1067,11 @@ const hydrateFromAssoc = async (state: PageState): Promise<void> => {
     const text = await readLibraryText(ref.id);
     if (!text) continue;
     const entry = items.find((e) => e.id === ref.id);
-    state.cfg.subs[layer] = { name: entry ? displayLabel(entry, items) : ref.name, text };
+    state.cfg.subs[layer] = {
+      ...state.cfg.subs[layer],
+      name: entry ? displayLabel(entry, items) : ref.name,
+      text,
+    };
     state.save();
     log(`auto-matched ${layer} subtitle from history`, ref.name);
   }
@@ -1035,10 +1081,17 @@ const applyLastLibraryItem = async (state: PageState): Promise<void> => {
   if (state.cfg.subs.a.text) return;
   const settings = await getLibrarySettings();
   if (!settings.autoApply || !settings.lastId) return;
-  const [text, items] = await Promise.all([readLibraryText(settings.lastId), listLibrary()]);
+  const [text, items, packs] = await Promise.all([
+    readLibraryText(settings.lastId),
+    listLibrary(),
+    listPacks(),
+  ]);
   const entry = items.find((e) => e.id === settings.lastId);
   if (!text || !entry) return;
-  state.cfg.subs.a = { name: displayLabel(entry, items), text };
+  const language = state.cfg.subs.a.language;
+  const pack = packs.find((item) => item.id === entry.packId);
+  if (language && pack && pack.language !== language) return;
+  state.cfg.subs.a = { ...state.cfg.subs.a, name: displayLabel(entry, items), text };
   state.save();
   log('auto-applied library subtitle', entry.name);
 };
@@ -1052,7 +1105,7 @@ const applySiteSubtitle = async (
 
   let packId = boundPackOf(siteRules, site.rule.id, site.seriesId);
   if (!packId && site.seriesTitle) {
-    const pack = matchPackByTitle(await listPacks(), site.seriesTitle);
+    const pack = matchPackByTitle(await listPacks(), site.seriesTitle, state.cfg.subs.a.language);
     if (!pack) return;
     packId = pack.id;
     // Bind only when the season is actually known; otherwise `#*` would hit every series.
@@ -1065,7 +1118,7 @@ const applySiteSubtitle = async (
   if (!entry) return;
   const text = await readLibraryText(entry.id);
   if (!text) return;
-  state.cfg.subs.a = { name: displayLabel(entry, entries), text };
+  state.cfg.subs.a = { ...state.cfg.subs.a, name: displayLabel(entry, entries), text };
   state.save();
   log(`auto-matched episode ${site.episode}`, entry.name);
 };
@@ -1112,6 +1165,8 @@ type PopupStatus = {
   hasVideo: boolean;
   subtitle: string;
   theater: boolean;
+  /** Layer A's content language, so the popup can show that language's dictionary bands. */
+  language: string;
   site: {
     rule: string;
     series: string | null;
@@ -1285,6 +1340,7 @@ const start = async (): Promise<void> => {
             hasVideo: true,
             subtitle: state.cfg.subs.a.name,
             theater: session?.theaterActive() ?? false,
+            language: state.cfg.subs.a.language ?? DEFAULT_LANGUAGE,
             site: site
               ? {
                   rule: site.rule.id,
@@ -1378,13 +1434,13 @@ const start = async (): Promise<void> => {
   Object.assign(window as unknown as Record<string, unknown>, {
     __jpSub: {
       setSubtitle: (text: string, name = 'debug') => {
-        state.cfg.subs.a = { name, text };
+        state.cfg.subs.a = { ...state.cfg.subs.a, name, text };
         session?.loadSubtitle('a', name, text);
         state.save();
       },
-      tokenize: async (text: string) => {
-        await tokenizer.start();
-        return tokenizer.tokenizeLine(text);
+      tokenize: async (text: string, language = 'ja') => {
+        await tokenizer.start(language);
+        return tokenizer.tokenizeLine(language, text);
       },
       get config() {
         return state.cfg;

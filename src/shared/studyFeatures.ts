@@ -27,6 +27,9 @@ export type StudyFeature = {
   /** Both features draw the same elements, so only one may be on. */
   conflictsWith?: FeatureId[];
   elements: string[];
+  /** Language-specific label; falls back to the options page's id→key map when absent. */
+  labelKey?: MessageKey;
+  detailKey?: MessageKey;
 };
 
 /** A built-in mode a language starts with; labels go through i18n. */
@@ -60,6 +63,28 @@ export const ROLE_ELEMENTS: string[] = [
   'syntax.role:predicate',
   'syntax.role:modifier',
   'syntax.role:adverbial',
+];
+
+/**
+ * English sentence-role vocabulary: 主谓宾定状补.
+ *
+ * Separate from `ROLE_ELEMENTS` because English marks 定语 (`attributive`) and 补语
+ * (`complement`) as first-class roles, while Japanese uses `modifier` and has no complement.
+ */
+export const EN_ROLE_ELEMENTS: string[] = [
+  'syntax.role:subject',
+  'syntax.role:predicate',
+  'syntax.role:object',
+  'syntax.role:attributive',
+  'syntax.role:adverbial',
+  'syntax.role:complement',
+];
+
+/** English clause types, layered on top of the roles rather than replacing them. */
+export const EN_CLAUSE_ELEMENTS: string[] = [
+  'syntax.clause:attributive',
+  'syntax.clause:nominal',
+  'syntax.clause:adverbial',
 ];
 
 /** The eight colour groups are universal, so their element ids are shared. */

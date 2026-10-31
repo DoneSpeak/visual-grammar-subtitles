@@ -1,28 +1,33 @@
-import { ja } from '@/languages/ja';
+import { DEFAULT_LANGUAGE, resolveLanguage } from '@/languages/registry';
+import type { BandSelection, LanguageId } from '@/languages/types';
 import type { DictEntry } from '@/shared/dictionary';
 import type { FeatureId } from '@/shared/studyFeatures';
 import type { Token } from '@/shared/types';
 
 /**
- * Local annotations, dispatched through the language pack.
+ * Local annotations, dispatched through the layer's language pack.
  *
- * Until the layer carries its own language (P4), every subtitle is Japanese; the call sites keep
- * their current shape so switching to `pack.annotators.local` is a parameter change, not a move.
+ * Language defaults to Japanese so existing callers (and the golden tests) keep their shape; the
+ * content script passes the layer's own language so two layers can annotate different languages.
  */
 
-export const annotateChunks = (tokens: Token[]): Token[] => ja.annotators.chunks(tokens);
+export const annotateChunks = (tokens: Token[], language: LanguageId = DEFAULT_LANGUAGE): Token[] =>
+  resolveLanguage(language).annotators.chunks(tokens);
 
-export const annotateExpressions = (tokens: Token[]): Token[] => ja.annotators.expressions(tokens);
+export const annotateExpressions = (tokens: Token[], language: LanguageId = DEFAULT_LANGUAGE): Token[] =>
+  resolveLanguage(language).annotators.expressions(tokens);
 
 export const annotateLevels = (
   tokens: Token[],
   entries: DictEntry[],
-  levels: Record<number, boolean>,
-): Token[] => ja.annotators.levels(tokens, entries, levels);
+  bands: BandSelection,
+  language: LanguageId = DEFAULT_LANGUAGE,
+): Token[] => resolveLanguage(language).annotators.levels(tokens, entries, bands);
 
 export const annotateLocal = (
   tokens: Token[],
   entries: DictEntry[],
-  levels: Record<number, boolean>,
+  bands: BandSelection,
   features: FeatureId[],
-): Token[] => ja.annotators.local(tokens, entries, levels, features);
+  language: LanguageId = DEFAULT_LANGUAGE,
+): Token[] => resolveLanguage(language).annotators.local(tokens, entries, bands, features);

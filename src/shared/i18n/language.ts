@@ -1,7 +1,7 @@
 import type { Language } from './types';
 
 export const LANGUAGE_KEY = 'ui:language';
-export const DEFAULT_LANGUAGE: Language = 'en-GB';
+export const DEFAULT_LANGUAGE: Language = 'zh-CN';
 
 const normalizeTag = (tag: string | null | undefined): Language | null => {
   if (!tag) return null;
@@ -23,7 +23,7 @@ const uiLanguage = (): string | null => {
   }
 };
 
-/** Browser UI language first, then the navigator's preference list; anything else is en-GB. */
+/** Browser UI language first, then the navigator's preference list; anything else is zh-CN. */
 export const resolveBrowserLanguage = (): Language => {
   const candidates: (string | null | undefined)[] = [uiLanguage()];
   if (typeof navigator !== 'undefined') {

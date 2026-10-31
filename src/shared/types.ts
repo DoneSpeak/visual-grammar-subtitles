@@ -75,7 +75,15 @@ export type LayerCfg = {
   opacity: number;
 };
 
-export type SubSource = { name: string; text: string };
+/** Subtitle content, including the language it is written in (not a display property). */
+export type SubSource = {
+  name: string;
+  text: string;
+  /** Language pack id (`ja`, `en`, `plain`…); absent means it has not been resolved yet. */
+  language?: string;
+  /** False once the user picked a language for this layer; absent/true means auto-detect. */
+  languageAuto?: boolean;
+};
 
 /** A baked-in ad insertion: `at` is on the subtitle timeline, `duration` the seconds it occupies. */
 export type AdSlot = { at: number; duration: number };

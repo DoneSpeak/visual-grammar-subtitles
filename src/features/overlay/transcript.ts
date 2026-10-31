@@ -1,4 +1,4 @@
-import { DEFAULT_LANGUAGE, featuresFor } from '@/languages/registry';
+import { featuresFor } from '@/languages/registry';
 import type { DictEntry, DictLine } from '@/shared/dictionary';
 import { createIcon, type IconName } from '@/shared/icons';
 import { t, type MessageKey } from '@/shared/i18n';
@@ -30,6 +30,8 @@ export type TranscriptOptions = {
   colorize: boolean;
   furigana: boolean;
   dict: DictRender;
+  /** Language of layer A, since the transcript mirrors that layer. */
+  language: string;
 };
 
 export type TranscriptSource = {
@@ -381,7 +383,7 @@ export class TranscriptPanel {
     const data = this.source.render(cue);
     const body = row.querySelector<HTMLElement>('.tx-body');
     if (!body) return;
-    const registry = featuresFor(DEFAULT_LANGUAGE);
+    const registry = featuresFor(opts.language);
     const elements = presetElements(registry, data.preset);
     // Mirrors `Overlay.render`: a preset's own features are a reason to paint tokens, even when
     // the standalone POS-colour switch is off.
@@ -395,7 +397,7 @@ export class TranscriptPanel {
         renderTokens(line, parsed.tokens, {
           colorize: themed,
           furigana,
-          style: { preset: data.preset, elements, registry },
+          style: { preset: data.preset, elements, registry, language: opts.language },
           dict: { ...opts.dict, entries: parsed.entries },
         });
         this.hooks.onLine(line, parsed.entries);

@@ -50,9 +50,9 @@ describe('browser language resolution', () => {
     expect(resolveWith(['en-US'], 'zh-CN')).toBe('zh-CN');
   });
 
-  it('falls back through the preference list, then to en-GB', () => {
+  it('falls back through the preference list, then to zh-CN', () => {
     expect(resolveWith(['fr-FR', 'zh-CN'])).toBe('zh-CN');
-    expect(resolveWith(['fr-FR', 'ja-JP'])).toBe('en-GB');
+    expect(resolveWith(['fr-FR', 'ja-JP'])).toBe('zh-CN');
   });
 });
 

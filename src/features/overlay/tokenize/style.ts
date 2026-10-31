@@ -60,8 +60,13 @@ export const tokenElements = (
   if (!token) return [];
   const matched: MatchedElement[] = [];
   if (features.includes('pos')) matched.push({ feature: 'pos', element: POS_ELEMENT[posGroupOf(token)] });
-  const role = grammarLabel(token, 'syntax.role:');
-  if (features.includes('syntax') && role) matched.push({ feature: 'syntax', element: role });
+  if (features.includes('syntax')) {
+    const role = grammarLabel(token, 'syntax.role:');
+    const clause = grammarLabel(token, 'syntax.clause:');
+    // Role first, clause second: the clause only sets the underline, so the role keeps the colour.
+    if (role) matched.push({ feature: 'syntax', element: role });
+    if (clause) matched.push({ feature: 'syntax', element: clause });
+  }
   // Expression and band layers are language-owned: the registry names the element, and the
   // feature that draws it is whatever declares that element.
   for (const element of [registry.expressionElement, registry.levelElement]) {

@@ -1,22 +1,33 @@
 import type { FeatureRegistry } from '@/shared/studyFeatures';
 
+import { th } from './th';
+import { en } from './en';
 import { ja } from './ja';
 import { plain } from './plain';
 import type { LanguageId, LanguagePack } from './types';
 
 export type { LanguageId, LanguagePack } from './types';
+export { en } from './en';
 export { ja } from './ja';
 export { plain } from './plain';
 
 /** Packs that can annotate text. `plain` is a fallback, not a choice the UI offers. */
-export const LANGUAGE_PACKS: Record<LanguageId, LanguagePack> = { ja };
+export const LANGUAGE_PACKS: Record<LanguageId, LanguagePack> = { ja, en, th };
+
+/** Languages the panel offers for a layer. `plain` deliberately stays out of this list. */
+export const SELECTABLE_LANGUAGES: readonly LanguagePack[] = Object.values(LANGUAGE_PACKS);
 
 /** Study-layer registries, one per annotatable language; used to seed and validate presets. */
-export const FEATURE_REGISTRIES: Record<LanguageId, FeatureRegistry> = Object.fromEntries(
-  Object.entries(LANGUAGE_PACKS)
-    .filter(([, pack]) => pack.features)
-    .map(([id, pack]) => [id, pack.features as FeatureRegistry]),
-);
+export const FEATURE_REGISTRIES: Record<LanguageId, FeatureRegistry> = {
+  ...Object.fromEntries(
+    Object.entries(LANGUAGE_PACKS)
+      .filter(([, pack]) => pack.features)
+      .map(([id, pack]) => [id, pack.features as FeatureRegistry]),
+  ),
+  // Every valid language id owns a preset bucket, including the degradation pack. `plain` has
+  // an empty registry, so it still resolves to its single "plain" mode.
+  plain: plain.features as FeatureRegistry,
+};
 
 /** Below this the text is treated as unannotatable rather than guessed. */
 export const DETECTION_THRESHOLD = 0.5;
@@ -44,3 +55,10 @@ export const detectLanguage = (text: string): LanguagePack => {
   }
   return best;
 };
+
+/** The id to store on a subtitle source: a real pack, or `plain` below the threshold. */
+export const detectLanguageId = (text: string): LanguageId => detectLanguage(text).id;
+
+/** True for packs the panel may offer; `plain` and unknown ids are not selectable. */
+export const isSelectableLanguage = (id: LanguageId | undefined): boolean =>
+  !!id && Object.hasOwn(LANGUAGE_PACKS, id);

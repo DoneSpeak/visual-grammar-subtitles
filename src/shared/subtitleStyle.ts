@@ -365,7 +365,10 @@ export const presetOrder = (
   style: SubtitleStyle,
   language: LanguageId,
 ): string[] => {
-  const presets = style.presets[language] ?? {};
+  const presets = style.presets[language];
+  // A language can be selectable before its bucket has been written (first run after adding a
+  // pack). Show the registry's own built-ins rather than an empty mode list.
+  if (!presets) return registry.builtIns.map((seed) => seed.id);
   const builtIn = registry.builtIns.map((seed) => seed.id).filter((id) => presets[id]);
   const custom = Object.keys(presets).filter((id) => !isBuiltInPresetId(registry, id));
   return [...builtIn, ...custom];

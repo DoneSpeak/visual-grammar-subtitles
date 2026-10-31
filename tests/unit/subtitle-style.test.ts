@@ -8,8 +8,10 @@ import {
 import {
   chunkElementAt,
   resolveElementStyle,
+  tokenElements,
   tokenStyle,
 } from '@/features/overlay/tokenize/style';
+import { enFeatures as E } from '@/languages/en/features';
 import { EXPRESSION_ELEMENT, LEVEL_ELEMENT, jaFeatures as J } from '@/languages/ja/features';
 import { POS_ELEMENT, resolveFeatures, toggleFeatureIn } from '@/shared/studyFeatures';
 import { withAlpha } from '@/shared/elementStyle';
@@ -220,6 +222,19 @@ describe('chunk positions', () => {
       token(surface, 'NOUN', { groups: { 'chunk.bunsetsu': 'g1' } }),
     );
     expect(chunkElementAt(tokens, 1, 'chunk.bunsetsu')).toBe('chunk.bunsetsu:middle');
+  });
+});
+
+describe('english syntax clauses', () => {
+  it('keeps the role colour and lets the clause underline win', () => {
+    const tokens = [
+      token('who', 'PRON', {
+        grammar: ['syntax.role:attributive', 'syntax.clause:attributive'],
+      }),
+    ];
+    const style = resolveElementStyle(E, tokenElements(E, tokens, 0, ['syntax']), E.elementDefaults);
+    expect(style.color).toBe(E.elementDefaults['syntax.role:attributive'].color);
+    expect(style.underline).toEqual(E.elementDefaults['syntax.clause:attributive'].underline);
   });
 });
 

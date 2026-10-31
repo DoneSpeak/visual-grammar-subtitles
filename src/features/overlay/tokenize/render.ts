@@ -1,4 +1,6 @@
-import { alignRuby } from '@/languages/ja/presentation';
+import { entryAllowed } from '@/languages/bands';
+import { DEFAULT_LANGUAGE, resolveLanguage } from '@/languages/registry';
+import type { BandSelection, LanguageId } from '@/languages/types';
 import type { DictEntry } from '@/shared/dictionary';
 import { underlineOffset, type ElementStyle } from '@/shared/elementStyle';
 import { READING_ELEMENT, type FeatureRegistry } from '@/shared/studyFeatures';
@@ -9,13 +11,16 @@ import { tokenStyle } from './style';
 export type DictRender = {
   entries: DictEntry[];
   enabled: boolean;
-  levels: Record<number, boolean>;
+  /** Band selection per language; the layer's own language picks the slice. */
+  bands: Record<LanguageId, BandSelection>;
 };
 
 export type RenderStyle = {
   preset: StudyPreset;
   elements: Record<string, ElementStyle>;
   registry: FeatureRegistry;
+  /** Which pack's reading presentation applies; absent means the default language. */
+  language?: string;
 };
 
 export type RenderOpts = { colorize: boolean; furigana: boolean; style: RenderStyle; dict?: DictRender };
@@ -59,6 +64,9 @@ const applyRubyStyle = (rt: HTMLElement, style: ElementStyle | undefined): void 
 export const renderTokens = (container: HTMLElement, tokens: Token[], opts: RenderOpts): void => {
   container.textContent = '';
   const { preset, elements, registry } = opts.style;
+  const languageId = opts.style.language ?? DEFAULT_LANGUAGE;
+  const pack = resolveLanguage(languageId);
+  const align = pack.presentation.reading.align;
   const reading = preset.features.includes('reading') ? elements[READING_ELEMENT] : undefined;
   // Switching the furigana element off hides the ruby entirely; its style carries nothing else.
   const readingOff = elements[READING_ELEMENT]?.enabled === false;
@@ -71,8 +79,7 @@ export const renderTokens = (container: HTMLElement, tokens: Token[], opts: Rend
     const span = document.createElement('span');
     if (opts.colorize) applyStyle(span, tokenStyle(registry, tokens, index, preset, elements));
     if (token.grammar?.length) span.title = token.grammar.join(' · ');
-    const ruby =
-      !readingOff && opts.furigana && token.reading ? alignRuby(token.surface, token.reading) : null;
+    const ruby = !readingOff && opts.furigana && token.reading ? align(token.surface, token.reading) : null;
     if (ruby) {
       const r = document.createElement('ruby');
       r.appendChild(document.createTextNode(ruby.base));
@@ -86,7 +93,9 @@ export const renderTokens = (container: HTMLElement, tokens: Token[], opts: Rend
     }
     const dict = opts.dict;
     const entry = dict && token.dictIdx !== undefined ? dict.entries[token.dictIdx] : undefined;
-    if (dict?.enabled && entry && dict.levels[entry.lv]) {
+    // Bands are declared by the language pack: JLPT levels for Japanese, exam tags for English.
+    // An entry outside every band stays lookup-able — the filter only hides words it classifies.
+    if (dict?.enabled && entry && entryAllowed(pack.bands, entry, dict.bands[languageId] ?? {})) {
       span.classList.add('dict-word');
       span.dataset.dictIdx = String(token.dictIdx);
     }

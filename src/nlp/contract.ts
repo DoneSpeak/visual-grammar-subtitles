@@ -8,18 +8,23 @@ export type TrackCue = { id: string; startMs: number; endMs: number; text: strin
 export type AnalysisDocument = { format: 'subtitle-annotation'; schemaVersion: string; documentId: string; source: { trackHash: string; rawSha256: string; normalizationVersion: 'track-v1'; format: string }; track: { language: string; cues: TrackCue[] }; providers: { id: string; kind: string; capabilities: string[] }[]; units: AnalysisUnit[] };
 export const hash = async (text: string): Promise<string> => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))), n => n.toString(16).padStart(2, '0')).join('');
 export const toTrack = (cues: Cue[]): TrackCue[] => cues.map((c, i) => ({ id: `c${String(i + 1).padStart(6, '0')}`, startMs: Math.round(c.start * 1000), endMs: Math.round(c.end * 1000), text: c.text }));
-export const trackHash = (cues: TrackCue[], language = 'ja') => hash(JSON.stringify(['track-v1', language, cues.map(c => [c.startMs, c.endMs, c.text])]));
+/** Language is part of the fingerprint: the same cues analysed as ja and en are different tracks. */
+export const trackHash = (cues: TrackCue[], language: string) => hash(JSON.stringify(['track-v1', language, cues.map(c => [c.startMs, c.endMs, c.text])]));
+
+const LANGUAGE_ID = /^[a-z]{2,8}(-[A-Za-z0-9]+)?$/;
 
 export async function validateDocument(input: unknown, expectedHash?: string): Promise<AnalysisDocument> {
   validateShape(input);
   const d = input as AnalysisDocument;
-  if (!d || d.format !== 'subtitle-annotation' || !/^1\.\d+\.\d+$/.test(d.schemaVersion) || d.source?.normalizationVersion !== 'track-v1' || !/^[a-f0-9]{64}$/.test(d.source.rawSha256) || d.track?.language !== 'ja' || !Array.isArray(d.track.cues) || d.track.cues.length > 50000 || !Array.isArray(d.units) || !Array.isArray(d.providers)) throw Error('Invalid analysis document');
-  const actualHash = await trackHash(d.track.cues);
+  if (!d || d.format !== 'subtitle-annotation' || !/^1\.\d+\.\d+$/.test(d.schemaVersion) || d.source?.normalizationVersion !== 'track-v1' || !/^[a-f0-9]{64}$/.test(d.source.rawSha256) || typeof d.track?.language !== 'string' || !LANGUAGE_ID.test(d.track.language) || !Array.isArray(d.track.cues) || d.track.cues.length > 50000 || !Array.isArray(d.units) || !Array.isArray(d.providers)) throw Error('Invalid analysis document');
+  const actualHash = await trackHash(d.track.cues, d.track.language);
   if (actualHash !== d.source.trackHash || (expectedHash && expectedHash !== actualHash)) throw Error('Subtitle fingerprint mismatch');
   const cues = new Map(d.track.cues.map(c => [c.id, c]));
   if (cues.size !== d.track.cues.length) throw Error('Duplicate cue');
   for (const c of cues.values()) if (typeof c.text !== 'string' || !Number.isSafeInteger(c.startMs) || !Number.isSafeInteger(c.endMs) || c.startMs < 0 || c.endMs < c.startMs) throw Error('Invalid cue');
-  const segmenter = new Intl.Segmenter('ja', { granularity: 'grapheme' });
+  // Grapheme boundaries are locale-independent for this purpose; any locale would produce the
+  // same UTF-16 offsets, so do not pin the segmenter to Japanese.
+  const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
   const boundaryCache = new Map<string, Set<number>>();
   const slice = (text: string, start: number, end: number) => {
     let boundaries = boundaryCache.get(text);

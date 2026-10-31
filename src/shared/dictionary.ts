@@ -1,3 +1,5 @@
+import type { LanguageId } from '@/languages/types';
+
 import type { Token } from './types';
 
 export type DictExample = { j: string; e: string };
@@ -15,6 +17,12 @@ export type DictEntry = {
   z?: string[];
   /** OpenMoji hexcode for the word's reviewed mnemonic image. */
   img?: string;
+  /** Source language; absent means ja (pre-multilingual data). */
+  lang?: LanguageId | string;
+  /** IPA transcription (English). */
+  ipa?: string;
+  /** Exam / corpus tags, e.g. 'ielts' | 'toefl' | 'bec' | 'kaoyan'. */
+  tags?: string[];
 };
 
 export type DictFile = { v: number; entries: DictEntry[] };

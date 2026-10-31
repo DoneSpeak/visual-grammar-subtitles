@@ -345,11 +345,16 @@ export const boundPackOf = (rules: SiteRules, ruleId: string, seriesId: string |
 const normalizeTitle = (text: string): string => text.toLowerCase().replace(/[\p{P}\p{S}\s]+/gu, '');
 
 /** The one pack whose title matches the site's series title; null when none or several do. */
-export const matchPackByTitle = <T extends { title: string }>(packs: T[], title: string): T | null => {
+export const matchPackByTitle = <T extends { title: string; language?: string }>(
+  packs: T[],
+  title: string,
+  language?: string,
+): T | null => {
   const want = normalizeTitle(title);
   if (want.length < 2) return null;
 
   const candidates = packs
+    .filter((pack) => !language || !pack.language || pack.language === language)
     .map((pack) => ({ pack, key: normalizeTitle(pack.title) }))
     .filter(({ key }) => key.length >= 2);
   const exact = candidates.filter(({ key }) => key === want);
