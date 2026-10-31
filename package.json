@@ -19,6 +19,7 @@
     "build-storybook": "storybook build",
     "e2e": "playwright test",
     "publish:cws": "node scripts/publish-cws.mjs",
+    "assets:store": "node scripts/capture-store-assets.mjs",
     "subtitles:fetch": "node scripts/fetch-subtitles.ts",
     "dict:build": "node scripts/build-dictionary.ts",
     "vocab:build": "node scripts/build-vocabulary.ts"
