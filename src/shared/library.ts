@@ -1,4 +1,6 @@
 import { parseSubtitles } from '@/features/overlay/subtitles/parse';
+import { LEGACY_ORIGIN_NOTE, UNFILED_TITLE } from './persistedText';
+import { t } from './i18n';
 
 /** Where a pack came from, so a series can always be traced back to its source. */
 export type SubtitleOrigin =
@@ -42,8 +44,6 @@ const INDEX_KEY = 'lib:index';
 const SETTINGS_KEY = 'lib:settings';
 const itemKey = (id: string) => `lib:item:${id}`;
 
-const UNFILED_TITLE = '未归类';
-
 export const isLibraryKey = (key: string): boolean =>
   key === PACKS_KEY || key === INDEX_KEY || key === SETTINGS_KEY || key.startsWith('lib:item:');
 
@@ -86,7 +86,7 @@ const ensureMigrated = (): Promise<void> => {
         pack = {
           id: crypto.randomUUID(),
           title,
-          origin: { kind: 'local', note: '旧版本导入，来源未记录', importedAt: now },
+          origin: { kind: 'local', note: LEGACY_ORIGIN_NOTE, importedAt: now },
           addedAt: entry.addedAt,
           updatedAt: entry.addedAt,
         };
@@ -172,7 +172,7 @@ export const importLibraryFiles = async (
     const text = await file.text();
     const cues = parseSubtitles(text);
     if (cues.length === 0) {
-      errors.push(`${file.name}: 未解析到任何字幕`);
+      errors.push(t('errors.unparsableFile', { name: file.name }));
       continue;
     }
     const existing = byName.get(file.name);

@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "JP Subtitle Overlay",
+    "description": "Extension name in the browser UI"
+  },
+  "extDescription": {
+    "message": "Overlay local subtitles on any web video, with Japanese part-of-speech colouring and display-duration control",
+    "description": "Extension description in the browser UI"
+  },
+  "extActionTitle": {
+    "message": "Subtitle Overlay",
+    "description": "Toolbar button tooltip"
+  }
+}

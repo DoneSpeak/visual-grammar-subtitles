@@ -10,7 +10,9 @@ import {
 } from 'lucide-react';
 
 import { SegmentedControl, Toaster, cn } from '@/design-system';
+import { useLanguage } from '@/features/i18n/use-language';
 import { useTheme } from '@/features/theme/use-theme';
+import { setLanguage, t, type Language, type MessageKey } from '@/shared/i18n';
 import { useDictSettings } from './hooks/use-dict-settings';
 import { useLibrary } from './hooks/use-library';
 import { usePosColors } from './hooks/use-pos-colors';
@@ -24,24 +26,34 @@ import { RulesPage } from './pages/RulesPage';
 
 type PageId = 'packs' | 'dict' | 'rules' | 'binds' | 'keys' | 'colors';
 
+type GroupId = 'content' | 'study' | 'site' | 'actions' | 'appearance';
+
 type NavEntry = {
   id: PageId;
-  label: string;
-  group: string;
+  labelKey: MessageKey;
+  group: GroupId;
   icon: LucideIcon;
   count?: 'packs' | 'rules' | 'binds';
 };
 
 const NAV: NavEntry[] = [
-  { id: 'packs', label: '字幕包', group: '内容', icon: Layers3, count: 'packs' },
-  { id: 'dict', label: '学习词典', group: '学习', icon: BookOpen },
-  { id: 'rules', label: '站点规则', group: '站点', icon: SlidersHorizontal, count: 'rules' },
-  { id: 'binds', label: '番剧绑定', group: '站点', icon: Link2, count: 'binds' },
-  { id: 'keys', label: '快捷键', group: '操作', icon: Keyboard },
-  { id: 'colors', label: '词性配色', group: '外观', icon: Palette },
+  { id: 'packs', labelKey: 'options.nav.packs', group: 'content', icon: Layers3, count: 'packs' },
+  { id: 'dict', labelKey: 'options.nav.dict', group: 'study', icon: BookOpen },
+  { id: 'rules', labelKey: 'options.nav.rules', group: 'site', icon: SlidersHorizontal, count: 'rules' },
+  { id: 'binds', labelKey: 'options.nav.binds', group: 'site', icon: Link2, count: 'binds' },
+  { id: 'keys', labelKey: 'options.nav.keys', group: 'actions', icon: Keyboard },
+  { id: 'colors', labelKey: 'options.nav.colors', group: 'appearance', icon: Palette },
 ];
 
-const GROUPS = [...new Set(NAV.map((entry) => entry.group))];
+const GROUP_ORDER: GroupId[] = ['content', 'study', 'site', 'actions', 'appearance'];
+
+const GROUP_LABEL_KEYS: Record<GroupId, MessageKey> = {
+  content: 'options.nav.group.content',
+  study: 'options.nav.group.study',
+  site: 'options.nav.group.site',
+  actions: 'options.nav.group.actions',
+  appearance: 'options.nav.group.appearance',
+};
 
 const PAGE_ALIAS: Record<string, PageId> = { online: 'packs' };
 
@@ -52,12 +64,19 @@ const readPage = (): PageId => {
 };
 
 const themeOptions = [
-  { value: 'light', label: '浅色' },
-  { value: 'dark', label: '深色' },
-  { value: 'system', label: '跟随系统' },
+  { value: 'light', labelKey: 'options.theme.light' },
+  { value: 'dark', labelKey: 'options.theme.dark' },
+  { value: 'system', labelKey: 'options.theme.system' },
+] as const satisfies readonly { value: string; labelKey: MessageKey }[];
+
+/** Language names stay in their own language, as language pickers conventionally do. */
+const languageOptions = [
+  { value: 'zh-CN', label: '中文' },
+  { value: 'en-GB', label: 'English' },
 ] as const;
 
 export function App() {
+  const language = useLanguage('meta.optionsTitle');
   const [page, setPage] = React.useState<PageId>(readPage);
   const { mode, resolved, setMode } = useTheme();
 
@@ -88,14 +107,14 @@ export function App() {
           <span className="grid size-6 flex-none place-items-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground">
             JP
           </span>
-          <span>字幕扩展</span>
+          <span>{t('meta.brand')}</span>
         </div>
 
-        <nav className="flex flex-col gap-4.5" aria-label="设置页面">
-          {GROUPS.map((group) => (
+        <nav className="flex flex-col gap-4.5" aria-label={t('options.nav.aria')}>
+          {GROUP_ORDER.map((group) => (
             <div key={group} className="flex flex-col gap-px">
               <div className="px-2.5 pb-1.5 text-[10.5px] tracking-[0.06em] text-text-faint uppercase">
-                {group}
+                {t(GROUP_LABEL_KEYS[group])}
               </div>
               {NAV.filter((entry) => entry.group === group).map((entry) => {
                 const active = entry.id === page;
@@ -113,22 +132,33 @@ export function App() {
                     )}
                   >
                     <Icon className={cn('size-4 flex-none', active ? 'opacity-100' : 'opacity-80')} />
-                    <span>{entry.label}</span>
+                    <span>{t(entry.labelKey)}</span>
                     {entry.count && counts[entry.count] ? (
                       <span className="ml-auto text-2xs text-text-faint tabular-nums">{counts[entry.count]}</span>
                     ) : null}
                   </a>
                 );
               })}
-              {group === '外观' ? (
-                <SegmentedControl
-                  className="mt-1.5"
-                  fill
-                  value={mode}
-                  options={themeOptions}
-                  onChange={setMode}
-                  aria-label="主题"
-                />
+              {group === 'appearance' ? (
+                <div className="mt-1.5 flex flex-col gap-1.5">
+                  <SegmentedControl
+                    fill
+                    value={mode}
+                    options={themeOptions.map((option) => ({
+                      value: option.value,
+                      label: t(option.labelKey),
+                    }))}
+                    onChange={setMode}
+                    aria-label={t('options.theme.aria')}
+                  />
+                  <SegmentedControl
+                    fill
+                    value={language}
+                    options={languageOptions}
+                    onChange={(value) => setLanguage(value as Language)}
+                    aria-label={t('options.language.aria')}
+                  />
+                </div>
               ) : null}
             </div>
           ))}

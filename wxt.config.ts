@@ -12,13 +12,14 @@ export default defineConfig({
     },
   }),
   manifest: {
-    name: 'JP Subtitle Overlay',
-    description: '在任意网页视频上叠加本地字幕，支持日语词性着色与显示时长控制',
+    name: '__MSG_extName__',
+    description: '__MSG_extDescription__',
+    default_locale: 'en_GB',
     minimum_chrome_version: '120',
     permissions: ['storage', 'unlimitedStorage'],
     host_permissions: ['<all_urls>'],
     action: {
-      default_title: '字幕扩展',
+      default_title: '__MSG_extActionTitle__',
     },
   },
 });

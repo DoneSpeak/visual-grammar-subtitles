@@ -9,6 +9,7 @@ import {
   type SiteRule,
   type SiteRules,
 } from '@/shared/siteRules';
+import { DEFAULT_RULE_NAME } from '@/shared/persistedText';
 
 const SAVE_DELAY = 250;
 /** Ignore our own writes echoed back through storage.onChanged. */
@@ -82,12 +83,13 @@ export const useSiteRules = (): SiteRulesController => {
   const addRule = React.useCallback(() => {
     const rule: SiteRule = {
       id: `rule-${Date.now().toString(36)}`,
-      name: '新规则',
+      name: DEFAULT_RULE_NAME,
       enabled: true,
       urlTemplate: '',
       fileTemplate: '',
       seriesAdSlots: {},
       episodeAdSlots: {},
+      seriesAdDuration: {},
     };
     const previous = rulesRef.current;
     commit({ ...previous, rules: [...previous.rules, rule] });

@@ -9,8 +9,11 @@ import { listDir, mergeSeries, searchSeries } from '@/features/scraper/kitsunekk
 import { translateToEnglish } from '@/shared/translate';
 import { importKitsunekkoArchive, loadKitsunekkoIndex } from '@/shared/kitsunekkoLibrary';
 import { fetchPgcSeason } from '@/shared/bilibiliPgc';
+import { initI18n, t } from '@/shared/i18n';
 
 export default defineBackground(() => {
+// Service-worker errors are generated at request time, so the stored language must be loaded first.
+void initI18n();
 
 const errText = (err: unknown): string => (err instanceof Error ? err.message : String(err));
 
@@ -106,7 +109,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg?.type === 'bilibiliPgcSeason') {
     void fetchPgcSeason({ epId: msg.epId, seasonId: msg.seasonId }).then((season) => {
-      sendResponse(season ?? { error: 'bilibili 番剧信息获取失败' });
+      sendResponse(season ?? { error: t('errors.bilibiliInfo') });
     });
     return true;
   }

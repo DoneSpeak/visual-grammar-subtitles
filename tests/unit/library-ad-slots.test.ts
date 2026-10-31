@@ -29,6 +29,7 @@ const adRule = (): SiteRule => ({
     'series@1@1': [{ at: 30, duration: 10 }],
     'other@2@1': [{ at: 5, duration: 3 }],
   },
+  seriesAdDuration: {},
 });
 
 describe('groupEpisodeMarks', () => {

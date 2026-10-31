@@ -52,6 +52,8 @@ export type SiteRule = {
   seriesAdSlots: Record<string, AdSlot[]>;
   /** Per-episode ad slots, keyed by `adEpisodeKey`; replaces the series defaults. */
   episodeAdSlots: Record<string, AdSlot[]>;
+  /** Per-series seconds the skip shortcut adds and records; missing = `DEFAULT_AD_DURATION`. */
+  seriesAdDuration: Record<string, number>;
   /** Enabled on built-in rules only: fills in series id / title / episode the URL does not carry. */
   adapter?: SiteAdapterId;
 };

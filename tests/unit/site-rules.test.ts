@@ -21,6 +21,7 @@ const rule = (overrides: Partial<SiteRule> = {}): SiteRule => ({
   fileTemplate: '',
   seriesAdSlots: {},
   episodeAdSlots: {},
+  seriesAdDuration: {},
   ...overrides,
 });
 
@@ -105,10 +106,18 @@ describe('ad slots', () => {
     });
     expect(resolveAdSlots(withSlots, 'abc', '1', 3)).toEqual({
       slots: [{ at: 5, duration: 2 }],
+      adDuration: 15,
       adEpisodeKey: 'abc@1@3',
     });
     expect(resolveAdSlots(withSlots, 'abc', '1', 4).slots).toEqual([{ at: 90, duration: 30 }]);
     expect(resolveAdSlots(rule(), 'abc', '1', 4).slots).toEqual([]);
+  });
+
+  it('uses the series skip duration, defaulting to 15 seconds', () => {
+    const custom = rule({ seriesAdDuration: { abc: 20 } });
+    expect(resolveAdSlots(custom, 'abc', '1', 3).adDuration).toBe(20);
+    expect(resolveAdSlots(custom, 'other', '1', 3).adDuration).toBe(15);
+    expect(resolveAdSlots(custom, null, null, 3).adDuration).toBe(15);
   });
 
   it('maps between player and content timelines and finds the covering ad', () => {

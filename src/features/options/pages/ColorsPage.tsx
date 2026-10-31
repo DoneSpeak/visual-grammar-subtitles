@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { Button, Card, CardTitle, ColorSwatch, PageHeader } from '@/design-system';
 import { renderTokens } from '@/features/overlay/tokenize/render';
+import { t } from '@/shared/i18n';
 import { POS_GROUP_LABELS, POS_GROUPS } from '@/shared/posColors';
 import type { Token } from '@/shared/types';
 import type { PosColorsController } from '../hooks/use-pos-colors';
@@ -44,9 +45,9 @@ export function ColorsPage({ posColors }: { posColors: PosColorsController }) {
 
   return (
     <>
-      <PageHeader title="词性配色" description="按词性给字幕上色；改动自动保存，播放页立即生效。" />
+      <PageHeader title={t('colors.title')} description={t('colors.description')} />
       <Card>
-        <CardTitle>例句</CardTitle>
+        <CardTitle>{t('colors.example')}</CardTitle>
         <div
           ref={exampleRef}
           className="mt-2 rounded-lg border border-border bg-muted px-4 py-3.5 text-[21px] leading-[1.9] font-bold tracking-[0.01em]"
@@ -54,26 +55,28 @@ export function ColorsPage({ posColors }: { posColors: PosColorsController }) {
       </Card>
       <Card>
         <div className="mb-2 flex items-center justify-between gap-2">
-          <CardTitle>调色板</CardTitle>
+          <CardTitle>{t('colors.palette')}</CardTitle>
           <Button size="sm" onClick={() => void posColors.reset()}>
-            恢复默认
+            {t('colors.reset')}
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-x-7">
-          {POS_GROUPS.map((group) => (
-            <ColorSwatch
-              key={group}
-              label={POS_GROUP_LABELS[group].name}
-              detail={POS_GROUP_LABELS[group].detail}
-              value={posColors.colors[group]}
-              onChange={(value) => posColors.change(group, value)}
-              onCommit={(value) => void posColors.commit(group, value)}
-            />
-          ))}
+          {POS_GROUPS.map((group) => {
+            const name = t(POS_GROUP_LABELS[group].nameKey);
+            return (
+              <ColorSwatch
+                key={group}
+                label={name}
+                detail={t(POS_GROUP_LABELS[group].detailKey)}
+                ariaLabel={t('colors.swatchAria', { name })}
+                value={posColors.colors[group]}
+                onChange={(value) => posColors.change(group, value)}
+                onCommit={(value) => void posColors.commit(group, value)}
+              />
+            );
+          })}
         </div>
-        <p className="mt-2 text-2xs text-text-faint">
-          字幕叠在画面上，建议保持中低亮度、避开与画面同色的取值；默认值同时满足白底与深色画面的 3:1 对比度。
-        </p>
+        <p className="mt-2 text-2xs text-text-faint">{t('colors.hint')}</p>
       </Card>
     </>
   );

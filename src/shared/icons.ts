@@ -7,6 +7,8 @@ export type IconName =
   | 'speaker'
   | 'markStart'
   | 'markEnd'
+  | 'record'
+  | 'stop'
   | 'layers'
   | 'skip'
   | 'expand'
@@ -20,6 +22,9 @@ const PATHS: Record<IconName, string> = {
   // Opening / closing bracket: the pair delimits one ad.
   markStart: 'M5.2 3v10M9.5 3H5.2M9.5 13H5.2',
   markEnd: 'M10.8 3v10M6.5 3h4.3M6.5 13h4.3',
+  // Record / stop pair: one toggle button starts and finishes an ad mark.
+  record: 'M8 3.2a4.8 4.8 0 1 0 0 9.6a4.8 4.8 0 1 0 0-9.6',
+  stop: 'M4.5 4.5h7v7h-7z',
   layers: 'M8 2.2 2.8 4.7 8 7.2l5.2-2.5zM2.8 8 8 10.5 13.2 8M2.8 11.3 8 13.8l5.2-2.5',
   skip: 'M2.8 3.2 7.2 8l-4.4 4.8zM8.2 3.2 12.6 8l-4.4 4.8zM13.2 3.2v9.6',
   // Four corners: expand lifts the player to the viewport, collapse puts it back.
@@ -36,7 +41,8 @@ export type IconOptions = {
 export const createIcon = (name: IconName, opts: IconOptions = {}): SVGSVGElement => {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('viewBox', '0 0 16 16');
-  svg.setAttribute('fill', 'none');
+  // A record dot reads as "live" only when filled; everything else stays stroked.
+  svg.setAttribute('fill', name === 'record' ? 'currentColor' : 'none');
   svg.setAttribute('stroke', 'currentColor');
   svg.setAttribute('stroke-width', String(opts.strokeWidth ?? 1.6));
   svg.setAttribute('stroke-linecap', 'round');

@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "日语字幕叠加",
+    "description": "浏览器界面中的扩展名称"
+  },
+  "extDescription": {
+    "message": "在任意网页视频上叠加本地字幕，支持日语词性着色与显示时长控制",
+    "description": "浏览器界面中的扩展描述"
+  },
+  "extActionTitle": {
+    "message": "字幕扩展",
+    "description": "工具栏按钮提示"
+  }
+}

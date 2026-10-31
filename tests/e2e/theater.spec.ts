@@ -1,4 +1,4 @@
-import { chromium, expect, test, type BrowserContext, type Page } from '@playwright/test';
+import { chromium, expect, test, type BrowserContext, type Page, type Worker } from '@playwright/test';
 import http from 'node:http';
 import path from 'node:path';
 
@@ -13,6 +13,7 @@ const PAGE = `<!doctype html><html><head><style>
 <body><div id="page"><div id="player"><video id="v"></video><div id="controls" style="position:absolute;bottom:0;left:0;right:0;height:40px;background:#333"></div></div></div></body></html>`;
 
 let context: BrowserContext;
+let worker: Worker;
 let page: Page;
 let server: http.Server;
 let stop: () => Promise<void>;
@@ -32,6 +33,10 @@ test.beforeAll(async () => {
     viewport: { width: 1280, height: 720 },
     args: [`--disable-extensions-except=${EXTENSION_PATH}`, `--load-extension=${EXTENSION_PATH}`],
   });
+  [worker] = context.serviceWorkers();
+  if (!worker) worker = await context.waitForEvent('serviceworker', { timeout: 15_000 });
+  await worker.evaluate(() => chrome.storage.local.set({ 'ui:language': 'zh-CN' }));
+
   page = await context.newPage();
   await page.goto(`http://127.0.0.1:${port}/`);
   await page.waitForSelector('#jp-sub-host', { timeout: 10_000 });
@@ -82,4 +87,20 @@ test('settings panel closes on an outside click', async () => {
 
   await page.mouse.click(1200, 650);
   await expect(panel).toBeHidden();
+});
+
+test('a live language switch relabels the panel in place', async () => {
+  const panel = page.locator('#jp-sub-host #jp-sub-panel');
+  await page.locator('#jp-sub-host .dock button:not(.theater)').click();
+  await expect(panel.locator('h4')).toHaveText('字幕设置');
+  const menusBefore = await page.locator('#jp-sub-host .lib-menu').count();
+
+  await worker.evaluate(() => chrome.storage.local.set({ 'ui:language': 'en-GB' }));
+
+  await expect(page.locator('#jp-sub-host #jp-sub-panel h4')).toHaveText('Subtitle settings');
+  await expect(page.locator('#jp-sub-host #jp-sub-panel')).toHaveCount(1);
+  expect(await page.locator('#jp-sub-host .lib-menu').count()).toBe(menusBefore);
+  // The host page's own document must stay untouched; only the shadow host is labelled.
+  expect(await page.evaluate(() => document.documentElement.getAttribute('lang'))).toBeNull();
+  await expect(page.locator('#jp-sub-host')).toHaveAttribute('lang', 'en-GB');
 });

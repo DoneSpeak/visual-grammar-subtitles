@@ -1,5 +1,7 @@
 import { Card, PageHeader, PillGroup, SettingRow, Switch } from '@/design-system';
 import { DurationInput } from '@/features/dict/duration-input';
+import type { MessageKey } from '@/shared/i18n';
+import { t } from '@/shared/i18n';
 import type { DictTrigger } from '@/shared/dictSettings';
 import type { DictSettingsController } from '../hooks/use-dict-settings';
 
@@ -11,17 +13,19 @@ const levelOptions = [
   { value: '5', label: 'N5' },
 ] as const;
 
-const triggerOptions: { value: DictTrigger; label: string }[] = [
-  { value: 'click', label: '点击' },
-  { value: 'hover', label: '悬停' },
+const triggerOptions: { value: DictTrigger; labelKey: MessageKey }[] = [
+  { value: 'click', labelKey: 'dict.trigger.click' },
+  { value: 'hover', labelKey: 'dict.trigger.hover' },
 ];
 
-const durationOptions = [
-  { value: 'cue', label: '跟随字幕' },
-  { value: 'fixed', label: '固定' },
-] as const;
+const durationOptions: { value: 'cue' | 'fixed'; labelKey: MessageKey }[] = [
+  { value: 'cue', labelKey: 'dict.duration.cue' },
+  { value: 'fixed', labelKey: 'dict.duration.fixed' },
+];
 
-const pronounceOptions = [{ value: 'romaji', label: '罗马音' }] as const;
+const pronounceOptions: { value: 'romaji'; labelKey: MessageKey }[] = [
+  { value: 'romaji', labelKey: 'dict.pronounce.romaji' },
+];
 
 export function DictPage({ dict }: { dict: DictSettingsController }) {
   const { settings } = dict;
@@ -33,24 +37,24 @@ export function DictPage({ dict }: { dict: DictSettingsController }) {
 
   return (
     <>
-      <PageHeader title="学习词典" description="字幕里的 JLPT 单词可点击查词，设置改动在播放页立即生效。" />
+      <PageHeader title={t('dict.title')} description={t('dict.description')} />
       <Card>
-        <SettingRow title="启用查词" description="识别字幕中的词条并标记为可交互">
+        <SettingRow title={t('dict.enable')} description={t('dict.enableDescription')}>
           <Switch
             checked={settings.enabled}
-            aria-label="启用查词"
+            aria-label={t('dict.enable')}
             onCheckedChange={(enabled) => void dict.save({ enabled })}
           />
         </SettingRow>
 
-        <SettingRow title="JLPT 等级" description="只对所选等级的词汇生效">
+        <SettingRow title={t('dict.levels')} description={t('dict.levelsDescription')}>
           <PillGroup
             name="dictLevels"
             multiple
             disabled={off}
             options={levelOptions}
             value={levels}
-            aria-label="JLPT 等级"
+            aria-label={t('dict.levels')}
             onChange={(next) => {
               const selected = new Set(next as string[]);
               void dict.save({
@@ -66,33 +70,33 @@ export function DictPage({ dict }: { dict: DictSettingsController }) {
           />
         </SettingRow>
 
-        <SettingRow title="触发方式" description="点击更稳定，悬停更快">
+        <SettingRow title={t('dict.trigger')} description={t('dict.triggerDescription')}>
           <PillGroup
             name="dictTrigger"
             disabled={off}
-            options={triggerOptions}
+            options={triggerOptions.map((option) => ({ value: option.value, label: t(option.labelKey) }))}
             value={settings.trigger}
-            aria-label="触发方式"
+            aria-label={t('dict.trigger')}
             onChange={(next) => void dict.save({ trigger: next as DictTrigger })}
           />
         </SettingRow>
 
-        <SettingRow title="查词时暂停" description="点击词条查词时暂停播放">
+        <SettingRow title={t('dict.pause')} description={t('dict.pauseDescription')}>
           <Switch
             checked={settings.pauseOnLookup}
             disabled={off || settings.trigger !== 'click'}
-            aria-label="查词时暂停播放"
+            aria-label={t('dict.pause')}
             onCheckedChange={(pauseOnLookup) => void dict.save({ pauseOnLookup })}
           />
         </SettingRow>
 
-        <SettingRow title="卡片持续" description="跟随字幕或固定显示时长">
+        <SettingRow title={t('dict.duration')} description={t('dict.durationDescription')}>
           <PillGroup
             name="dictDuration"
             disabled={off}
-            options={durationOptions}
+            options={durationOptions.map((option) => ({ value: option.value, label: t(option.labelKey) }))}
             value={settings.duration.mode}
-            aria-label="卡片持续"
+            aria-label={t('dict.duration')}
             onChange={(next) =>
               void dict.save({ duration: { ...settings.duration, mode: next as 'cue' | 'fixed' } })
             }
@@ -100,27 +104,27 @@ export function DictPage({ dict }: { dict: DictSettingsController }) {
           <DurationInput
             valueMs={settings.duration.ms}
             disabled={off || settings.duration.mode !== 'fixed'}
-            aria-label="固定显示秒数"
+            aria-label={t('dict.fixedSeconds')}
             onChange={(seconds) => void dict.setDurationSeconds(seconds)}
           />
-          <span className="text-2xs text-text-faint">秒</span>
+          <span className="text-2xs text-text-faint">{t('common.secondsShort')}</span>
         </SettingRow>
 
-        <SettingRow title="发音显示" description="词卡里的读音呈现方式">
+        <SettingRow title={t('dict.pronounce')} description={t('dict.pronounceDescription')}>
           <PillGroup
             name="dictPronounce"
             multiple
             disabled={off}
-            options={pronounceOptions}
+            options={pronounceOptions.map((option) => ({ value: option.value, label: t(option.labelKey) }))}
             value={settings.pronunciation.romaji ? ['romaji'] : []}
-            aria-label="发音显示"
+            aria-label={t('dict.pronounce')}
             onChange={(next) =>
               void dict.save({ pronunciation: { romaji: (next as string[]).includes('romaji') } })
             }
           />
         </SettingRow>
       </Card>
-      <p className="text-2xs text-text-faint">词表来自 JMdict + open-anki-jlpt-decks；未收录的词不可点击。</p>
+      <p className="text-2xs text-text-faint">{t('dict.footnote')}</p>
     </>
   );
 }

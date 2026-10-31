@@ -27,10 +27,13 @@ function DialogContent({
   children,
   title,
   description,
+  closeLabel = 'Close',
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   title: string;
   description?: string;
+  /** Accessible name for the corner close button. */
+  closeLabel?: string;
 }) {
   return (
     <DialogPrimitive.Portal>
@@ -50,7 +53,7 @@ function DialogContent({
         ) : null}
         <div className="mt-3">{children}</div>
         <DialogPrimitive.Close
-          aria-label="关闭"
+          aria-label={closeLabel}
           className="absolute top-3 right-3 inline-flex size-6 cursor-pointer items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-foreground focus-visible:outline-none"
         >
           <X className="size-3.5" />

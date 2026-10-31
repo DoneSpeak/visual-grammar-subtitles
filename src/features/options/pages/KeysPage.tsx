@@ -1,54 +1,65 @@
 import { Card, CardTitle, Kbd, PageHeader, SettingRow } from '@/design-system';
+import { t, type MessageKey } from '@/shared/i18n';
 
-type Shortcut = { title: string; description: string; keys: string[] };
+type Shortcut = { titleKey: MessageKey; descriptionKey: MessageKey; keys: string[] };
 
-const groups: { title: string; rows: Shortcut[] }[] = [
+const groups: { titleKey: MessageKey; rows: Shortcut[] }[] = [
   {
-    title: '时间',
+    titleKey: 'keys.group.time',
     rows: [
       {
-        title: '字幕偏移',
-        description: '左括号提前、右括号延后；按住 Shift 步进 0.5 秒',
+        titleKey: 'keys.offset.title',
+        descriptionKey: 'keys.offset.description',
         keys: ['Alt', '[', ']'],
       },
       {
-        title: '重听当前句',
-        description: '回到当前字幕起点前 0.15 秒重新播放',
+        titleKey: 'keys.replay.title',
+        descriptionKey: 'keys.replay.description',
         keys: ['Alt', 'Enter'],
       },
       {
-        title: '重显字幕',
-        description: '强制显示 1.8 秒，不受“显示时长”限制',
+        titleKey: 'keys.reshow.title',
+        descriptionKey: 'keys.reshow.description',
         keys: ['Alt', 'P'],
       },
     ],
   },
   {
-    title: '外观',
+    titleKey: 'keys.group.ad',
     rows: [
       {
-        title: '切换译文层',
-        description: '临时隐藏或恢复译文，不改动原文',
+        titleKey: 'keys.skip.title',
+        descriptionKey: 'keys.skip.description',
+        keys: ['Alt', 'S'],
+      },
+    ],
+  },
+  {
+    titleKey: 'keys.group.appearance',
+    rows: [
+      {
+        titleKey: 'keys.translation.title',
+        descriptionKey: 'keys.translation.description',
         keys: ['Alt', '\\'],
       },
       {
-        title: '原文字号',
-        description: '等号放大、减号缩小；按住 Shift 粗调',
+        titleKey: 'keys.font.title',
+        descriptionKey: 'keys.font.description',
         keys: ['Alt', '=', '-'],
       },
       {
-        title: '移动原文',
-        description: '方向键每次移动 1%，仅作用于原文层',
+        titleKey: 'keys.move.title',
+        descriptionKey: 'keys.move.description',
         keys: ['Alt', '↑', '↓', '←', '→'],
       },
     ],
   },
   {
-    title: '面板',
+    titleKey: 'keys.group.panel',
     rows: [
       {
-        title: '关闭',
-        description: '收起查词卡片；库列表里同时关闭下拉',
+        titleKey: 'keys.close.title',
+        descriptionKey: 'keys.close.description',
         keys: ['Esc'],
       },
     ],
@@ -58,16 +69,16 @@ const groups: { title: string; rows: Shortcut[] }[] = [
 export function KeysPage() {
   return (
     <>
-      <PageHeader title="快捷键" description="仅在播放页生效，统一用 Alt 起手，不会拦截普通输入。" />
+      <PageHeader title={t('keys.title')} description={t('keys.description')} />
       {groups.map((group) => (
-        <Card key={group.title}>
-          <CardTitle>{group.title}</CardTitle>
+        <Card key={group.titleKey}>
+          <CardTitle>{t(group.titleKey)}</CardTitle>
           <div className="mt-2">
             {group.rows.map((row) => (
               <SettingRow
-                key={row.title}
-                title={row.title}
-                description={row.description}
+                key={row.titleKey}
+                title={t(row.titleKey)}
+                description={t(row.descriptionKey)}
                 align="center"
               >
                 <span className="inline-flex flex-none items-center gap-1">

@@ -1,5 +1,6 @@
 import type { AdSlot, SiteRule, SiteRules, UrlParts } from './types';
 import { resolveWithAdapter } from './siteAdapters';
+import { BILIBILI_RULE_NAME } from './persistedText';
 
 export type { AdSlot, SiteAdapterId, SiteRule, SiteRules } from './types';
 
@@ -15,18 +16,27 @@ export const SITE_RULES_KEY = 'site:rules';
 
 export const isSiteRulesKey = (key: string): boolean => key === SITE_RULES_KEY;
 
+/** Seconds the skip shortcut adds to the player and records as a slot when the series sets none. */
+export const DEFAULT_AD_DURATION = 15;
+
+export const seriesAdDurationOf = (rule: SiteRule, seriesId: string | null): number => {
+  const value = seriesId ? rule.seriesAdDuration?.[seriesId] : undefined;
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : DEFAULT_AD_DURATION;
+};
+
 export const defaultSiteRules = (): SiteRules => ({
   version: 2,
   rules: [
     {
       id: 'bilibili',
-      name: 'bilibili 番剧',
+      name: BILIBILI_RULE_NAME,
       enabled: true,
       // ep/ss 号不决定集数，交由 adapter 读取番剧信息。
       urlTemplate: 'https://*.bilibili.com/bangumi/play/*',
       fileTemplate: '',
       seriesAdSlots: {},
       episodeAdSlots: {},
+      seriesAdDuration: {},
       adapter: 'bilibili',
     },
     {
@@ -37,6 +47,7 @@ export const defaultSiteRules = (): SiteRules => ({
       fileTemplate: '',
       seriesAdSlots: {},
       episodeAdSlots: {},
+      seriesAdDuration: {},
     },
   ],
   binds: {},
@@ -260,6 +271,8 @@ export type ResolvedSite = {
   season: string | null;
   episode: number | null;
   slots: AdSlot[];
+  /** Seconds the skip shortcut uses for this series. */
+  adDuration: number;
   /** Key into `rule.episodeAdSlots`; null when the episode is unknown. */
   adEpisodeKey: string | null;
 };
@@ -276,12 +289,13 @@ export const resolveAdSlots = (
   seriesId: string | null,
   season: string | null,
   episode: number | null,
-): Pick<ResolvedSite, 'slots' | 'adEpisodeKey'> => {
+): Pick<ResolvedSite, 'slots' | 'adDuration' | 'adEpisodeKey'> => {
   const key = adEpisodeKey(seriesId, season, episode);
+  const adDuration = seriesAdDurationOf(rule, seriesId);
   const episodeSlots = key ? rule.episodeAdSlots?.[key] : undefined;
-  if (episodeSlots) return { slots: episodeSlots, adEpisodeKey: key };
+  if (episodeSlots) return { slots: episodeSlots, adDuration, adEpisodeKey: key };
   const seriesSlots = seriesId ? rule.seriesAdSlots?.[seriesId] : undefined;
-  return { slots: seriesSlots ?? [], adEpisodeKey: key };
+  return { slots: seriesSlots ?? [], adDuration, adEpisodeKey: key };
 };
 
 export const resolveSiteRule = (rules: SiteRules, url: string): ResolvedSite | null => {
@@ -349,6 +363,8 @@ const normalizeRule = (rule: SiteRule): SiteRule => ({
   ...rule,
   seriesAdSlots: rule.seriesAdSlots && typeof rule.seriesAdSlots === 'object' ? rule.seriesAdSlots : {},
   episodeAdSlots: rule.episodeAdSlots && typeof rule.episodeAdSlots === 'object' ? rule.episodeAdSlots : {},
+  seriesAdDuration:
+    rule.seriesAdDuration && typeof rule.seriesAdDuration === 'object' ? rule.seriesAdDuration : {},
 });
 
 export const loadSiteRules = async (): Promise<SiteRules> => {

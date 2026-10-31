@@ -16,6 +16,11 @@ import {
   toast,
   useConfirm,
 } from '@/design-system';
+import {
+  originNoteForDisplay,
+  packTitleForDisplay,
+  t,
+} from '@/shared/i18n';
 import { importKitsunekkoArchive } from '@/shared/kitsunekkoLibrary';
 import {
   importLibraryFiles,
@@ -26,6 +31,7 @@ import {
   type LibraryPack,
   type SubtitleOrigin,
 } from '@/shared/library';
+import { folderNote, LOCAL_IMPORT_TITLE, UNFILED_TITLE } from '@/shared/persistedText';
 import { describeSubtitles } from '@/shared/subtitleLabel';
 import type { SeriesDir, SubFile } from '@/features/scraper/kitsunekko';
 import { fmtDate, fmtSize } from '../lib/format';
@@ -34,10 +40,22 @@ import type { LibraryController } from '../hooks/use-library';
 
 const SUBTITLE_EXT = /\.(srt|vtt|ass|ssa|txt)$/i;
 
+const errorText = (error: unknown): string => (error instanceof Error ? error.message : String(error));
+
 const originSummary = (origin: SubtitleOrigin): string =>
   origin.kind === 'kitsunekko'
-    ? `kitsunekko.net · ${origin.seriesPath} · ${origin.archiveName} · ${origin.archiveModified} · 导入于 ${fmtDate(origin.importedAt)}`
-    : `本地导入${origin.note ? ` · ${origin.note}` : ''} · ${fmtDate(origin.importedAt)}`;
+    ? t('packs.origin.kitsu', {
+        series: origin.seriesPath,
+        archive: origin.archiveName,
+        modified: origin.archiveModified,
+        date: fmtDate(origin.importedAt),
+      })
+    : origin.note
+      ? t('packs.origin.localNote', {
+          note: originNoteForDisplay(origin.note, t),
+          date: fmtDate(origin.importedAt),
+        })
+      : t('packs.origin.local', { date: fmtDate(origin.importedAt) });
 
 function KitsuSection({ kitsu, onImport, importing }: {
   kitsu: KitsunekkoController;
@@ -49,28 +67,26 @@ function KitsuSection({ kitsu, onImport, importing }: {
 
   return (
     <Card>
-      <CardTitle>在线获取 · kitsunekko</CardTitle>
-      <p className="mt-1 mb-2.5 text-xs text-muted-foreground">
-        kitsunekko.net 用英文 / 罗马音命名；输入中文 / 日文标题会自动翻译成英文一并搜索。
-      </p>
+      <CardTitle>{t('packs.kitsu.title')}</CardTitle>
+      <p className="mt-1 mb-2.5 text-xs text-muted-foreground">{t('packs.kitsu.note')}</p>
       <div className="flex items-center gap-2">
         <SearchField
           value={kitsu.query}
-          placeholder="输入番剧标题，如 Monster、Monogatari"
+          placeholder={t('packs.kitsu.searchPlaceholder')}
           autoComplete="off"
           spellCheck={false}
-          aria-label="搜索 kitsunekko"
+          aria-label={t('packs.kitsu.searchAria')}
           onChange={(event) => kitsu.setQuery(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === 'Enter') void kitsu.search();
           }}
         />
         <Button variant="primary" onClick={() => void kitsu.search()} disabled={kitsu.searching}>
-          搜索
+          {t('packs.kitsu.search')}
         </Button>
         {trail.length ? (
           <Button onClick={() => void kitsu.back()} disabled={kitsu.dirLoading}>
-            返回
+            {t('packs.kitsu.back')}
           </Button>
         ) : null}
       </div>
@@ -80,7 +96,7 @@ function KitsuSection({ kitsu, onImport, importing }: {
           <>
             <div className="px-1 pb-1 text-xs font-medium">{dir.name}</div>
             {kitsu.dirLoading ? (
-              <EmptyState>正在读取目录…</EmptyState>
+              <EmptyState>{t('packs.kitsu.dirLoading')}</EmptyState>
             ) : listing ? (
               <>
                 {listing.dirs.map((sub) => (
@@ -88,9 +104,9 @@ function KitsuSection({ kitsu, onImport, importing }: {
                     <span className="min-w-0 flex-1 truncate text-xs" title={sub.name}>
                       {sub.name}
                     </span>
-                    <span className="flex-none text-2xs text-text-faint">子目录</span>
+                    <span className="flex-none text-2xs text-text-faint">{t('packs.kitsu.subdir')}</span>
                     <Button size="sm" onClick={() => void kitsu.openDir(sub)}>
-                      打开
+                      {t('packs.kitsu.open')}
                     </Button>
                   </div>
                 ))}
@@ -108,19 +124,21 @@ function KitsuSection({ kitsu, onImport, importing }: {
                       disabled={importing !== null}
                       onClick={() => void onImport(dir, file)}
                     >
-                      {importing === file.path ? '下载中…' : '下载并导入为包'}
+                      {importing === file.path ? t('packs.kitsu.downloading') : t('packs.kitsu.downloadImport')}
                     </Button>
                   </div>
                 ))}
-                {listing.dirs.length || listing.files.length ? null : <EmptyState>该目录为空</EmptyState>}
+                {listing.dirs.length || listing.files.length ? null : <EmptyState>{t('packs.kitsu.emptyDir')}</EmptyState>}
               </>
             ) : null}
           </>
         ) : kitsu.searching ? (
-          <EmptyState>正在加载 kitsunekko 索引（首次约 600KB）…</EmptyState>
+          <EmptyState>{t('packs.kitsu.indexLoading')}</EmptyState>
         ) : kitsu.hits === null ? null : (
           <>
-            {kitsu.translated ? <EmptyState>已自动翻译为「{kitsu.translated}」一并搜索</EmptyState> : null}
+            {kitsu.translated ? (
+              <EmptyState>{t('packs.kitsu.translated', { title: kitsu.translated })}</EmptyState>
+            ) : null}
             {kitsu.hits.length ? (
               kitsu.hits.slice(0, 40).map((hit) => (
                 <div key={hit.path} className="flex items-center gap-3 border-t border-border px-1 py-1.5 first:border-t-0">
@@ -129,12 +147,12 @@ function KitsuSection({ kitsu, onImport, importing }: {
                     {hit.name}
                   </span>
                   <Button size="sm" onClick={() => void kitsu.openDir(hit)}>
-                    查看文件
+                    {t('packs.kitsu.viewFiles')}
                   </Button>
                 </div>
               ))
             ) : (
-              <EmptyState>没有匹配的番剧。kitsunekko 用英文 / 罗马音命名，试试罗马音或英文名。</EmptyState>
+              <EmptyState>{t('packs.kitsu.noMatch')}</EmptyState>
             )}
           </>
         )}
@@ -161,26 +179,33 @@ function ImportSection({ library, onImported }: {
     if (!files.length) return;
     const typed = packTitleRef.current?.value.trim() ?? '';
     const inferred = folder ?? (files.length ? inferPackTitle(files[0].name) : '');
-    const title = typed || (inferred && inferred !== '未归类' ? inferred : '本地导入');
+    const title = typed || (inferred && inferred !== UNFILED_TITLE ? inferred : LOCAL_IMPORT_TITLE);
     const { pack, added, errors } = await importLibraryFiles(files, {
       title,
-      origin: { kind: 'local', note: folder ? `文件夹：${folder}` : undefined, importedAt: Date.now() },
+      origin: { kind: 'local', note: folder ? folderNote(folder) : undefined, importedAt: Date.now() },
     });
     if (packTitleRef.current) packTitleRef.current.value = '';
     onImported(pack.id);
     await library.refresh();
-    if (added.length) toast.success(`已导入 ${added.length} 份字幕 → ${pack.title}`);
-    if (errors.length) toast.error(errors.join('；'));
+    if (added.length) {
+      toast.success(
+        t('packs.import.imported', {
+          count: added.length,
+          pack: packTitleForDisplay(pack.title, t),
+        }),
+      );
+    }
+    if (errors.length) toast.error(errors.join(t('packs.import.errorSeparator')));
   };
 
   const totalBytes = library.entries.reduce((sum, entry) => sum + entry.size, 0);
 
   return (
     <Card>
-      <CardTitle>导入字幕</CardTitle>
+      <CardTitle>{t('packs.import.title')}</CardTitle>
       <div className="mt-2.5 flex flex-wrap items-center gap-2">
         <Button variant="primary" onClick={() => fileRef.current?.click()}>
-          选择文件
+          {t('packs.import.chooseFiles')}
         </Button>
         <input
           ref={fileRef}
@@ -194,7 +219,7 @@ function ImportSection({ library, onImported }: {
             void importFiles(files);
           }}
         />
-        <Button onClick={() => dirRef.current?.click()}>导入文件夹</Button>
+        <Button onClick={() => dirRef.current?.click()}>{t('packs.import.chooseFolder')}</Button>
         <input
           ref={dirRef}
           type="file"
@@ -204,7 +229,7 @@ function ImportSection({ library, onImported }: {
             const files = [...(event.target.files ?? [])].filter((file) => SUBTITLE_EXT.test(file.name));
             event.target.value = '';
             if (!files.length) {
-              toast.error('文件夹里没有 .srt / .vtt / .ass 字幕文件');
+              toast.error(t('packs.import.noFiles'));
               return;
             }
             const folder = files[0].webkitRelativePath.split('/')[0] || '';
@@ -214,11 +239,16 @@ function ImportSection({ library, onImported }: {
         <input
           ref={packTitleRef}
           type="search"
-          placeholder="包名（可选），如 Monster"
+          placeholder={t('packs.import.packNamePlaceholder')}
           className="h-[26px] w-[200px] rounded-md border border-border-strong bg-card px-2.5 text-xs focus:border-foreground focus:ring-3 focus:ring-ring focus:outline-none"
         />
         <span className="text-2xs text-text-faint">
-          {library.packs.length ? `${library.packs.length} 个包 · ${library.entries.length} 份` : ''}
+          {library.packs.length
+            ? `${t('packs.import.summaryPacks', { count: library.packs.length })} · ${t(
+                'packs.import.summaryFiles',
+                { count: library.entries.length },
+              )}`
+            : ''}
         </span>
       </div>
       <div
@@ -237,10 +267,10 @@ function ImportSection({ library, onImported }: {
           over ? 'border-foreground bg-secondary text-foreground' : 'border-border-strong bg-muted text-text-faint',
         )}
       >
-        把 .srt / .vtt / .ass 拖到这里，同一次拖入的文件归入同一个包
+        {t('packs.import.drop')}
       </div>
       <div className="mt-2 text-2xs text-text-faint">
-        {library.entries.length ? `合计 ${fmtSize(totalBytes)}` : ''}
+        {library.entries.length ? t('packs.import.total', { size: fmtSize(totalBytes) }) : ''}
       </div>
     </Card>
   );
@@ -254,6 +284,7 @@ function PackCard({ pack, entries, open, onToggle, onChanged, confirm }: {
   onChanged: () => Promise<void>;
   confirm: ReturnType<typeof useConfirm>['confirm'];
 }) {
+  const title = packTitleForDisplay(pack.title, t);
   const ordered = React.useMemo(() => {
     const labels = describeSubtitles(entries.map((entry) => entry.name));
     return entries
@@ -267,7 +298,7 @@ function PackCard({ pack, entries, open, onToggle, onChanged, confirm }: {
         <button
           type="button"
           aria-expanded={open}
-          aria-label={open ? '收起' : '展开'}
+          aria-label={open ? t('packs.pack.collapse') : t('packs.pack.expand')}
           className="cursor-pointer border-0 bg-transparent px-1 text-2xs text-text-faint hover:text-foreground"
           onClick={onToggle}
         >
@@ -278,10 +309,10 @@ function PackCard({ pack, entries, open, onToggle, onChanged, confirm }: {
           className="cursor-pointer border-0 bg-transparent p-0 text-xs font-medium hover:underline hover:underline-offset-2"
           onClick={onToggle}
         >
-          {pack.title}
+          {title}
         </button>
-        <Badge>{pack.origin.kind === 'kitsunekko' ? 'kitsunekko' : '本地'}</Badge>
-        <Badge>{entries.length} 份</Badge>
+        <Badge>{pack.origin.kind === 'kitsunekko' ? 'kitsunekko' : t('packs.pack.localBadge')}</Badge>
+        <Badge>{t('popup.pack.fileCount', { count: entries.length })}</Badge>
         <span className="min-w-0 flex-1 truncate text-2xs text-text-faint" title={originSummary(pack.origin)}>
           {originSummary(pack.origin)}
           {pack.origin.kind === 'kitsunekko' ? (
@@ -292,7 +323,7 @@ function PackCard({ pack, entries, open, onToggle, onChanged, confirm }: {
               className="ml-1 inline-flex items-center gap-0.5 text-muted-foreground underline underline-offset-2"
             >
               <Link2 className="size-3" />
-              来源
+              {t('packs.pack.originLink')}
             </a>
           ) : null}
         </span>
@@ -301,18 +332,19 @@ function PackCard({ pack, entries, open, onToggle, onChanged, confirm }: {
           size="sm"
           onClick={async () => {
             const ok = await confirm({
-              title: `删除字幕包「${pack.title}」？`,
-              description: `${entries.length} 份字幕将从本地存储移除；已打开页面里的副本不受影响。`,
-              confirmLabel: '删除整包',
+              title: t('packs.pack.deleteTitle', { title }),
+              description: t('packs.pack.deleteDescription', { count: entries.length }),
+              confirmLabel: t('packs.pack.deleteAll'),
+              cancelLabel: t('common.cancel'),
               destructive: true,
             });
             if (!ok) return;
             await removePack(pack.id);
             await onChanged();
-            toast.success(`已删除整包 ${pack.title}`);
+            toast.success(t('packs.pack.deleted', { title }));
           }}
         >
-          删除整包
+          {t('packs.pack.deleteAll')}
         </Button>
       </div>
 
@@ -322,24 +354,28 @@ function PackCard({ pack, entries, open, onToggle, onChanged, confirm }: {
             ordered.map(({ entry, label }) => (
               <Chip
                 key={entry.id}
-                title={`${label}\n${entry.name}\n${entry.cueCount} 条 · ${fmtSize(entry.size)}`}
+                title={`${label}\n${entry.name}\n${t('popup.entry.cueCount', {
+                  count: entry.cueCount,
+                })} · ${fmtSize(entry.size)}`}
+                removeLabel={t('common.remove')}
                 onRemove={async () => {
                   const ok = await confirm({
-                    title: `从包中移除「${entry.name}」？`,
-                    confirmLabel: '移除',
+                    title: t('packs.pack.removeTitle', { name: entry.name }),
+                    confirmLabel: t('common.remove'),
+                    cancelLabel: t('common.cancel'),
                     destructive: true,
                   });
                   if (!ok) return;
                   await removeLibraryItem(entry.id);
                   await onChanged();
-                  toast.success(`已移除 ${entry.name}`);
+                  toast.success(t('packs.pack.removed', { name: entry.name }));
                 }}
               >
                 {label}
               </Chip>
             ))
           ) : (
-            <EmptyState>包内没有字幕文件。</EmptyState>
+            <EmptyState>{t('packs.pack.empty')}</EmptyState>
           )}
         </div>
       ) : null}
@@ -375,9 +411,13 @@ function PackList({ library, expanded, setExpanded, confirm }: {
   return (
     <Card>
       <div className="mb-1 flex items-center justify-between gap-2">
-        <CardTitle>全部字幕包</CardTitle>
+        <CardTitle>{t('packs.list.title')}</CardTitle>
         <span className="text-2xs text-text-faint">
-          {library.entries.length ? `合计 ${fmtSize(library.entries.reduce((sum, entry) => sum + entry.size, 0))}` : ''}
+          {library.entries.length
+            ? t('packs.list.total', {
+                size: fmtSize(library.entries.reduce((sum, entry) => sum + entry.size, 0)),
+              })
+            : ''}
         </span>
       </div>
       <div className="mt-1">
@@ -394,7 +434,7 @@ function PackList({ library, expanded, setExpanded, confirm }: {
             />
           ))
         ) : (
-          <EmptyState>还没有字幕包。导入一套字幕后会按番剧归到一个包里。</EmptyState>
+          <EmptyState>{t('packs.list.empty')}</EmptyState>
         )}
       </div>
     </Card>
@@ -417,11 +457,14 @@ export function PacksPage({ library }: { library: LibraryController }) {
       const { pack, entries, errors } = await importKitsunekkoArchive(dir, file);
       expand(pack.id);
       await library.refresh();
-      const failed = errors ? `，${errors} 份无法解析` : '';
-      if (errors) toast.warning(`已导入 ${entries.length} 份到「${pack.title}」${failed}`);
-      else toast.success(`已导入 ${entries.length} 份到「${pack.title}」`);
+      const imported = t('popup.toast.imported', {
+        count: entries.length,
+        pack: packTitleForDisplay(pack.title, t),
+      });
+      if (errors) toast.warning(imported + t('popup.toast.parseFailed', { count: errors }));
+      else toast.success(imported);
     } catch (error) {
-      toast.error(`下载失败：${error instanceof Error ? error.message : String(error)}`);
+      toast.error(t('errors.downloadFailed', { error: errorText(error) }));
     } finally {
       setImporting(null);
     }
@@ -429,17 +472,14 @@ export function PacksPage({ library }: { library: LibraryController }) {
 
   return (
     <>
-      <PageHeader
-        title="字幕包"
-        description="先从 kitsunekko 在线获取（整套番剧一次导入），也可以本地拖入字幕文件。导入后在播放页按包选择。"
-      />
+      <PageHeader title={t('packs.title')} description={t('packs.description')} />
       <KitsuSection kitsu={kitsu} onImport={importRemote} importing={importing} />
       <ImportSection library={library} onImported={expand} />
       <Card>
-        <SettingRow title="新页面自动套用上次字幕" description="打开播放页时恢复上次选中的字幕包">
+        <SettingRow title={t('packs.autoApply.title')} description={t('packs.autoApply.description')}>
           <Switch
             checked={library.autoApply}
-            aria-label="新页面自动套用上次字幕"
+            aria-label={t('packs.autoApply.title')}
             onCheckedChange={(checked) => void library.setAutoApply(checked)}
           />
         </SettingRow>

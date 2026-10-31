@@ -11,7 +11,7 @@ type ChipProps = {
   className?: string;
 };
 
-function Chip({ children, title, onRemove, removeLabel = '移除', className }: ChipProps) {
+function Chip({ children, title, onRemove, removeLabel = 'Remove', className }: ChipProps) {
   return (
     <div
       data-slot="chip"
