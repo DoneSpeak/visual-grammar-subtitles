@@ -1,6 +1,7 @@
 import type { DictEntry } from '@/shared/dictionary';
-import { EXPRESSION_ELEMENT, LEVEL_ELEMENT, type FeatureId } from '@/shared/studyFeatures';
+import type { FeatureId } from '@/shared/studyFeatures';
 import type { Pos, Token } from '@/shared/types';
+import { CHUNK_GROUP_KEY, EXPRESSION_ELEMENT, LEVEL_ELEMENT } from './features';
 import { EXPRESSION_SOURCES } from './grammarPatterns';
 
 /**
@@ -9,9 +10,6 @@ import { EXPRESSION_SOURCES } from './grammarPatterns';
  * line and written into the same `grammar` / `groups` fields the remote analyser fills, so the
  * renderer never needs to know where a label came from.
  */
-
-/** Layer a bunsetsu annotation lands in; also the key of `Token.groups`. */
-export const CHUNK_GROUP_KEY = 'chunk.bunsetsu';
 
 /** A bunsetsu ends on a particle, an auxiliary, a conjugable word or punctuation. */
 const ENDS_CHUNK = new Set<Pos>(['ADP', 'AUX', 'VERB', 'ADJ', 'PUNCT', 'CCONJ', 'INTJ']);

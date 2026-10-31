@@ -1,5 +1,5 @@
-import { defaultPosColors, POS_GROUPS } from './posColors';
 import type { ElementStyle } from './elementStyle';
+import type { MessageKey } from './i18n';
 import type { PosGroup } from './types';
 
 /**
@@ -8,17 +8,13 @@ import type { PosGroup } from './types';
  * A preset is a list of feature ids. Each feature owns a small set of elements and one source of
  * truth for them, so the options page can group them by where the data comes from and tell the
  * user which ones need the remote grammar service.
+ *
+ * The feature list itself is per language: `FeatureRegistry` carries one language's features,
+ * merge order, element defaults and built-in preset seeds. The helpers below are the neutral
+ * rules (dependencies, exclusivity, precedence) that every registry shares.
  */
 
-export type FeatureId =
-  | 'pos'
-  | 'nouns'
-  | 'reading'
-  | 'expression'
-  | 'level'
-  | 'chunk-rule'
-  | 'syntax'
-  | 'chunk';
+export type FeatureId = string;
 
 export type FeatureGroupId = 'token' | 'rule' | 'remote';
 
@@ -33,6 +29,30 @@ export type StudyFeature = {
   elements: string[];
 };
 
+/** A built-in mode a language starts with; labels go through i18n. */
+export type BuiltInPresetSeed = {
+  id: string;
+  features: FeatureId[];
+  labelKey: MessageKey;
+  detailKey: MessageKey;
+};
+
+export type FeatureRegistry = {
+  features: StudyFeature[];
+  /** Merge precedence, low to high. */
+  order: FeatureId[];
+  elementDefaults: Record<string, ElementStyle>;
+  /** Element a local expression annotator tags; `grammar` carries this id. Null if unsupported. */
+  expressionElement: string | null;
+  /** Element a study-band annotator tags. Null if the language has no bands. */
+  levelElement: string | null;
+  /** `Token.groups` key the chunk annotator writes; null when the language has no chunks. */
+  chunkGroupKey: string | null;
+  builtIns: BuiltInPresetSeed[];
+  defaultPresetId: string;
+};
+
+/** Syntax-role vocabulary, shared by every language's grammar provider. */
 export const ROLE_ELEMENTS: string[] = [
   'syntax.role:topic',
   'syntax.role:subject',
@@ -42,6 +62,7 @@ export const ROLE_ELEMENTS: string[] = [
   'syntax.role:adverbial',
 ];
 
+/** The eight colour groups are universal, so their element ids are shared. */
 export const POS_ELEMENT: Record<PosGroup, string> = {
   noun: 'token.pos:NOUN',
   verb: 'token.pos:VERB',
@@ -53,190 +74,87 @@ export const POS_ELEMENT: Record<PosGroup, string> = {
   other: 'token.pos:X',
 };
 
-/** Position within its bunsetsu, so a chunk renders as one block with rounded outer edges. */
-export const CHUNK_ELEMENTS: string[] = [
-  'chunk.bunsetsu:first',
-  'chunk.bunsetsu:middle',
-  'chunk.bunsetsu:last',
-  'chunk.bunsetsu:only',
-];
-
-export const LEVEL_ELEMENT = 'token.level:plan';
-export const EXPRESSION_ELEMENT = 'expression.grammar:all';
 export const READING_ELEMENT = 'token.reading:ruby';
-
-export const STUDY_FEATURES: StudyFeature[] = [
-  { id: 'pos', group: 'token', requires: 'local', elements: POS_GROUPS.map((group) => POS_ELEMENT[group]) },
-  { id: 'nouns', group: 'token', requires: 'local', dependsOn: 'pos', elements: [] },
-  { id: 'reading', group: 'token', requires: 'local', elements: [READING_ELEMENT] },
-  { id: 'expression', group: 'rule', requires: 'local', elements: [EXPRESSION_ELEMENT] },
-  { id: 'level', group: 'rule', requires: 'local', elements: [LEVEL_ELEMENT] },
-  {
-    id: 'chunk-rule',
-    group: 'rule',
-    requires: 'local',
-    conflictsWith: ['chunk'],
-    elements: [...CHUNK_ELEMENTS],
-  },
-  { id: 'syntax', group: 'remote', requires: 'remote', elements: ROLE_ELEMENTS },
-  {
-    id: 'chunk',
-    group: 'remote',
-    requires: 'remote',
-    conflictsWith: ['chunk-rule'],
-    elements: [...CHUNK_ELEMENTS],
-  },
-];
-
-export const FEATURE_BY_ID: Record<FeatureId, StudyFeature> = Object.fromEntries(
-  STUDY_FEATURES.map((feature) => [feature.id, feature]),
-) as Record<FeatureId, StudyFeature>;
 
 export const FEATURE_GROUP_ORDER: FeatureGroupId[] = ['token', 'rule', 'remote'];
 
-/**
- * Merge precedence, low to high, per visual property.
- *
- * A fragment can match several features at once (`勉強` is a noun, a predicate and part of an
- * expression). Every property takes the value from the highest entry that sets it explicitly;
- * nothing is multiplied or stacked.
- */
-export const FEATURE_ORDER: FeatureId[] = [
-  'pos',
-  'nouns',
-  'reading',
-  'chunk-rule',
-  'chunk',
-  'level',
-  'expression',
-  'syntax',
-];
+/** Position elements of a chunk group, derived from its `Token.groups` key. */
+export const chunkElements = (groupKey: string): string[] =>
+  ['first', 'middle', 'last', 'only'].map((position) => `${groupKey}:${position}`);
 
-export const featureRank = (id: FeatureId): number => FEATURE_ORDER.indexOf(id);
+export const featureById = (registry: FeatureRegistry, id: FeatureId): StudyFeature | undefined =>
+  registry.features.find((feature) => feature.id === id);
 
-export const isFeatureId = (value: unknown): value is FeatureId =>
-  typeof value === 'string' && value in FEATURE_BY_ID;
+export const isFeatureId = (registry: FeatureRegistry, value: unknown): value is FeatureId =>
+  typeof value === 'string' && registry.features.some((feature) => feature.id === value);
 
-const ROLE_COLORS: Record<string, string> = {
-  topic: '#C084FC',
-  subject: '#60A5FA',
-  object: '#FACC15',
-  predicate: '#FB923C',
-  modifier: '#4ADE80',
-  adverbial: '#22D3EE',
-};
+export const featureRank = (registry: FeatureRegistry, id: FeatureId): number => registry.order.indexOf(id);
 
-const CHUNK_BACKGROUND = '#38BDF84D';
-
-const chunkUnderline = (offsetPx: number) => ({
-  enabled: true,
-  style: 'solid' as const,
-  color: '#7DD3FC',
-  thicknessPx: 2,
-  offsetPx,
-});
-
-/** Built-in element palette. User edits are stored as overrides on top of this. */
-export const DEFAULT_FEATURE_ELEMENTS: Record<string, ElementStyle> = (() => {
-  const posColors = defaultPosColors();
-  const elements: Record<string, ElementStyle> = {};
-  for (const group of POS_GROUPS) elements[POS_ELEMENT[group]] = { color: posColors[group] };
-  for (const id of ROLE_ELEMENTS) {
-    const role = id.split(':')[1];
-    elements[id] = {
-      color: ROLE_COLORS[role] ?? '#FFFFFF',
-      underline: { enabled: true, style: 'solid', thicknessPx: 2, offsetPx: 3 },
-    };
-  }
-  elements['chunk.bunsetsu:first'] = {
-    backgroundColor: CHUNK_BACKGROUND,
-    radiusPx: 6,
-    radiusSides: 'start',
-    underline: chunkUnderline(4),
-  };
-  elements['chunk.bunsetsu:middle'] = {
-    backgroundColor: CHUNK_BACKGROUND,
-    radiusPx: 0,
-    underline: chunkUnderline(4),
-  };
-  elements['chunk.bunsetsu:last'] = {
-    backgroundColor: CHUNK_BACKGROUND,
-    radiusPx: 6,
-    radiusSides: 'end',
-    underline: chunkUnderline(4),
-  };
-  elements['chunk.bunsetsu:only'] = {
-    backgroundColor: CHUNK_BACKGROUND,
-    radiusPx: 6,
-    radiusSides: 'all',
-    underline: chunkUnderline(4),
-  };
-  elements[EXPRESSION_ELEMENT] = { backgroundColor: '#F472B640', radiusPx: 4 };
-  elements[LEVEL_ELEMENT] = {
-    backgroundColor: '#FBBF2433',
-    radiusPx: 3,
-    underline: { enabled: true, style: 'solid', color: '#FBBF24', thicknessPx: 2, offsetPx: 3 },
-  };
-  elements[READING_ELEMENT] = { color: '#FFFFFFB8' };
-  return elements;
-})();
+/** The feature that owns an element id, for grouping the palette and reporting overrides. */
+export const featureOfElement = (registry: FeatureRegistry, elementId: string): FeatureId | undefined =>
+  registry.features.find((feature) => feature.elements.includes(elementId))?.id;
 
 /** Defaults for every element the given features bring in. */
-export const defaultElementsFor = (features: FeatureId[]): Record<string, ElementStyle> => {
+export const defaultElementsFor = (
+  registry: FeatureRegistry,
+  features: FeatureId[],
+): Record<string, ElementStyle> => {
   const elements: Record<string, ElementStyle> = {};
-  for (const feature of features) {
-    for (const id of FEATURE_BY_ID[feature].elements) {
-      elements[id] = DEFAULT_FEATURE_ELEMENTS[id] ?? {};
+  for (const id of features) {
+    const feature = featureById(registry, id);
+    for (const element of feature?.elements ?? []) {
+      elements[element] = registry.elementDefaults[element] ?? {};
     }
   }
   return elements;
 };
 
-export const elementsForFeatures = (features: FeatureId[]): string[] =>
-  features.flatMap((feature) => FEATURE_BY_ID[feature].elements);
+export const elementsForFeatures = (registry: FeatureRegistry, features: FeatureId[]): string[] =>
+  features.flatMap((id) => featureById(registry, id)?.elements ?? []);
 
-/** The feature that owns an element id, for grouping the palette and reporting overrides. */
-export const featureOfElement = (elementId: string): FeatureId | undefined =>
-  STUDY_FEATURES.find((feature) => feature.elements.includes(elementId))?.id;
+export const featuresRequireRemote = (registry: FeatureRegistry, features: FeatureId[]): boolean =>
+  features.some((id) => featureById(registry, id)?.requires === 'remote');
 
-export const featuresRequireRemote = (features: FeatureId[]): boolean =>
-  features.some((feature) => FEATURE_BY_ID[feature].requires === 'remote');
-
-export const localFeatures = (features: FeatureId[]): FeatureId[] =>
-  features.filter((feature) => FEATURE_BY_ID[feature].requires === 'local');
+export const localFeatures = (registry: FeatureRegistry, features: FeatureId[]): FeatureId[] =>
+  features.filter((id) => featureById(registry, id)?.requires !== 'remote');
 
 /**
  * Applies the registry's dependency and exclusivity rules to a requested feature set.
  * Returns the features that are actually in effect.
  */
-export const resolveFeatures = (requested: FeatureId[]): FeatureId[] => {
-  const enabled = new Set(requested.filter(isFeatureId));
-  for (const feature of STUDY_FEATURES) {
+export const resolveFeatures = (registry: FeatureRegistry, requested: FeatureId[]): FeatureId[] => {
+  const enabled = new Set(requested.filter((id) => isFeatureId(registry, id)));
+  for (const feature of registry.features) {
     if (feature.dependsOn && !enabled.has(feature.dependsOn)) enabled.delete(feature.id);
   }
-  for (const feature of STUDY_FEATURES) {
+  for (const feature of registry.features) {
     if (!enabled.has(feature.id)) continue;
     for (const rival of feature.conflictsWith ?? []) enabled.delete(rival);
   }
-  return FEATURE_ORDER.filter((feature) => enabled.has(feature));
+  return registry.order.filter((feature) => enabled.has(feature));
 };
 
-export const isFeatureEnabled = (features: FeatureId[], id: FeatureId): boolean =>
-  resolveFeatures(features).includes(id);
+export const isFeatureEnabled = (
+  registry: FeatureRegistry,
+  features: FeatureId[],
+  id: FeatureId,
+): boolean => resolveFeatures(registry, features).includes(id);
 
 /**
  * A user toggle: turning a feature on displaces its rival and pulls in its dependency, so a click
  * always lands. Turning one off drops whatever depended on it.
  */
-export const toggleFeatureIn = (features: FeatureId[], id: FeatureId): FeatureId[] => {
-  if (resolveFeatures(features).includes(id)) {
-    return resolveFeatures(features.filter((feature) => feature !== id));
-  }
-  const feature = FEATURE_BY_ID[id];
-  const next = features.filter(
-    (other) => other !== id && !(feature.conflictsWith ?? []).includes(other),
-  );
+export const toggleFeatureIn = (
+  registry: FeatureRegistry,
+  features: FeatureId[],
+  id: FeatureId,
+): FeatureId[] => {
+  const resolved = resolveFeatures(registry, features);
+  if (resolved.includes(id)) return resolveFeatures(registry, resolved.filter((feature) => feature !== id));
+  const feature = featureById(registry, id);
+  if (!feature) return resolved;
+  const next = resolved.filter((other) => !(feature.conflictsWith ?? []).includes(other));
   if (feature.dependsOn) next.push(feature.dependsOn);
   next.push(id);
-  return resolveFeatures(next);
+  return resolveFeatures(registry, next);
 };

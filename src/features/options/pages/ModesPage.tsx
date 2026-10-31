@@ -4,28 +4,29 @@ import { Copy, RotateCcw, Server, Trash2 } from 'lucide-react';
 import { Button, Card, CardTitle, Input, PageHeader, PillGroup, Switch, cn } from '@/design-system';
 import { renderTokens } from '@/features/overlay/tokenize/render';
 import { elementEnabled, matchedByPriority, tokenElements } from '@/features/overlay/tokenize/style';
+import { EXPRESSION_ELEMENT, LEVEL_ELEMENT } from '@/languages/ja/features';
+import { DEFAULT_LANGUAGE, featuresFor } from '@/languages/registry';
 import { withAlpha } from '@/shared/elementStyle';
 import { t, type MessageKey } from '@/shared/i18n';
 import { POS_GROUP_LABELS, POS_GROUPS } from '@/shared/posColors';
 import {
-  EXPRESSION_ELEMENT,
-  FEATURE_BY_ID,
   FEATURE_GROUP_ORDER,
-  LEVEL_ELEMENT,
-  POS_ELEMENT,
-  READING_ELEMENT,
-  STUDY_FEATURES,
+  featureById,
   featureOfElement,
   featureRank,
+  POS_ELEMENT,
+  READING_ELEMENT,
   resolveFeatures,
   type FeatureGroupId,
   type FeatureId,
+  type FeatureRegistry,
 } from '@/shared/studyFeatures';
 import {
-  BUILT_IN_PRESET_DETAIL_KEY,
+  defaultPreset,
   effectiveBox,
   isBuiltInPresetId,
   isCustomPresetId,
+  presetDetailKey,
   presetDisplayName,
   presetElements,
   presetOrder,
@@ -40,7 +41,11 @@ import { useSubtitleStyle } from '../hooks/use-subtitle-style';
 import { PREVIEW_TOKENS, SAMPLE_TOKENS } from '../lib/study-fixtures';
 import { NlpPanel } from './NlpPanel';
 
-const FEATURE_LABEL: Record<FeatureId, MessageKey> = {
+/**
+ * Feature and element labels are per language. Ids without an entry render as themselves, so a
+ * new language's features show up without touching this page.
+ */
+const FEATURE_LABEL: Record<string, MessageKey> = {
   pos: 'modes.feature.pos',
   nouns: 'modes.feature.nouns',
   reading: 'modes.feature.reading',
@@ -51,7 +56,7 @@ const FEATURE_LABEL: Record<FeatureId, MessageKey> = {
   chunk: 'modes.feature.chunk',
 };
 
-const FEATURE_DETAIL: Record<FeatureId, MessageKey> = {
+const FEATURE_DETAIL: Record<string, MessageKey> = {
   pos: 'modes.feature.posDetail',
   nouns: 'modes.feature.nounsDetail',
   reading: 'modes.feature.readingDetail',
@@ -88,6 +93,16 @@ const GROUP_BY_ELEMENT = Object.fromEntries(
   POS_GROUPS.map((group) => [POS_ELEMENT[group], group]),
 ) as Record<string, PosGroup>;
 
+const featureLabel = (id: FeatureId): string => {
+  const key = FEATURE_LABEL[id];
+  return key ? t(key) : id;
+};
+
+const featureDetail = (id: FeatureId): string => {
+  const key = FEATURE_DETAIL[id];
+  return key ? t(key) : id;
+};
+
 const elementName = (id: ElementId): string => {
   const group = GROUP_BY_ELEMENT[id];
   if (group) return t(POS_GROUP_LABELS[group].nameKey);
@@ -95,21 +110,21 @@ const elementName = (id: ElementId): string => {
   return key ? t(key) : id;
 };
 
-const elementDetail = (id: ElementId): string => {
+const elementDetail = (registry: FeatureRegistry, id: ElementId): string => {
   const group = GROUP_BY_ELEMENT[id];
   if (group) return t(POS_GROUP_LABELS[group].detailKey);
-  const feature = featureOfElement(id);
-  return feature ? t(FEATURE_DETAIL[feature]) : '';
+  const feature = featureOfElement(registry, id);
+  return feature ? featureDetail(feature) : '';
 };
 
 const hex6 = (value: string | undefined, fallback: string): string =>
   value && /^#[0-9a-f]{6}/i.test(value) ? value.slice(0, 7) : fallback;
 
 /** The sample string an element could render, taken from the annotated fixture. */
-const sampleFor = (id: ElementId, features: FeatureId[]): string => {
+const sampleFor = (registry: FeatureRegistry, id: ElementId, features: FeatureId[]): string => {
   if (id === READING_ELEMENT) return SAMPLE_TOKENS.find((token) => token.reading)?.reading ?? '—';
   const index = SAMPLE_TOKENS.findIndex((_, i) =>
-    tokenElements(SAMPLE_TOKENS, i, features).some((match) => match.element === id),
+    tokenElements(registry, SAMPLE_TOKENS, i, features).some((match) => match.element === id),
   );
   return index >= 0 ? SAMPLE_TOKENS[index].surface : '—';
 };
@@ -119,30 +134,33 @@ const sampleFor = (id: ElementId, features: FeatureId[]): string => {
  * element rather than per property to keep the row short; the priority note spells out the order.
  */
 const overriddenBy = (
+  registry: FeatureRegistry,
   id: ElementId,
   features: FeatureId[],
   elements: Record<ElementId, ElementStyle>,
 ): FeatureId | undefined => {
   const index = SAMPLE_TOKENS.findIndex((_, i) =>
-    tokenElements(SAMPLE_TOKENS, i, features).some((match) => match.element === id),
+    tokenElements(registry, SAMPLE_TOKENS, i, features).some((match) => match.element === id),
   );
   if (index < 0) return undefined;
   const own = elements[id];
   if (!own || !elementEnabled(elements, id)) return undefined;
-  const matched = matchedByPriority(tokenElements(SAMPLE_TOKENS, index, features)).filter((match) =>
-    elementEnabled(elements, match.element),
-  );
+  const matched = matchedByPriority(
+    registry,
+    tokenElements(registry, SAMPLE_TOKENS, index, features),
+  ).filter((match) => elementEnabled(elements, match.element));
   const self = matched.find((match) => match.element === id);
   if (!self) return undefined;
   return matched.find(
     (match) =>
       match.element !== id &&
-      featureRank(match.feature) > featureRank(self.feature) &&
+      featureRank(registry, match.feature) > featureRank(registry, self.feature) &&
       Object.entries(own).some(([property, value]) => value !== undefined && elements[match.element]?.[property as keyof ElementStyle] !== undefined),
   )?.feature;
 };
 
 type PreviewProps = {
+  registry: FeatureRegistry;
   preset: StudyPreset;
   /** Effective box style: the preset's override or the global one. */
   box: BoxStyle;
@@ -150,17 +168,17 @@ type PreviewProps = {
 };
 
 /** The real renderer, so the preview cannot drift from playback. */
-function PresetPreview({ preset, box, className }: PreviewProps) {
+function PresetPreview({ registry, preset, box, className }: PreviewProps) {
   const ref = React.useRef<HTMLDivElement>(null);
-  const elements = React.useMemo(() => presetElements(preset), [preset]);
+  const elements = React.useMemo(() => presetElements(registry, preset), [registry, preset]);
   React.useEffect(() => {
     if (!ref.current) return;
     renderTokens(ref.current, PREVIEW_TOKENS, {
       colorize: true,
       furigana: preset.features.includes('reading'),
-      style: { preset, elements },
+      style: { preset, elements, registry },
     });
-  }, [preset, elements]);
+  }, [registry, preset, elements]);
   const { backgroundColor, backgroundOpacity } = box;
   return (
     <div
@@ -182,13 +200,14 @@ function PresetPreview({ preset, box, className }: PreviewProps) {
 type RowProps = {
   id: ElementId;
   sample: string;
+  detail: string;
   style: ElementStyle;
   overridden: FeatureId | undefined;
   onChange: (patch: Partial<ElementStyle>) => void;
   onReset: () => void;
 };
 
-function ElementRow({ id, sample, style, overridden, onChange, onReset }: RowProps) {
+function ElementRow({ id, sample, detail, style, overridden, onChange, onReset }: RowProps) {
   const [open, setOpen] = React.useState(false);
   const underline = style.underline;
   const underlineOnly = style.textColorMode === 'underline-only';
@@ -221,8 +240,8 @@ function ElementRow({ id, sample, style, overridden, onChange, onReset }: RowPro
             {!enabled
               ? t('modes.element.off')
               : overridden
-                ? t('modes.overridden.by', { name: t(FEATURE_LABEL[overridden]) })
-                : elementDetail(id)}
+                ? t('modes.overridden.by', { name: featureLabel(overridden) })
+                : detail}
           </span>
           <span className="flex-none text-2xs text-muted-foreground">{sample}</span>
           <span aria-hidden className="flex-none text-text-faint">{open ? '−' : '+'}</span>
@@ -429,6 +448,10 @@ function BoxControls(props: {
 }
 
 export function ModesPage() {
+  // P4 makes the language a per-layer setting and adds a picker; until then the options page
+  // edits the default language's preset list.
+  const language = DEFAULT_LANGUAGE;
+  const registry = React.useMemo(() => featuresFor(language), [language]);
   const {
     style,
     setPreset,
@@ -443,18 +466,22 @@ export function ModesPage() {
     updateBox,
     setPresetBoxEnabled,
     updatePresetBox,
-  } = useSubtitleStyle();
-  const preset = style.presets[style.activePresetId] ?? style.presets['pos-basic'];
-  const features = resolveFeatures(preset.features);
-  const elements = presetElements(preset);
+  } = useSubtitleStyle(language);
+  const presets = style.presets[language] ?? {};
+  const preset =
+    presets[style.activePresetId[language]] ??
+    presets[registry.defaultPresetId] ??
+    defaultPreset(registry, registry.defaultPresetId);
+  const features = resolveFeatures(registry, preset.features);
+  const elements = presetElements(registry, preset);
   const [bright, setBright] = React.useState(false);
 
   const elementGroups = React.useMemo(
     () =>
       features
-        .map((feature) => ({ feature, elements: FEATURE_BY_ID[feature].elements }))
+        .map((feature) => ({ feature, elements: featureById(registry, feature)?.elements ?? [] }))
         .filter((group) => group.elements.length > 0),
-    [features],
+    [features, registry],
   );
 
   const onFeatureChange = (next: FeatureId[]) => {
@@ -463,7 +490,12 @@ export function ModesPage() {
     for (const id of features) if (!target.has(id)) toggleFeature(preset.id, id);
   };
 
-  const conflict = features.includes('chunk') ? 'chunk-rule' : features.includes('chunk-rule') ? 'chunk' : null;
+  const conflict =
+    registry.features.find(
+      (feature) =>
+        !features.includes(feature.id) &&
+        (feature.conflictsWith ?? []).some((other) => features.includes(other)),
+    )?.id ?? null;
 
   /** The card's capability mark is the way into the analysis settings it depends on. */
   const openNlpSettings = (id: string) => {
@@ -481,11 +513,11 @@ export function ModesPage() {
 
       <Card>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {presetOrder(style).map((id) => {
-            const candidate = style.presets[id];
+          {presetOrder(registry, style, language).map((id) => {
+            const candidate = presets[id];
             if (!candidate) return null;
             const selected = id === preset.id;
-            const remote = presetRequiresRemote(candidate);
+            const remote = presetRequiresRemote(registry, candidate);
             return (
               <div
                 key={id}
@@ -506,7 +538,7 @@ export function ModesPage() {
                       selected ? 'pr-24' : remote ? 'pr-6' : '',
                     )}
                   >
-                    <span className="truncate">{presetDisplayName(candidate, t)}</span>
+                    <span className="truncate">{presetDisplayName(registry, candidate, t)}</span>
                     {candidate.customized ? (
                       <span className="flex-none rounded-sm border border-border px-1 py-px text-[10px] font-normal text-text-faint">
                         {t('modes.preset.customized')}
@@ -514,13 +546,20 @@ export function ModesPage() {
                     ) : null}
                   </span>
                   <span className="truncate text-2xs text-text-faint">
-                    {isBuiltInPresetId(id)
-                      ? t(BUILT_IN_PRESET_DETAIL_KEY[id])
-                      : candidate.features.map((feature) => t(FEATURE_LABEL[feature])).join(' · ') ||
-                        t('modes.features.empty')}
+                    {(() => {
+                      const detailKey = presetDetailKey(registry, candidate);
+                      return detailKey
+                        ? t(detailKey)
+                        : candidate.features.map(featureLabel).join(' · ') || t('modes.features.empty');
+                    })()}
                   </span>
                   <span className="mt-1 block rounded-sm bg-neutral-900 px-1.5 py-1 text-[13px] leading-normal">
-                    <PresetPreview preset={candidate} box={effectiveBox(style, candidate)} className="text-white" />
+                    <PresetPreview
+                      registry={registry}
+                      preset={candidate}
+                      box={effectiveBox(style, candidate)}
+                      className="text-white"
+                    />
                   </span>
                 </button>
                 {/* The card owns its own actions; only the selected one shows them. */}
@@ -546,13 +585,13 @@ export function ModesPage() {
                         onClick={() =>
                           duplicatePreset(
                             id,
-                            t('modes.preset.copyName', { name: presetDisplayName(candidate, t) }),
+                            t('modes.preset.copyName', { name: presetDisplayName(registry, candidate, t) }),
                           )
                         }
                       >
                         <Copy aria-hidden className="size-3.5" />
                       </Button>
-                      {isBuiltInPresetId(id) && candidate.customized ? (
+                      {isBuiltInPresetId(registry, id) && candidate.customized ? (
                         <Button
                           size="icon-sm"
                           variant="ghost"
@@ -618,7 +657,7 @@ export function ModesPage() {
             bright ? 'bg-neutral-100 text-neutral-900' : 'bg-neutral-900 text-white',
           )}
         >
-          <PresetPreview preset={preset} box={effectiveBox(style, preset)} />
+          <PresetPreview registry={registry} preset={preset} box={effectiveBox(style, preset)} />
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
           <span className="text-xs font-medium">{t('modes.box.modeSubtitle')}</span>
@@ -655,7 +694,7 @@ export function ModesPage() {
         <CardTitle>{t('modes.features')}</CardTitle>
         <div className="mt-2 grid gap-3">
           {FEATURE_GROUP_ORDER.map((group) => {
-            const groupFeatures = STUDY_FEATURES.filter((feature) => feature.group === group);
+            const groupFeatures = registry.features.filter((feature) => feature.group === group);
             if (!groupFeatures.length) return null;
             return (
               <div key={group} className="grid gap-1.5">
@@ -679,7 +718,7 @@ export function ModesPage() {
                   options={groupFeatures.map((feature) => ({
                     value: feature.id,
                     label: (
-                      <span title={t(FEATURE_DETAIL[feature.id])}>{t(FEATURE_LABEL[feature.id])}</span>
+                      <span title={featureDetail(feature.id)}>{featureLabel(feature.id)}</span>
                     ),
                   }))}
                 />
@@ -689,7 +728,7 @@ export function ModesPage() {
         </div>
         {conflict ? (
           <p className="mt-2 text-2xs text-text-faint">
-            {t('modes.feature.conflict', { name: t(FEATURE_LABEL[conflict]) })}
+            {t('modes.feature.conflict', { name: featureLabel(conflict) })}
           </p>
         ) : null}
         <p className="mt-2 text-2xs text-text-faint">{t('modes.priority')}</p>
@@ -701,14 +740,15 @@ export function ModesPage() {
         <div className="mt-2 flex flex-col gap-3">
           {elementGroups.map((group) => (
             <div key={group.feature} className="grid gap-1">
-              <span className="text-2xs font-medium text-muted-foreground">{t(FEATURE_LABEL[group.feature])}</span>
+              <span className="text-2xs font-medium text-muted-foreground">{featureLabel(group.feature)}</span>
               {group.elements.map((id) => (
                 <ElementRow
                   key={id}
                   id={id}
-                  sample={sampleFor(id, features)}
+                  sample={sampleFor(registry, id, features)}
+                  detail={elementDetail(registry, id)}
                   style={elements[id] ?? {}}
-                  overridden={overriddenBy(id, features, elements)}
+                  overridden={overriddenBy(registry, id, features, elements)}
                   onChange={(patch) => updateElement(preset.id, id, patch)}
                   onReset={() => resetElement(preset.id, id)}
                 />
@@ -718,7 +758,7 @@ export function ModesPage() {
         </div>
       </Card>
 
-      {presetRequiresRemote(preset) ? (
+      {presetRequiresRemote(registry, preset) ? (
         <div id="nlp-settings" className="scroll-mt-4">
           <NlpPanel />
         </div>

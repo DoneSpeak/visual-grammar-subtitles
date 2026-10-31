@@ -1,3 +1,5 @@
+import { FEATURE_REGISTRIES, featuresFor } from '@/languages/registry';
+
 import {
   clampNumber,
   DEFAULT_BASE,
@@ -10,7 +12,6 @@ import {
 import type { MessageKey } from './i18n';
 import { normalizePosColor, POS_GROUPS } from './posColors';
 import {
-  CHUNK_ELEMENTS,
   defaultElementsFor,
   featuresRequireRemote,
   isFeatureId,
@@ -19,6 +20,7 @@ import {
   resolveFeatures,
   ROLE_ELEMENTS,
   type FeatureId,
+  type FeatureRegistry,
 } from './studyFeatures';
 
 /**
@@ -27,66 +29,23 @@ import {
  * A preset is not an NLP parameter — switching presets never re-runs analysis. Built-in presets
  * seed the list; editing one marks it `customized` so the UI can offer a reset, and users can add
  * their own.
+ *
+ * v4 keys presets and the active preset by language, because two subtitle layers can show
+ * different languages at once and each needs its own mode list. The box style stays global.
  */
 
 export const SUBTITLE_STYLE_KEY = 'ui:subtitleStyle';
 /** Pre-v3 single palette, migrated into `pos-basic` on first load. */
 export const LEGACY_POS_COLORS_KEY = 'ui:posColors';
+/** One-shot copy of the v3 document, written before the first v4 save. */
+export const SUBTITLE_STYLE_V3_BACKUP_KEY = 'ui:subtitleStyle.v3backup';
 
 export type { BaseStyle, ElementStyle, Underline, UnderlineStyle } from './elementStyle';
 export { normalizeElementStyle } from './elementStyle';
 export { POS_ELEMENT, ROLE_ELEMENTS, type FeatureId } from './studyFeatures';
 
 export type ElementId = string;
-
-/** Built-in presets are labelled through i18n; user presets carry their own name. */
-export const BUILT_IN_PRESET_LABEL_KEY: Record<BuiltInPresetId, MessageKey> = {
-  plain: 'modes.mode.plain',
-  'pos-basic': 'modes.mode.pos-basic',
-  'syntax-focus': 'modes.mode.syntax-focus',
-  'chunk-focus': 'modes.mode.chunk-focus',
-  'expression-focus': 'modes.mode.expression-focus',
-  'reading-assist': 'modes.mode.reading-assist',
-};
-
-export const BUILT_IN_PRESET_DETAIL_KEY: Record<BuiltInPresetId, MessageKey> = {
-  plain: 'modes.modeDetail.plain',
-  'pos-basic': 'modes.modeDetail.pos-basic',
-  'syntax-focus': 'modes.modeDetail.syntax-focus',
-  'chunk-focus': 'modes.modeDetail.chunk-focus',
-  'expression-focus': 'modes.modeDetail.expression-focus',
-  'reading-assist': 'modes.modeDetail.reading-assist',
-};
-
-export type BuiltInPresetId =
-  | 'plain'
-  | 'pos-basic'
-  | 'syntax-focus'
-  | 'chunk-focus'
-  | 'expression-focus'
-  | 'reading-assist';
-
-export const BUILT_IN_PRESET_IDS: BuiltInPresetId[] = [
-  'plain',
-  'pos-basic',
-  'syntax-focus',
-  'chunk-focus',
-  'expression-focus',
-  'reading-assist',
-];
-
-/**
- * `chunk-focus` uses the local rule-based grouping: it works with no grammar service, and the
- * remote GiNZA bunsetsu stays available as a separate feature.
- */
-export const BUILT_IN_PRESET_FEATURES: Record<BuiltInPresetId, FeatureId[]> = {
-  plain: [],
-  'pos-basic': ['pos'],
-  'syntax-focus': ['syntax'],
-  'chunk-focus': ['chunk-rule'],
-  'expression-focus': ['expression'],
-  'reading-assist': ['reading'],
-};
+export type LanguageId = string;
 
 export type StudyPreset = {
   /** Built-in id, or `custom:<uuid>` for user-created presets. */
@@ -126,15 +85,16 @@ export const normalizeBoxStyle = (value: unknown): BoxStyle => {
 };
 
 export type SubtitleStyle = {
-  version: 3;
-  activePresetId: string;
+  version: 4;
+  /** Per language: the mode currently in effect for that language's layer. */
+  activePresetId: Record<LanguageId, string>;
   /** Global, not per preset: one box style for every mode. */
   box: BoxStyle;
-  presets: Record<string, StudyPreset>;
+  presets: Record<LanguageId, Record<string, StudyPreset>>;
 };
 
-export const isBuiltInPresetId = (value: unknown): value is BuiltInPresetId =>
-  typeof value === 'string' && (BUILT_IN_PRESET_IDS as string[]).includes(value);
+export const isBuiltInPresetId = (registry: FeatureRegistry, value: unknown): value is string =>
+  typeof value === 'string' && registry.builtIns.some((seed) => seed.id === value);
 
 export const isCustomPresetId = (value: string): boolean => value.startsWith('custom:');
 
@@ -144,17 +104,24 @@ export const baseForFeatures = (features: FeatureId[]): BaseStyle =>
     ? { dimOpacity: 0.35, focusElement: POS_ELEMENT.noun }
     : { ...DEFAULT_BASE };
 
-export const defaultPreset = (id: BuiltInPresetId): StudyPreset => {
-  const features = resolveFeatures(BUILT_IN_PRESET_FEATURES[id]);
-  return { id, features, base: baseForFeatures(features), elements: {} };
+export const defaultPreset = (registry: FeatureRegistry, id: string): StudyPreset => {
+  const seed = registry.builtIns.find((candidate) => candidate.id === id);
+  const features = resolveFeatures(registry, seed?.features ?? []);
+  return { id: seed?.id ?? registry.defaultPresetId, features, base: baseForFeatures(features), elements: {} };
 };
 
-export const defaultSubtitleStyle = (): SubtitleStyle => ({
-  version: 3,
-  activePresetId: 'pos-basic',
-  box: { ...DEFAULT_BOX },
-  presets: Object.fromEntries(BUILT_IN_PRESET_IDS.map((id) => [id, defaultPreset(id)])),
-});
+export const defaultPresets = (registry: FeatureRegistry): Record<string, StudyPreset> =>
+  Object.fromEntries(registry.builtIns.map((seed) => [seed.id, defaultPreset(registry, seed.id)]));
+
+export const defaultSubtitleStyle = (): SubtitleStyle => {
+  const presets: SubtitleStyle['presets'] = {};
+  const activePresetId: SubtitleStyle['activePresetId'] = {};
+  for (const [language, registry] of Object.entries(FEATURE_REGISTRIES)) {
+    presets[language] = defaultPresets(registry);
+    activePresetId[language] = registry.defaultPresetId;
+  }
+  return { version: 4, activePresetId, box: { ...DEFAULT_BOX }, presets };
+};
 
 /** Underline is the only nested object in an element style; cloning it keeps copies independent. */
 const cloneElementStyle = (style: ElementStyle): ElementStyle =>
@@ -178,8 +145,8 @@ export const copyPreset = (source: StudyPreset, id: string, name?: string): Stud
   };
 };
 
-const normalizeFeatures = (value: unknown): FeatureId[] =>
-  Array.isArray(value) ? resolveFeatures(value.filter(isFeatureId)) : [];
+const normalizeFeatures = (registry: FeatureRegistry, value: unknown): FeatureId[] =>
+  Array.isArray(value) ? resolveFeatures(registry, value.filter((id) => isFeatureId(registry, id))) : [];
 
 const normalizeElements = (value: unknown): Record<ElementId, ElementStyle> => {
   if (!value || typeof value !== 'object') return {};
@@ -192,6 +159,7 @@ const normalizeElements = (value: unknown): Record<ElementId, ElementStyle> => {
 };
 
 const normalizePreset = (
+  registry: FeatureRegistry,
   value: unknown,
   fallbackId: string,
   fallbackFeatures: FeatureId[] = [],
@@ -200,7 +168,9 @@ const normalizePreset = (
   const raw = value as Record<string, unknown>;
   const id = typeof raw.id === 'string' && raw.id ? raw.id : fallbackId;
   const features =
-    raw.features === undefined ? resolveFeatures(fallbackFeatures) : normalizeFeatures(raw.features);
+    raw.features === undefined
+      ? resolveFeatures(registry, fallbackFeatures)
+      : normalizeFeatures(registry, raw.features);
   const name = typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim().slice(0, 40) : undefined;
   return {
     id,
@@ -213,63 +183,130 @@ const normalizePreset = (
   };
 };
 
+/**
+ * Normalizes one language's preset map: built-ins are always present with their seed features
+ * when absent, user presets are kept, and unknown feature ids are dropped.
+ */
+const normalizePresetMap = (
+  registry: FeatureRegistry,
+  saved: unknown,
+  legacyElements?: Record<string, unknown>,
+): Record<string, StudyPreset> => {
+  const raw = (saved && typeof saved === 'object' ? saved : {}) as Record<string, unknown>;
+  const presets: Record<string, StudyPreset> = {};
+  for (const seed of registry.builtIns) {
+    presets[seed.id] =
+      normalizePreset(registry, raw[seed.id], seed.id, seed.features) ?? defaultPreset(registry, seed.id);
+  }
+  for (const [id, preset] of Object.entries(raw)) {
+    if (presets[id]) continue;
+    const normalized = normalizePreset(registry, preset, id);
+    if (normalized) presets[id] = normalized;
+  }
+  if (legacyElements) {
+    const elements = normalizeElements(legacyElements);
+    if (Object.keys(elements).length) {
+      const target = presets['pos-basic'] ?? defaultPreset(registry, registry.builtIns[0]?.id ?? 'plain');
+      presets[target.id] = { ...target, elements, customized: true };
+    }
+  }
+  return presets;
+};
+
+const activeIdFor = (
+  registry: FeatureRegistry,
+  preselected: unknown,
+  presets: Record<string, StudyPreset>,
+): string => {
+  const id = typeof preselected === 'string' ? preselected : '';
+  return presets[id] ? id : registry.defaultPresetId;
+};
+
 /** v2 kept one profile per built-in mode; its element overrides carry over verbatim. */
-const migrateV2 = (raw: Record<string, unknown>): SubtitleStyle => {
+const migrateV2Presets = (registry: FeatureRegistry, raw: Record<string, unknown>): Record<string, StudyPreset> => {
   const profiles = (raw.profiles && typeof raw.profiles === 'object' ? raw.profiles : {}) as Record<
     string,
     unknown
   >;
   const presets: Record<string, StudyPreset> = {};
-  for (const id of BUILT_IN_PRESET_IDS) {
-    const profile = profiles[id] as { elements?: Record<string, unknown> } | undefined;
+  for (const seed of registry.builtIns) {
+    const profile = profiles[seed.id] as { elements?: Record<string, unknown> } | undefined;
     const elements = normalizeElements(profile?.elements);
     // `chunk.bunsetsu:all` was the single chunk element before positions existed.
     const legacyChunk = elements['chunk.bunsetsu:all'];
     if (legacyChunk) {
       delete elements['chunk.bunsetsu:all'];
-      for (const chunkId of CHUNK_ELEMENTS) elements[chunkId] = { ...legacyChunk };
+      for (const position of ['first', 'middle', 'last', 'only']) {
+        elements[`chunk.bunsetsu:${position}`] = { ...legacyChunk };
+      }
     }
-    const preset = defaultPreset(id);
+    const preset = defaultPreset(registry, seed.id);
     const customized = Object.keys(elements).length > 0;
-    presets[id] = { ...preset, elements, ...(customized ? { customized: true } : {}) };
+    presets[seed.id] = { ...preset, elements, ...(customized ? { customized: true } : {}) };
   }
-  const active = typeof raw.activeProfileId === 'string' ? raw.activeProfileId : '';
-  return {
-    version: 3,
-    activePresetId: presets[active] ? active : 'pos-basic',
-    box: { ...DEFAULT_BOX },
-    presets,
-  };
+  return presets;
+};
+
+/**
+ * v3 stored one preset map for Japanese only. It moves into the `ja` bucket untouched; every
+ * other language is seeded with its defaults. The caller backs up the v3 document first.
+ */
+const migrateV3 = (raw: Record<string, unknown>): SubtitleStyle => {
+  const presets: SubtitleStyle['presets'] = {};
+  const activePresetId: SubtitleStyle['activePresetId'] = {};
+  const savedJa = raw.presets;
+  for (const [language, registry] of Object.entries(FEATURE_REGISTRIES)) {
+    presets[language] = normalizePresetMap(registry, language === 'ja' ? savedJa : undefined);
+    activePresetId[language] = activeIdFor(
+      registry,
+      language === 'ja' ? raw.activePresetId : undefined,
+      presets[language],
+    );
+  }
+  return { version: 4, activePresetId, box: normalizeBoxStyle(raw.box), presets };
 };
 
 export const normalizeSubtitleStyle = (value: unknown): SubtitleStyle => {
   const raw = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>;
-  if (raw.version !== 3) return migrateV2(raw);
+
+  if (raw.version === 2 || (raw.version !== 3 && raw.version !== 4)) {
+    const presets: SubtitleStyle['presets'] = {};
+    const activePresetId: SubtitleStyle['activePresetId'] = {};
+    for (const [language, registry] of Object.entries(FEATURE_REGISTRIES)) {
+      presets[language] = migrateV2Presets(registry, language === 'ja' ? raw : {});
+      activePresetId[language] = activeIdFor(
+        registry,
+        language === 'ja' ? raw.activeProfileId : undefined,
+        presets[language],
+      );
+    }
+    return { version: 4, activePresetId, box: { ...DEFAULT_BOX }, presets };
+  }
+
+  if (raw.version === 3) return migrateV3(raw);
 
   const saved = (raw.presets && typeof raw.presets === 'object' ? raw.presets : {}) as Record<
     string,
     unknown
   >;
-  const presets: Record<string, StudyPreset> = {};
-  for (const id of BUILT_IN_PRESET_IDS) {
-    presets[id] = normalizePreset(saved[id], id, BUILT_IN_PRESET_FEATURES[id]) ?? defaultPreset(id);
+  const savedActive = (raw.activePresetId && typeof raw.activePresetId === 'object'
+    ? raw.activePresetId
+    : {}) as Record<string, unknown>;
+  const presets: SubtitleStyle['presets'] = {};
+  const activePresetId: SubtitleStyle['activePresetId'] = {};
+  for (const [language, registry] of Object.entries(FEATURE_REGISTRIES)) {
+    presets[language] = normalizePresetMap(registry, saved[language]);
+    activePresetId[language] = activeIdFor(registry, savedActive[language], presets[language]);
   }
-  for (const [id, preset] of Object.entries(saved)) {
-    if (presets[id]) continue;
-    const normalized = normalizePreset(preset, id);
-    if (normalized) presets[id] = normalized;
-  }
-  const active = typeof raw.activePresetId === 'string' ? raw.activePresetId : '';
-  return {
-    version: 3,
-    activePresetId: presets[active] ? active : 'pos-basic',
-    box: normalizeBoxStyle(raw.box),
-    presets,
-  };
+  return { version: 4, activePresetId, box: normalizeBoxStyle(raw.box), presets };
 };
 
-export const activePreset = (style: SubtitleStyle): StudyPreset =>
-  style.presets[style.activePresetId] ?? defaultPreset('pos-basic');
+export const activePreset = (style: SubtitleStyle, language: LanguageId): StudyPreset => {
+  const registry = featuresFor(language);
+  const bucket = style.presets[language];
+  const id = style.activePresetId[language];
+  return bucket?.[id] ?? Object.values(bucket ?? {})[0] ?? defaultPreset(registry, registry.defaultPresetId);
+};
 
 /**
  * Fields resolve one by one, so a mode that only owns an opacity still shows the global colour.
@@ -286,55 +323,83 @@ export const effectiveBox = (style: SubtitleStyle, preset: StudyPreset): BoxStyl
 };
 
 /** Defaults merged with the preset's overrides — what the renderer actually uses. */
-export const presetElements = (preset: StudyPreset): Record<ElementId, ElementStyle> => {
-  const elements = defaultElementsFor(preset.features);
+export const presetElements = (
+  registry: FeatureRegistry,
+  preset: StudyPreset,
+): Record<ElementId, ElementStyle> => {
+  const elements = defaultElementsFor(registry, preset.features);
   for (const [id, style] of Object.entries(preset.elements)) {
     elements[id] = { ...(elements[id] ?? {}), ...style };
   }
   return elements;
 };
 
-export const presetRequiresRemote = (preset: StudyPreset): boolean =>
-  featuresRequireRemote(preset.features);
+export const presetRequiresRemote = (registry: FeatureRegistry, preset: StudyPreset): boolean =>
+  featuresRequireRemote(registry, preset.features);
 
 /** Drops features that need the grammar service, keeping everything that works locally. */
-export const localOnlyPreset = (preset: StudyPreset): StudyPreset => {
-  if (!presetRequiresRemote(preset)) return preset;
-  const features = localFeatures(resolveFeatures(preset.features));
+export const localOnlyPreset = (registry: FeatureRegistry, preset: StudyPreset): StudyPreset => {
+  if (!presetRequiresRemote(registry, preset)) return preset;
+  const features = localFeatures(registry, resolveFeatures(registry, preset.features));
   return { ...preset, features, base: baseForFeatures(features) };
 };
 
-export const presetLabelKey = (preset: StudyPreset): MessageKey | null =>
-  isBuiltInPresetId(preset.id) ? BUILT_IN_PRESET_LABEL_KEY[preset.id] : null;
+export const presetLabelKey = (registry: FeatureRegistry, preset: StudyPreset): MessageKey | null =>
+  registry.builtIns.find((seed) => seed.id === preset.id)?.labelKey ?? null;
+
+export const presetDetailKey = (registry: FeatureRegistry, preset: StudyPreset): MessageKey | null =>
+  registry.builtIns.find((seed) => seed.id === preset.id)?.detailKey ?? null;
 
 /** i18n label for built-ins, the stored name for user presets. */
-export const presetDisplayName = (preset: StudyPreset, label: (key: MessageKey) => string): string => {
-  const key = presetLabelKey(preset);
+export const presetDisplayName = (
+  registry: FeatureRegistry,
+  preset: StudyPreset,
+  label: (key: MessageKey) => string,
+): string => {
+  const key = presetLabelKey(registry, preset);
   return key ? label(key) : (preset.name ?? preset.id);
 };
 
-export const presetOrder = (style: SubtitleStyle): string[] => {
-  const builtIn = BUILT_IN_PRESET_IDS.filter((id) => style.presets[id]);
-  const custom = Object.keys(style.presets).filter((id) => !isBuiltInPresetId(id));
+export const presetOrder = (
+  registry: FeatureRegistry,
+  style: SubtitleStyle,
+  language: LanguageId,
+): string[] => {
+  const presets = style.presets[language] ?? {};
+  const builtIn = registry.builtIns.map((seed) => seed.id).filter((id) => presets[id]);
+  const custom = Object.keys(presets).filter((id) => !isBuiltInPresetId(registry, id));
   return [...builtIn, ...custom];
 };
 
 export const isSubtitleStyleKey = (key: string): boolean => key === SUBTITLE_STYLE_KEY;
 
 export const loadSubtitleStyle = async (): Promise<SubtitleStyle> => {
-  const raw = await chrome.storage.local.get([SUBTITLE_STYLE_KEY, LEGACY_POS_COLORS_KEY]);
+  const raw = await chrome.storage.local.get([
+    SUBTITLE_STYLE_KEY,
+    LEGACY_POS_COLORS_KEY,
+    SUBTITLE_STYLE_V3_BACKUP_KEY,
+  ]);
   const stored = raw[SUBTITLE_STYLE_KEY];
-  if (stored) return normalizeSubtitleStyle(stored);
+  if (stored) {
+    const version = (stored as { version?: unknown }).version;
+    // Keep one copy of the pre-v4 document before the first v4 save overwrites it.
+    if ((version === 2 || version === 3) && !raw[SUBTITLE_STYLE_V3_BACKUP_KEY]) {
+      await chrome.storage.local.set({ [SUBTITLE_STYLE_V3_BACKUP_KEY]: stored });
+    }
+    return normalizeSubtitleStyle(stored);
+  }
   const base = defaultSubtitleStyle();
   // Migrate the pre-v3 palette verbatim; do not reset colours a user already chose.
   const legacy = raw[LEGACY_POS_COLORS_KEY] as Record<string, unknown> | undefined;
   if (legacy) {
-    const preset = base.presets['pos-basic'];
-    for (const group of POS_GROUPS) {
-      const color = normalizePosColor(legacy[group]);
-      if (color) preset.elements[POS_ELEMENT[group]] = { color };
+    const preset = base.presets.ja?.['pos-basic'];
+    if (preset) {
+      for (const group of POS_GROUPS) {
+        const color = normalizePosColor(legacy[group]);
+        if (color) preset.elements[POS_ELEMENT[group]] = { color };
+      }
+      preset.customized = true;
     }
-    preset.customized = true;
   }
   return base;
 };

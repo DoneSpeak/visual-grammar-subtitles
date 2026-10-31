@@ -126,8 +126,8 @@ test('study modes compose features and paint a visible chunk block', async () =>
 
   // An element row switches off inline: the token it styled falls back to the default colour.
   await options.getByRole('button', { name: /^词性/ }).click();
-  await expect(options.getByRole('button', { name: '设置形容' })).toBeVisible();
-  const adjectiveColor = () =>
+  await expect(options.getByRole('button', { name: '设置名词' })).toBeVisible();
+  const nounColor = () =>
     options.evaluate(() => {
       const span = [...document.querySelectorAll('[data-preview="main"] span')].find(
         (el) => el.textContent === '静か',
@@ -135,10 +135,10 @@ test('study modes compose features and paint a visible chunk block', async () =>
       return span ? getComputedStyle(span).color : '';
     });
   const WHITE = 'rgb(255, 255, 255)';
-  expect(await adjectiveColor()).not.toBe(WHITE);
-  await options.getByRole('switch', { name: '显示形容' }).click();
-  await expect.poll(adjectiveColor).toBe(WHITE);
-  await expect(options.getByRole('switch', { name: '显示形容' })).not.toBeChecked();
+  expect(await nounColor()).not.toBe(WHITE);
+  await options.getByRole('switch', { name: '显示名词' }).click();
+  await expect.poll(nounColor).toBe(WHITE);
+  await expect(options.getByRole('switch', { name: '显示名词' })).not.toBeChecked();
 
   // A built-in can be copied; the copy becomes active with everything carried over.
   await options.getByRole('button', { name: '复制', exact: true }).click();
@@ -146,7 +146,7 @@ test('study modes compose features and paint a visible chunk block', async () =>
     'aria-pressed',
     'true',
   );
-  await expect(options.getByRole('switch', { name: '显示形容' })).not.toBeChecked();
+  await expect(options.getByRole('switch', { name: '显示名词' })).not.toBeChecked();
   await expect(options.getByRole('button', { name: '删除', exact: true })).toBeVisible();
 
   // Only the mode that needs the grammar service carries its symbol, and the symbol opens it.
