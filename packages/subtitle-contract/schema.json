@@ -1,0 +1,383 @@
+{
+  "type": "object",
+  "properties": {
+    "format": {
+      "enum": [
+        "subtitle-annotation"
+      ]
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+    },
+    "documentId": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "enum": [
+            "srt",
+            "vtt",
+            "cue-json-v1"
+          ]
+        },
+        "rawSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "normalizationVersion": {
+          "enum": [
+            "track-v1"
+          ]
+        },
+        "trackHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "format",
+        "rawSha256",
+        "normalizationVersion",
+        "trackHash"
+      ]
+    },
+    "track": {
+      "type": "object",
+      "properties": {
+        "language": {
+          "enum": [
+            "ja"
+          ]
+        },
+        "cues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "startMs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "endMs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "startMs",
+              "endMs",
+              "text"
+            ]
+          }
+        }
+      },
+      "required": [
+        "language",
+        "cues"
+      ]
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "engine": {
+            "type": "string"
+          },
+          "engineVersion": {
+            "type": "string"
+          },
+          "modelVersion": {
+            "type": "string"
+          },
+          "dictionaryVersion": {
+            "type": "string"
+          },
+          "ruleVersion": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "local",
+              "remote"
+            ]
+          },
+          "configHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "engine",
+          "engineVersion",
+          "modelVersion",
+          "dictionaryVersion",
+          "ruleVersion",
+          "kind",
+          "configHash",
+          "capabilities"
+        ]
+      }
+    },
+    "units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "complete",
+              "failed"
+            ]
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "text": {
+            "type": "string"
+          },
+          "offsetEncoding": {
+            "enum": [
+              "utf16"
+            ]
+          },
+          "mappings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "unitStart": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "unitEnd": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "cueId": {
+                  "type": "string"
+                },
+                "cueStart": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "cueEnd": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "unitStart",
+                "unitEnd",
+                "cueId",
+                "cueStart",
+                "cueEnd"
+              ]
+            }
+          },
+          "tokens": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "end": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "surface": {
+                  "type": "string"
+                },
+                "pos": {
+                  "enum": [
+                    "NOUN",
+                    "PROPN",
+                    "VERB",
+                    "AUX",
+                    "ADJ",
+                    "ADV",
+                    "PRON",
+                    "ADP",
+                    "PART",
+                    "SCONJ",
+                    "CCONJ",
+                    "DET",
+                    "NUM",
+                    "INTJ",
+                    "PUNCT",
+                    "SYM",
+                    "X"
+                  ]
+                },
+                "lemma": {
+                  "type": "string"
+                },
+                "reading": {
+                  "type": "string"
+                },
+                "rawPos": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "start",
+                "end",
+                "surface",
+                "pos"
+              ]
+            }
+          },
+          "annotations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "layer": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "quality": {
+                  "enum": [
+                    "heuristic",
+                    "model",
+                    "reviewed"
+                  ]
+                },
+                "spans": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "end": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "layer",
+                "label",
+                "quality",
+                "spans"
+              ]
+            }
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "dependentTokenId": {
+                  "type": "string"
+                },
+                "headTokenId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "relation": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dependentTokenId",
+                "headTokenId",
+                "relation"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "providerId",
+          "status",
+          "capabilities",
+          "text",
+          "offsetEncoding",
+          "mappings",
+          "tokens",
+          "annotations",
+          "dependencies"
+        ]
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "format",
+    "schemaVersion",
+    "documentId",
+    "createdAt",
+    "source",
+    "track",
+    "providers",
+    "units",
+    "diagnostics",
+    "extensions"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -39,6 +39,9 @@
   --switch-track: #dcdce1;
   --switch-knob: #ffffff;
   --switch-knob-on: #ffffff;
+
+  /* OpenMoji drawings use dark strokes, so their tile stays light in both themes. */
+  --image-tile: #f6f7f9;
 }
 
 :root[data-theme='dark'] {
@@ -76,4 +79,6 @@
   --switch-track: #3a3a40;
   --switch-knob: #ededef;
   --switch-knob-on: #17171a;
+
+  --image-tile: #f6f7f9;
 }

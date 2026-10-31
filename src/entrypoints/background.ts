@@ -1,9 +1,11 @@
+import { nlpMessage } from '@/nlp/background';
 import { defineBackground } from 'wxt/utils/define-background';
 import kuromoji from '@sglkc/kuromoji';
 import type { IpadicFeatures } from '@sglkc/kuromoji';
 import type { DictEntry, DictFile } from '@/shared/dictionary';
 import { DictIndex } from '@/shared/dictionary';
 import type { Token } from '@/shared/types';
+import { hydrateVocabulary, type VocabularyFile } from '@/shared/vocabulary';
 import { pageKeyFromUrl } from '@/shared/storage';
 import { listDir, mergeSeries, searchSeries } from '@/features/scraper/kitsunekko';
 import { translateToEnglish } from '@/shared/translate';
@@ -81,12 +83,17 @@ let dictPromise: Promise<DictIndex | null> | null = null;
 
 const getDictIndex = (): Promise<DictIndex | null> => {
   if (dictPromise) return dictPromise;
-  dictPromise = fetch(chrome.runtime.getURL('dict/jlpt-dict.json'))
-    .then((res) => {
+  dictPromise = Promise.all([
+    fetch(chrome.runtime.getURL('dict/jlpt-dict.json')).then((res) => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json() as Promise<DictFile>;
-    })
-    .then((file) => new DictIndex(file.entries))
+    }),
+    // Optional: a build without the visual vocabulary still yields a text-only card.
+    fetch(chrome.runtime.getURL('dict/vocabulary.json'))
+      .then((res) => (res.ok ? (res.json() as Promise<VocabularyFile>) : null))
+      .catch(() => null),
+  ])
+    .then(([file, vocabulary]) => new DictIndex(hydrateVocabulary(file.entries, vocabulary)))
     .catch((err) => {
       console.error('[jp-sub] dictionary load failed', err);
       return null;
@@ -95,6 +102,11 @@ const getDictIndex = (): Promise<DictIndex | null> => {
 };
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg?.type === 'nlp') {
+    void nlpMessage(msg).then(sendResponse).catch(error => sendResponse({ error: String(error) }));
+    return true;
+  }
+
   if (msg?.type === 'pageKey') {
     const url = sender.tab?.url ?? '';
     sendResponse({ key: url ? pageKeyFromUrl(url) : '', url });
@@ -110,6 +122,23 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg?.type === 'bilibiliPgcSeason') {
     void fetchPgcSeason({ epId: msg.epId, seasonId: msg.seasonId }).then((season) => {
       sendResponse(season ?? { error: t('errors.bilibiliInfo') });
+    });
+    return true;
+  }
+
+  if (msg?.type === 'lookupTokens') {
+    const tokens = msg.tokens as Token[];
+    if (!Array.isArray(tokens) || tokens.length > 20000) { sendResponse({ error: 'Invalid tokens' }); return false; }
+    void getDictIndex().then(dict => {
+      const entries: DictEntry[] = [];
+      const result = tokens.map(token => {
+        const index = dict?.find(token);
+        if (index === undefined || !dict) return token;
+        const dictIdx = entries.length;
+        entries.push(dict.entry(index));
+        return { ...token, dictIdx };
+      });
+      sendResponse({ tokens: result, entries });
     });
     return true;
   }

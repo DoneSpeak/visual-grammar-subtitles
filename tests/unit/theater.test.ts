@@ -32,6 +32,7 @@ const setup = (videoBox: DOMRect, wrapperBox: DOMRect, outerBox: DOMRect) => {
 afterEach(() => {
   document.getElementById('jp-theater-style')?.remove();
   document.documentElement.removeAttribute('data-jp-theater-scroll');
+  document.documentElement.style.removeProperty('--jp-split-size');
   document.body.replaceChildren();
   document.body.removeAttribute('data-jp-theater-el');
   document.body.removeAttribute('data-jp-theater-scroll');
@@ -81,5 +82,34 @@ describe('Theater', () => {
 
     theater.exit();
     expect(theater.active()).toBe(false);
+  });
+
+  it('reserves a transcript strip and survives a re-enter', () => {
+    const { wrapper, video } = setup(box(0, 0, 800, 450), box(0, 0, 800, 450), box(0, 0, 800, 600));
+    const theater = new Theater(video);
+
+    theater.enter();
+    theater.setSplit('side', 380);
+    // The video is itself a pinned root; the strip must shrink it, not just its wrapper.
+    expect(wrapper.getAttribute('data-jp-theater-split')).toBe('side');
+    expect(video.getAttribute('data-jp-theater-split')).toBe('side');
+    expect(document.documentElement.style.getPropertyValue('--jp-split-size')).toBe('380px');
+
+    theater.setSplitSize(420);
+    expect(document.documentElement.style.getPropertyValue('--jp-split-size')).toBe('420px');
+
+    // sync() exits and re-enters when the player rebuilds; the desired split must come back.
+    theater.exit();
+    expect(video.hasAttribute('data-jp-theater-split')).toBe(false);
+    expect(document.documentElement.style.getPropertyValue('--jp-split-size')).toBe('');
+    theater.enter();
+    expect(video.getAttribute('data-jp-theater-split')).toBe('side');
+    expect(document.documentElement.style.getPropertyValue('--jp-split-size')).toBe('420px');
+
+    theater.setSplit(null);
+    expect(video.hasAttribute('data-jp-theater-split')).toBe(false);
+    expect(document.documentElement.style.getPropertyValue('--jp-split-size')).toBe('');
+
+    theater.destroy();
   });
 });

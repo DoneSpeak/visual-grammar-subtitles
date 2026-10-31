@@ -18,6 +18,8 @@ export default defineConfig({
     minimum_chrome_version: '120',
     permissions: ['storage', 'unlimitedStorage'],
     host_permissions: ['<all_urls>'],
+    // The word card lives in the page's Shadow DOM, so its <img> needs public URLs.
+    web_accessible_resources: [{ resources: ['vocab/openmoji/*.svg'], matches: ['<all_urls>'] }],
     action: {
       default_title: '__MSG_extActionTitle__',
     },

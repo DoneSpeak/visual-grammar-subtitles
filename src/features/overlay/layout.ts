@@ -45,6 +45,9 @@ export type OptimizeInput = {
   /** The user's slider value: a soft lower bound. Shrinking below it is penalised; growing above
    *  it is nearly free, because filling the box is the point of the box. */
   preferredFont?: number;
+  /** A hard output size: every cue paints at this font, whatever the box or cue length says.
+   *  The optimizer still chooses line breaks and line height around it. */
+  fixedFont?: number;
   /** Per-line height multiplier for ruby/furigana, which sits above the base glyphs. */
   rubyFactor?: number;
   minLineHeight?: number;
@@ -135,15 +138,18 @@ const fallback = (input: OptimizeInput, maxLineWidth: number, paragraphs: number
   const ruby = input.rubyFactor ?? 1;
   const minLh = input.minLineHeight ?? DEFAULT_MIN_LINE_HEIGHT;
   // Keep one line per paragraph: breaking more would be arbitrary without the optimizer, and
-  // shrinking below 1px is still better than painting past the box edges.
-  const fontPx = Math.max(
-    0.01,
-    Math.min(
-      input.maxFont,
-      maxLineWidth > 0 ? width / maxLineWidth : input.maxFont,
-      height / Math.max(1, paragraphs * minLh * ruby),
-    ),
-  );
+  // shrinking below 1px is still better than painting past the box edges. A fixed output size
+  // is authoritative: it may overflow rather than shrink.
+  const fontPx = input.fixedFont
+    ? input.fixedFont
+    : Math.max(
+        0.01,
+        Math.min(
+          input.maxFont,
+          maxLineWidth > 0 ? width / maxLineWidth : input.maxFont,
+          height / Math.max(1, paragraphs * minLh * ruby),
+        ),
+      );
   const lineHeight = clamp(height / Math.max(1, paragraphs * fontPx * ruby), minLh, input.maxLineHeight ?? DEFAULT_MAX_LINE_HEIGHT);
   return {
     fontPx,
@@ -166,7 +172,7 @@ export const optimizeLayout = (input: OptimizeInput): OptimizeResult => {
   const shown = paragraphs.filter((para) => para.length > 0).length;
   if (!shown || width < 1 || height < 1) {
     return {
-      fontPx: Math.max(1, Math.min(maxFont, minFont)),
+      fontPx: input.fixedFont ?? Math.max(1, Math.min(maxFont, minFont)),
       lineHeight: input.minLineHeight ?? DEFAULT_MIN_LINE_HEIGHT,
       letterSpacingEm: 0,
       lineStarts: identityPlan(input.paragraphs),
@@ -179,7 +185,8 @@ export const optimizeLayout = (input: OptimizeInput): OptimizeResult => {
   const minLh = input.minLineHeight ?? DEFAULT_MIN_LINE_HEIGHT;
   const maxLh = input.maxLineHeight ?? DEFAULT_MAX_LINE_HEIGHT;
   const maxLetterEm = input.maxLetterEm ?? DEFAULT_MAX_LETTER_EM;
-  const preferred = input.preferredFont ?? (minFont + maxFont) / 2;
+  const fixedFont = input.fixedFont && input.fixedFont > 0 ? input.fixedFont : null;
+  const preferred = input.preferredFont ?? fixedFont ?? (minFont + maxFont) / 2;
 
   // Flatten paragraphs; remember each unit's local index so break offsets map back.
   const flat: LayoutUnit[] = [];
@@ -332,8 +339,10 @@ export const optimizeLayout = (input: OptimizeInput): OptimizeResult => {
   for (let lines = Math.max(1, shown); lines <= maxLines; lines++) {
     const required = bottleneck(lines);
     if (required === null) continue;
-    const font = Math.min(maxFont, width / Math.max(required, 1e-6), height / (lines * minLh * ruby));
-    if (font < lineFloor) continue;
+    const fitted = Math.min(maxFont, width / Math.max(required, 1e-6), height / (lines * minLh * ruby));
+    // A fixed output size only drives the break search; it is never shrunk to fit the box.
+    const font = fixedFont ?? fitted;
+    if (!fixedFont && font < lineFloor) continue;
     const ends = solve(lines, font);
     if (!ends) continue;
     const lineHeight = clamp(height / (lines * font * ruby), minLh, maxLh);

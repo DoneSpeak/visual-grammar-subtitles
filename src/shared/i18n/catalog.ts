@@ -13,8 +13,9 @@ export const enGB = {
   ...sections.optionsRules.en,
   ...sections.optionsBinds.en,
   ...sections.optionsDict.en,
+  ...sections.optionsVocab.en,
   ...sections.optionsKeys.en,
-  ...sections.optionsColors.en,
+  ...sections.optionsModes.en,
   ...sections.overlay.en,
   ...sections.content.en,
 };
@@ -33,8 +34,9 @@ export const zhCN: Record<MessageKey, Message> = {
   ...sections.optionsRules.zh,
   ...sections.optionsBinds.zh,
   ...sections.optionsDict.zh,
+  ...sections.optionsVocab.zh,
   ...sections.optionsKeys.zh,
-  ...sections.optionsColors.zh,
+  ...sections.optionsModes.zh,
   ...sections.overlay.zh,
   ...sections.content.zh,
 };

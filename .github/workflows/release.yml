@@ -1,0 +1,103 @@
+name: release
+
+# 发布流程：tag `v*` → 校验 → 构建 zip → 上传并提交 Chrome Web Store 审核。
+# 版本号唯一来源是 package.json；tag 必须与之匹配，否则 verify 阶段失败。
+# 走 Chrome Web Store API v2（v1.1 已于 2026-10-15 停止支持）。
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 只构建不发布（跳过上传与提交审核）
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '22'
+  PNPM_VERSION: '11'
+
+jobs:
+  verify:
+    name: typecheck / test / build / e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # tag 与 package.json 版本必须一致，否则发布出去的清单版本与 tag 不符。
+      - name: Check version matches tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "::error::tag v$tag 与 package.json 版本 $pkg 不一致"
+            exit 1
+          fi
+
+      - run: pnpm typecheck
+      - run: pnpm test
+
+      # 同时产出 .output/chrome-mv3 与 .output/jp-subtitle-overlay-<version>-chrome.zip
+      - run: pnpm build
+      - run: pnpm zip
+
+      - name: Install Playwright chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      # e2e 加载 .output/chrome-mv3，必须在上一步 build 之后
+      - run: pnpm e2e
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-zip
+          path: .output/*-chrome.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: upload to Chrome Web Store
+    needs: verify
+    # 只在 tag 推送时发布；workflow_dispatch 默认 dry-run
+    if: startsWith(github.ref, 'refs/tags/') || inputs.dry_run == false
+    runs-on: ubuntu-latest
+    environment: chrome-web-store
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: extension-zip
+          path: .output
+
+      # 本地 `make publish` 与这里是同一份实现，见 scripts/publish-cws.mjs
+      - name: Upload and publish
+        env:
+          CWS_PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CWS_ITEM_ID: ${{ secrets.CWS_ITEM_ID }}
+          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: node scripts/publish-cws.mjs

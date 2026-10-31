@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; form-action 'none'; base-uri 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>本机日语 NLP 服务 · 设置</title>
+<style>
+  :root { color-scheme: light dark; --bg: #f6f6f7; --card: #fff; --text: #1c1c1e; --muted: #6b6b70; --line: #d9d9de; --primary: #2f6fed; --danger: #c0392b; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #17171a; --card: #202024; --text: #ececf0; --muted: #9b9ba3; --line: #34343a; --primary: #6f9bff; --danger: #ff7b6b; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 32px 16px; background: var(--bg); color: var(--text); font: 14px/1.55 -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+  main { max-width: 680px; margin: 0 auto; display: grid; gap: 16px; }
+  h1 { font-size: 20px; margin: 0; }
+  p.lead { margin: 0; color: var(--muted); }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  h2 { font-size: 14px; margin: 0 0 10px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  code, input, .origin { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+  .value { flex: 1 1 260px; min-width: 0; overflow-wrap: anywhere; padding: 7px 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 7px; }
+  button { font: inherit; padding: 6px 12px; border-radius: 7px; border: 1px solid var(--line); background: var(--card); color: var(--text); cursor: pointer; }
+  button:hover { border-color: var(--primary); }
+  button.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+  button.danger { color: var(--danger); border-color: transparent; padding: 2px 8px; }
+  input[type=text] { flex: 1 1 260px; min-width: 0; padding: 7px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); color: var(--text); }
+  ul { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 6px; }
+  li { display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; }
+  .origin { overflow-wrap: anywhere; }
+  .muted { color: var(--muted); }
+  #status { min-height: 1.5em; color: var(--muted); }
+  #status.error { color: var(--danger); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>本机日语 NLP 服务</h1>
+    <p class="lead">把下面的服务 URL 与 API Token 填进浏览器插件的 NLP 设置。允许来源改动立即生效，无需重启服务。</p>
+  </header>
+
+  <section>
+    <h2>服务 URL</h2>
+    <div class="row">
+      <span class="value" id="url">…</span>
+      <button data-copy="url">复制</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>API Token</h2>
+    <div class="row">
+      <span class="value" id="token">••••••••••••</span>
+      <button id="reveal" type="button">显示</button>
+      <button data-copy="token">复制</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>允许来源</h2>
+    <ul id="origins"></ul>
+    <div class="row">
+      <input id="new-origin" type="text" placeholder="chrome-extension://<32 位扩展 ID>" spellcheck="false" autocomplete="off">
+      <button id="add" class="primary">添加</button>
+    </div>
+    <p class="muted">扩展 ID 可复制插件设置页显示的 Allowed origin。留空并逐个删除可撤销全部允许。</p>
+  </section>
+
+  <section id="pending-section" hidden>
+    <h2>检测到的新扩展来源</h2>
+    <ul id="pending"></ul>
+    <p class="muted">这是插件刚刚尝试连接时上报的 Origin。确认是你自己的扩展后再允许。</p>
+  </section>
+
+  <p id="status" role="status" aria-live="polite"></p>
+</main>
+
+<script>
+  const state = { url: '', token: '', origins: [], pendingOrigins: [] };
+  const $ = (id) => document.getElementById(id);
+
+  function setStatus(message, isError = false) {
+    const node = $('status');
+    node.textContent = message;
+    node.classList.toggle('error', isError);
+  }
+
+  function render() {
+    $('url').textContent = state.url;
+    $('token').textContent = state.revealed ? state.token : '••••••••••••••••';
+    const list = $('origins');
+    list.replaceChildren(...state.origins.map((origin) => {
+      const item = document.createElement('li');
+      const label = document.createElement('span');
+      label.className = 'origin';
+      label.textContent = origin;
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'danger';
+      remove.textContent = '删除';
+      remove.addEventListener('click', () => save(state.origins.filter((value) => value !== origin)));
+      item.append(label, remove);
+      return item;
+    }));
+    if (!state.origins.length) {
+      const empty = document.createElement('li');
+      empty.className = 'muted';
+      empty.textContent = '尚未允许任何来源';
+      list.append(empty);
+    }
+    const pending = state.pendingOrigins.filter((origin) => !state.origins.includes(origin));
+    $('pending-section').hidden = pending.length === 0;
+    $('pending').replaceChildren(...pending.map((origin) => {
+      const item = document.createElement('li');
+      const label = document.createElement('span');
+      label.className = 'origin';
+      label.textContent = origin;
+      const allow = document.createElement('button');
+      allow.type = 'button';
+      allow.className = 'primary';
+      allow.textContent = '允许';
+      allow.addEventListener('click', () => save([...state.origins, origin]));
+      item.append(label, allow);
+      return item;
+    }));
+  }
+
+  async function load() {
+    try {
+      const response = await fetch('/api/v1/setup', { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      Object.assign(state, await response.json());
+      render();
+    } catch (error) {
+      setStatus(`读取设置失败：${error.message}`, true);
+    }
+  }
+
+  async function save(origins) {
+    try {
+      const response = await fetch('/api/v1/setup/origins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-NLP-Setup': '1' },
+        body: JSON.stringify({ origins }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.message || `HTTP ${response.status}`);
+      state.origins = body.origins;
+      render();
+      setStatus('已保存，立即生效。回到插件点击“检测连接”。');
+    } catch (error) {
+      setStatus(`保存失败：${error.message}`, true);
+    }
+  }
+
+  async function copy(id) {
+    try {
+      await navigator.clipboard.writeText(state[id]);
+      setStatus(id === 'token' ? 'Token 已复制' : 'URL 已复制');
+    } catch {
+      setStatus('复制失败，请手动选中文本复制', true);
+    }
+  }
+
+  $('reveal').addEventListener('click', () => {
+    state.revealed = !state.revealed;
+    $('reveal').textContent = state.revealed ? '隐藏' : '显示';
+    render();
+  });
+  document.querySelectorAll('[data-copy]').forEach((button) =>
+    button.addEventListener('click', () => copy(button.dataset.copy)));
+  $('add').addEventListener('click', () => {
+    const input = $('new-origin');
+    const value = input.value.trim().replace(/\/$/, '');
+    if (!/^chrome-extension:\/\/[a-p]{32}$/.test(value)) {
+      setStatus('格式应为 chrome-extension:// 加 32 位扩展 ID', true);
+      return;
+    }
+    if (state.origins.includes(value)) {
+      setStatus('该来源已在列表中');
+      return;
+    }
+    input.value = '';
+    save([...state.origins, value]);
+  });
+  $('new-origin').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') $('add').click();
+  });
+
+  setInterval(load, 2000);
+  load();
+</script>
+</body>
+</html>

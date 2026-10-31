@@ -1,14 +1,26 @@
 import type { DictEntry, DictLine } from '@/shared/dictionary';
 import { defaultDictSettings, type DictSettings } from '@/shared/dictSettings';
+import { withAlpha } from '@/shared/elementStyle';
 import { createIcon, type IconName } from '@/shared/icons';
 import { applyLanguage, getLanguage, t, type Language } from '@/shared/i18n';
-import { defaultPosColors, type PosColors } from '@/shared/posColors';
+import {
+  activePreset,
+  defaultSubtitleStyle,
+  effectiveBox,
+  presetDisplayName,
+  presetElements,
+  presetOrder,
+  saveSubtitleStyle,
+  type StudyPreset,
+  type SubtitleStyle,
+} from '@/shared/subtitleStyle';
 import { toRomaji } from '@/shared/romaji';
 import { DEFAULT_AD_DURATION } from '@/shared/siteRules';
 import type { AdSlot, LayerCfg, PageCfg, Token } from '@/shared/types';
 import { defaultLayer } from '@/shared/types';
-import { classifyBreak, optimizeLayout, segmentPlain, type LayoutUnit, type OptimizeResult } from './layout';
+import { segmentPlain } from './layout';
 import { renderPlain, renderTokens, type DictRender, type RenderOpts } from './tokenize/render';
+import { TRANSCRIPT_CSS } from './transcript';
 import type { PictureRect } from './video';
 
 type LayerId = 'a' | 'b';
@@ -40,10 +52,6 @@ type Controls = {
 /** fontScale is a fraction of the picture height; keep the rendered size inside this range. */
 const MIN_SCALE = 0.02;
 const MAX_SCALE = 0.12;
-/** Container height floor in CSS pixels, so a shrunken box stays grabbable. */
-const MIN_BOX_H = 24;
-/** Floor for the auto-fit, below which the text would stop being legible anyway. */
-const MIN_FONT_PX = 10;
 /** maxWidth is a fraction of the picture width. */
 const MIN_WIDTH = 0.2;
 const MAX_WIDTH = 1;
@@ -51,7 +59,6 @@ const MAX_WIDTH = 1;
 /** Display-duration presets in ms; 0 keeps the cue for its full duration. */
 const CAP_PRESETS: [() => string, number][] = [
   [() => t('overlay.cap.all'), 0],
-  [() => '0.2s', 200],
   [() => '0.5s', 500],
   [() => '1s', 1000],
 ];
@@ -75,7 +82,6 @@ export type OverlayCallbacks = {
   onAnchorChange: (layer: LayerId, x: number, y: number) => void;
   onFontScaleChange: (layer: LayerId, scale: number) => void;
   onMaxWidthChange: (layer: LayerId, width: number) => void;
-  onBoxHeightChange: (layer: LayerId, height: number) => void;
   onPickFile: (target: LayerId) => void;
   onLibraryPick: (target: LibraryTarget, key: string) => void;
   onOnlineSearch: (query: string) => void;
@@ -92,13 +98,21 @@ export type OverlayCallbacks = {
   onWordLookup: () => void;
   /** Expand the player to the whole viewport, or put it back. */
   onTheaterToggle: () => void;
+  /** The dock's transcript button: the host owns the cue list and the drawer state. */
+  onTranscriptToggle: () => void;
+  /** The settings panel opened; the host closes the transcript so the two surfaces cannot overlap. */
+  onPanelOpen: () => void;
 };
 
 const CSS = `
-:host { --card-bg: rgba(18,20,26,.97); --card-fg: #e8eaed; --card-muted: #99a3b0; --card-accent: #7fd3ff; --card-line: rgba(255,255,255,.12); --card-radius: 16px; position: fixed; inset: 0; pointer-events: none; z-index: 2147483646; font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif; }
+:host { --card-bg: rgba(18,20,26,.97); --card-fg: #e8eaed; --card-muted: #99a3b0; --card-accent: #7fd3ff; --card-line: rgba(255,255,255,.12); --card-tile-bg: #f6f7f9; --card-radius: 16px; position: fixed; inset: 0; pointer-events: none; z-index: 2147483646; font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif; }
 .stage { position: absolute; overflow: visible; }
 .layer { position: absolute; transform: translate(-50%, -100%); display: flex; align-items: center; justify-content: center; box-sizing: border-box; text-align: center; pointer-events: none; user-select: none; line-height: 1.38; font-weight: 700; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.92), 0 0 2px rgba(0,0,0,.92); transition: opacity 160ms linear; opacity: 0; }
 .layer .body { display: inline-block; max-width: 100%; pointer-events: auto; cursor: grab; }
+/* The subtitle box is a pseudo-element so its padding and bleed never enter the layout measurement. */
+.layer .body.boxed { position: relative; }
+.layer .body.boxed::before { content: ''; position: absolute; inset: -0.15em -0.45em; border-radius: 8px; background: var(--box-bg); }
+.layer .body.boxed > * { position: relative; }
 .layer.dragging { will-change: transform; }
 .layer.dragging .body { cursor: grabbing; }
 .layer .line { white-space: pre-wrap; }
@@ -107,7 +121,7 @@ const CSS = `
 .grip { position: absolute; pointer-events: auto; opacity: 0; touch-action: none; user-select: none; transition: opacity 140ms; left: -10px; top: -10px; width: 20px; height: 20px; border-radius: 50%; cursor: grab; background: transparent; box-shadow: none; }
 .layer.dragging .grip { cursor: grabbing; }
 /* One corner handle, faint at rest: the resize affordance stays findable without covering the picture. */
-.rz { position: absolute; pointer-events: auto; touch-action: none; user-select: none; transition: opacity 140ms; opacity: .2; right: -9px; bottom: -9px; width: 24px; height: 24px; cursor: nwse-resize; }
+.rz { position: absolute; pointer-events: auto; touch-action: none; user-select: none; transition: opacity 140ms; opacity: .2; left: 0; top: 0; width: 24px; height: 24px; cursor: nwse-resize; }
 .rz::after, .rz::before { content: ''; position: absolute; border-radius: 3px; background: rgba(255,255,255,.34); backdrop-filter: blur(6px) saturate(150%); -webkit-backdrop-filter: blur(6px) saturate(150%); box-shadow: 0 0 6px rgba(0,0,0,.4); }
 .rz::after { right: 6px; bottom: 6px; width: 5px; height: 16px; }
 .rz::before { right: 6px; bottom: 6px; width: 16px; height: 5px; }
@@ -141,6 +155,9 @@ const CSS = `
 .panel input[type=number] { width: 64px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: #e8eaed; border-radius: 5px; padding: 2px 5px; font-size: 11px; }
 .panel input[type=search] { flex: 1 1 auto; min-width: 0; width: 100%; box-sizing: border-box; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: #e8eaed; border-radius: 5px; padding: 3px 6px; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .panel input[type=search]:focus { outline: none; border-color: #7FD3FF; text-overflow: clip; }
+.panel select { flex: 1 1 auto; min-width: 0; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: #e8eaed; border-radius: 5px; padding: 2px 4px; font-size: 11px; }
+.panel select:focus { outline: none; border-color: #7FD3FF; }
+.panel select option { background: #181b22; color: #e8eaed; }
 .panel button.icon { width: 22px; height: 22px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
 .panel button.icon svg { width: 13px; height: 13px; display: block; }
 .panel .chips { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
@@ -180,7 +197,7 @@ const CSS = `
 .panel .row > .hint { flex: 1; min-width: 0; }
 .dict-word { pointer-events: auto; cursor: pointer; border-bottom: 1px dashed rgba(255,255,255,.5); }
 .dict-word:hover { background: rgba(127,211,255,.22); border-bottom-color: #7FD3FF; }
-.card { position: absolute; width: 320px; max-width: 92%; max-height: 62vh; overflow-y: auto; padding: 10px 20px 18px; border-radius: var(--card-radius); background: var(--card-bg); border: 1px solid rgba(255,255,255,.14); color: var(--card-fg); font-size: 12px; line-height: 1.5; text-align: center; pointer-events: auto; box-shadow: 0 18px 48px rgba(0,0,0,.6); transform: translate(-50%, -100%); }
+.card { position: absolute; z-index: 5; width: 320px; max-width: 92%; max-height: 62vh; overflow-y: auto; padding: 10px 20px 18px; border-radius: var(--card-radius); background: var(--card-bg); border: 1px solid rgba(255,255,255,.14); color: var(--card-fg); font-size: 12px; line-height: 1.5; text-align: center; pointer-events: auto; box-shadow: 0 18px 48px rgba(0,0,0,.6); transform: translate(-50%, -100%); }
 .card[hidden] { display: none; }
 .card .top { display: flex; align-items: center; justify-content: space-between; min-height: 26px; }
 .card .lv { padding: 1px 8px; border-radius: 99px; border: 1px solid rgba(127,211,255,.42); color: var(--card-accent); font-size: 10px; font-weight: 700; letter-spacing: .04em; }
@@ -191,17 +208,33 @@ const CSS = `
 .card .word { grid-column: 2; font-size: 44px; line-height: 1.15; font-weight: 700; letter-spacing: .01em; overflow-wrap: anywhere; }
 .card .word-line .icon-btn { grid-column: 3; justify-self: start; margin-left: 6px; width: 30px; height: 30px; flex: none; }
 .card .word-line .icon-btn svg { width: 19px; height: 19px; }
-.card .reading { margin-top: 6px; font-size: 18px; font-weight: 600; color: var(--card-accent); letter-spacing: .02em; }
-.card .romaji { margin-top: 2px; font-size: 16px; color: var(--card-muted); letter-spacing: .09em; }
-.card .pos { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 8px; }
+/* Reading and romaji share a line while they fit; flex-wrap splits them only when the pair
+   overflows the card, so short words stay compact without a fixed width cutoff. */
+.card .pron { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 0 10px; margin-top: 6px; }
+.card .pron .reading { font-size: 18px; font-weight: 600; color: var(--card-accent); letter-spacing: .02em; white-space: nowrap; }
+.card .pron .romaji { font-size: 16px; color: var(--card-muted); letter-spacing: .09em; white-space: nowrap; }
+/* Part of speech and gloss form one row; a long gloss wraps under the chips instead of
+   pushing them onto their own line. */
+.card .meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--card-line); }
+.card .pos { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
 .card .pos span { padding: 0 6px; border-radius: 4px; background: rgba(255,255,255,.08); color: #b9c0c9; font-size: 10px; line-height: 1.7; }
-.card .gloss { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--card-line); font-size: 14px; font-weight: 500; line-height: 1.45; }
+.card .gloss { font-size: 14px; font-weight: 500; line-height: 1.45; }
 .card .ex { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--card-line); text-align: left; }
 .card .ex-jp { display: flex; align-items: flex-start; gap: 6px; font-size: 12.5px; line-height: 1.55; }
 .card .ex-jp .text { flex: 1; min-width: 0; }
 .card .ex-jp .icon-btn { width: 22px; height: 22px; flex: none; margin-top: -2px; }
 .card .ex-jp .icon-btn svg { width: 12px; height: 12px; }
 .card .ex-en { margin-top: 2px; font-size: 11.5px; line-height: 1.5; color: var(--card-muted); }
+/* Image card: the picture anchors the word, so it gets its own light tile — OpenMoji
+   graphics are drawn for light surfaces and look muddy directly on the dark card. */
+.card.has-image { max-height: 70vh; }
+.card .img-tile { display: flex; align-items: center; justify-content: center; width: 100px; height: 100px; margin: 6px auto 0; border-radius: 20px; background: var(--card-tile-bg); opacity: 0; transition: opacity 160ms ease-out; }
+.card .img-tile.ready { opacity: 1; }
+.card .img-tile img { display: block; width: 84px; height: 84px; }
+.card.has-image .word { font-size: 38px; }
+.card .credit { margin-top: 10px; font-size: 9.5px; letter-spacing: .02em; color: var(--card-muted); opacity: .62; }
+.card .credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .card .img-tile { transition: none; } }
 `;
 
 /**
@@ -269,26 +302,26 @@ export class Overlay {
   private stage: HTMLDivElement;
   private layers: Record<LayerId, { wrap: HTMLDivElement; body: HTMLDivElement; grip: HTMLDivElement; rz: HTMLDivElement }>;
   private dockBtn: HTMLButtonElement;
+  private transcriptBtn: HTMLButtonElement;
   private theaterBtn: HTMLButtonElement;
+  /** The transcript drawer is created on first use; the host fills it with rows. */
+  private transcriptEl: HTMLDivElement | null = null;
   private panel: HTMLDivElement;
   private sizeTip: HTMLDivElement;
   private card: HTMLDivElement;
-  private cardLayer: LayerId | null = null;
+  /** 'doc' = a word hovered in the transcript, outside the two subtitle layers. */
+  private cardLayer: LayerId | 'doc' | null = null;
   private cardAnchor: HTMLElement | null = null;
   private cardTimer = 0;
   private hoverTimer = 0;
   private dictSettings: DictSettings = defaultDictSettings();
-  private posColors: PosColors = defaultPosColors();
+  private subtitleStyle: SubtitleStyle = defaultSubtitleStyle();
+  private presetSelect: HTMLSelectElement | null = null;
   private lineDict = new WeakMap<HTMLElement, DictEntry[]>();
   /** Current cue, kept so a resize can re-run the layout without a new tokenization round trip. */
   private content: Record<LayerId, LayerContent | null> = { a: null, b: null };
   /** Break plan currently painted, to avoid rebuilding the DOM on every resize frame. */
   private planKey: Record<LayerId, string> = { a: '', b: '' };
-  private layoutCache: Record<LayerId, { key: string; plan: OptimizeResult } | null> = { a: null, b: null };
-  /** Glyph width (px at font-size 1px) per unit text; the same tokens recur across cues. */
-  private unitWidths = new Map<string, number>();
-  private measureCtx: CanvasRenderingContext2D | null | undefined;
-  private fontFamily = '';
   private picture: PictureRect = { left: 0, top: 0, width: 0, height: 0 };
   private visible: Record<LayerId, boolean> = { a: false, b: false };
   private hovered = false;
@@ -330,7 +363,7 @@ export class Overlay {
     this.host.id = 'jp-sub-host';
     this.shadow = this.host.attachShadow({ mode: 'open' });
     const style = el('style');
-    style.textContent = CSS;
+    style.textContent = `${CSS}${TRANSCRIPT_CSS}`;
     this.shadow.appendChild(style);
 
     this.stage = el('div', 'stage');
@@ -355,7 +388,7 @@ export class Overlay {
       rz.addEventListener('pointerdown', (e) => this.startResize(e, id));
       rz.addEventListener('dblclick', () => {
         this.cb.onMaxWidthChange(id, defaultLayer().maxWidth);
-        this.cb.onBoxHeightChange(id, defaultLayer().boxH);
+        this.cb.onFontScaleChange(id, defaultLayer().fontScale);
         this.applyLayout();
       });
 
@@ -404,6 +437,12 @@ export class Overlay {
     this.dockBtn = el('button', '', t('overlay.dock.label'));
     this.dockBtn.title = t('overlay.dock.title');
     this.dockBtn.addEventListener('click', () => this.togglePanel());
+    this.transcriptBtn = el('button');
+    this.transcriptBtn.type = 'button';
+    this.transcriptBtn.appendChild(icon('list'));
+    this.transcriptBtn.title = t('overlay.transcript.open');
+    this.transcriptBtn.setAttribute('aria-label', t('overlay.transcript.open'));
+    this.transcriptBtn.addEventListener('click', () => this.cb.onTranscriptToggle());
     this.theaterBtn = el('button', 'theater');
     this.theaterBtn.type = 'button';
     this.theaterBtn.appendChild(icon('expand'));
@@ -411,7 +450,7 @@ export class Overlay {
     this.theaterBtn.setAttribute('aria-label', t('overlay.theater.enter'));
     this.theaterBtn.addEventListener('click', () => this.cb.onTheaterToggle());
     const dock = el('div', 'dock');
-    dock.append(this.dockBtn, this.theaterBtn);
+    dock.append(this.dockBtn, this.transcriptBtn, this.theaterBtn);
     this.stage.appendChild(dock);
 
     this.panel = this.buildPanel();
@@ -494,6 +533,8 @@ export class Overlay {
   private relabelChrome(): void {
     this.dockBtn.textContent = t('overlay.dock.label');
     this.dockBtn.title = t('overlay.dock.title');
+    this.transcriptBtn.title = t('overlay.transcript.open');
+    this.transcriptBtn.setAttribute('aria-label', t('overlay.transcript.open'));
     for (const id of ['a', 'b'] as LayerId[]) {
       const label = this.layerLabel(id);
       this.layers[id].grip.title = t('overlay.grip.drag', { layer: label });
@@ -561,7 +602,12 @@ export class Overlay {
 
   isInside(x: number, y: number): boolean {
     const { left, top, width, height } = this.picture;
-    return x >= left && x <= left + width && y >= top && y <= top + height;
+    if (x >= left && x <= left + width && y >= top && y <= top + height) return true;
+    // The transcript is its own surface: dropping a subtitle file over it must still load it.
+    const tx = this.transcriptEl;
+    if (!tx || tx.hidden) return false;
+    const r = tx.getBoundingClientRect();
+    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
   }
 
   diag(): Record<string, unknown> {
@@ -605,21 +651,47 @@ export class Overlay {
     };
   }
 
-  render(layer: LayerId, lines: string[], tokens: (DictLine | null)[], cfg: LayerCfg, dict: DictRender): void {
+  setNlpStatus(text: string): void {
+    let hint = this.panel.querySelector<HTMLElement>('[data-nlp-status]');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.dataset.nlpStatus = '';
+      hint.className = 'hint';
+      hint.setAttribute('role', 'status');
+      this.panel.appendChild(hint);
+    }
+    hint.textContent = text;
+  }
+
+  render(
+    layer: LayerId,
+    lines: string[],
+    tokens: (DictLine | null)[],
+    cfg: LayerCfg,
+    dict: DictRender,
+    preset: StudyPreset = activePreset(this.subtitleStyle),
+  ): void {
     if (this.cardLayer === layer && this.dictSettings.duration.mode === 'cue') this.hideCard();
+    // A preset is itself a reason to paint tokens: its features carry the styling even when the
+    // standalone POS-colour switch is off.
+    const themed = cfg.colorize || preset.features.length > 0;
+    const furigana = cfg.furigana || preset.features.includes('reading');
     // Keep the source, not just the painted DOM: a resize re-runs the layout optimizer and needs
     // the units back. Tokenized lines break at token boundaries, so a slice is still renderable.
     const paragraphs: ParaContent[] = lines.map((line, i) => {
       const parsed = tokens[i];
-      if (parsed && parsed.tokens.length && (cfg.colorize || dict.enabled)) {
+      if (parsed && parsed.tokens.length && (themed || dict.enabled)) {
         return {
           kind: 'tokens',
           tokens: parsed.tokens,
           entries: parsed.entries,
           opts: {
-            colorize: cfg.colorize,
-            furigana: cfg.furigana,
-            colors: this.posColors,
+            colorize: themed,
+            furigana,
+            style: {
+              preset,
+              elements: presetElements(preset),
+            },
             dict: { ...dict, entries: parsed.entries },
           },
         };
@@ -627,19 +699,31 @@ export class Overlay {
       return { kind: 'plain', segments: segmentPlain(line) };
     });
     const ruby = paragraphs.some(
-      (para) => para.kind === 'tokens' && cfg.furigana && para.tokens.some((token) => !!token.reading),
+      (para) => para.kind === 'tokens' && furigana && para.tokens.some((token) => !!token.reading),
     );
     this.content[layer] = { paragraphs, ruby };
-    this.layoutCache[layer] = null;
     this.planKey[layer] = '';
     this.layers[layer].wrap.classList.toggle('empty', paragraphs.length === 0);
+    this.applyBoxStyle(layer, preset);
     this.applyLayout();
+  }
+
+  /** The box behind the whole subtitle: the preset's override, else the global one. */
+  private applyBoxStyle(id: LayerId, preset: StudyPreset): void {
+    const body = this.layers[id].body;
+    const { backgroundColor, backgroundOpacity } = effectiveBox(this.subtitleStyle, preset);
+    if (!backgroundColor) {
+      body.classList.remove('boxed');
+      body.style.removeProperty('--box-bg');
+      return;
+    }
+    body.classList.add('boxed');
+    body.style.setProperty('--box-bg', withAlpha(backgroundColor, backgroundOpacity));
   }
 
   clear(layer: LayerId): void {
     if (this.cardLayer === layer) this.hideCard();
     this.content[layer] = null;
-    this.layoutCache[layer] = null;
     this.planKey[layer] = '';
     this.layers[layer].body.textContent = '';
     this.layers[layer].wrap.classList.add('empty');
@@ -655,7 +739,7 @@ export class Overlay {
     return line ? this.lineDict.get(line)?.[Number(span.dataset.dictIdx)] : undefined;
   }
 
-  private onWordClick = (event: MouseEvent, layer: LayerId): void => {
+  private onWordClick = (event: MouseEvent, layer: LayerId | 'doc'): void => {
     if (this.dictSettings.trigger !== 'click') return;
     const span = this.wordAt(event.target);
     if (!span) return;
@@ -667,7 +751,7 @@ export class Overlay {
     this.showCard(entry, span, layer);
   };
 
-  private onWordOver = (event: MouseEvent, layer: LayerId): void => {
+  private onWordOver = (event: MouseEvent, layer: LayerId | 'doc'): void => {
     if (this.dictSettings.trigger !== 'hover') return;
     const span = this.wordAt(event.target);
     if (!span || span === this.cardAnchor) return;
@@ -706,11 +790,27 @@ export class Overlay {
     if (!settings.enabled || settings.trigger === 'click') window.clearTimeout(this.hoverTimer);
   }
 
-  setPosColors(colors: PosColors): void {
-    this.posColors = colors;
+  setSubtitleStyle(style: SubtitleStyle): void {
+    this.subtitleStyle = style;
+    this.fillPresetOptions();
   }
 
-  private showCard(entry: DictEntry, anchor: HTMLElement, layer: LayerId): void {
+  /** Rebuilds the panel's preset list; called on every storage change so edits show up live. */
+  private fillPresetOptions(): void {
+    const select = this.presetSelect;
+    if (!select) return;
+    select.textContent = '';
+    for (const id of presetOrder(this.subtitleStyle)) {
+      const preset = this.subtitleStyle.presets[id];
+      if (!preset) continue;
+      const option = el('option', '', presetDisplayName(preset, t));
+      option.value = id;
+      select.appendChild(option);
+    }
+    select.value = this.subtitleStyle.activePresetId;
+  }
+
+  private showCard(entry: DictEntry, anchor: HTMLElement, layer: LayerId | 'doc'): void {
     window.clearTimeout(this.cardTimer);
     this.hideCard();
     this.cardLayer = layer;
@@ -718,6 +818,9 @@ export class Overlay {
     const card = this.card;
     const reading = entry.r && entry.r !== entry.w ? entry.r : '';
     const roman = this.dictSettings.pronunciation.romaji ? toRomaji(entry.r || entry.w) : '';
+    const glosses = this.language === 'zh-CN' && entry.z?.length ? entry.z : entry.g;
+
+    card.classList.toggle('has-image', !!entry.img);
 
     const top = el('div', 'top');
     top.appendChild(el('span', 'lv', `N${entry.lv}`));
@@ -726,6 +829,10 @@ export class Overlay {
     top.appendChild(close);
     card.appendChild(top);
 
+    // A reviewed image turns the card into a mnemonic flashcard; words without one keep
+    // the existing text-only layout. The word stays the largest text in both.
+    if (entry.img) card.appendChild(this.imageTile(entry, glosses[0]));
+
     const wordLine = el('div', 'word-line');
     wordLine.append(
       el('span', 'word', entry.w),
@@ -733,31 +840,62 @@ export class Overlay {
     );
     card.appendChild(wordLine);
 
-    if (reading) card.appendChild(el('div', 'reading', reading));
-    if (roman) card.appendChild(el('div', 'romaji', roman));
+    const pron = el('div', 'pron');
+    if (reading) pron.appendChild(el('span', 'reading', reading));
+    if (roman) pron.appendChild(el('span', 'romaji', roman));
+    if (pron.childElementCount) card.appendChild(pron);
 
+    const meta = el('div', 'meta');
     if (entry.p.length) {
       const pos = el('div', 'pos');
       for (const p of entry.p) pos.appendChild(el('span', '', p));
-      card.appendChild(pos);
+      meta.appendChild(pos);
     }
+    if (glosses.length) meta.appendChild(el('span', 'gloss', glosses.join(', ')));
+    if (meta.childElementCount) card.appendChild(meta);
 
-    // The Chinese gloss source is not wired in yet; keep the policy explicit so a partial
-    // gloss list never displaces the English one in the English UI.
-    const glosses = this.language === 'zh-CN' && entry.z?.length ? entry.z : entry.g;
-    if (glosses.length) card.appendChild(el('div', 'gloss', glosses.join(', ')));
-
-    for (const example of entry.x) {
+    // The image already adds height; one example keeps the flashcard scannable.
+    for (const example of entry.img ? entry.x.slice(0, 1) : entry.x) {
       const box = el('div', 'ex');
       const jp = el('div', 'ex-jp');
       jp.append(el('span', 'text', example.j), this.speakButton(example.j, t('overlay.card.speakExample')));
       box.append(jp, el('div', 'ex-en', example.e));
       card.appendChild(box);
     }
+    if (entry.img) card.appendChild(this.imageCredit());
 
     card.hidden = false;
     this.positionCard(anchor);
     this.armCardTimer();
+  }
+
+  /** Light tile + fixed box so the async SVG never shifts the card. */
+  private imageTile(entry: DictEntry, hint?: string): HTMLDivElement {
+    const tile = el('div', 'img-tile');
+    const img = document.createElement('img');
+    img.src = chrome.runtime.getURL(`vocab/openmoji/${entry.img}.svg`);
+    img.alt = hint ?? t('overlay.card.imageAlt', { word: entry.w });
+    img.decoding = 'async';
+    img.addEventListener('load', () => tile.classList.add('ready'));
+    img.addEventListener('error', () => {
+      // A missing file must not leave a blank tile or a stretched text layout.
+      tile.remove();
+      this.card.querySelector('.credit')?.remove();
+      this.card.classList.remove('has-image');
+    });
+    tile.appendChild(img);
+    return tile;
+  }
+
+  private imageCredit(): HTMLDivElement {
+    const credit = el('div', 'credit');
+    const link = document.createElement('a');
+    link.href = 'https://openmoji.org';
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'OpenMoji';
+    credit.append(document.createTextNode(t('overlay.card.imageCreditLead')), link, document.createTextNode(' · CC BY-SA 4.0'));
+    return credit;
   }
 
   private armCardTimer(): void {
@@ -774,7 +912,10 @@ export class Overlay {
     const w = card.offsetWidth;
     const h = card.offsetHeight;
     const centerX = a.left - stage.left + a.width / 2;
-    const left = Math.min(stage.width - w / 2 - 4, Math.max(w / 2 + 4, centerX));
+    // A word in the transcript strip sits outside the picture; clamping to the stage would drag
+    // the card back over the video. Bound by the room between the stage origin and the viewport.
+    const boundsW = Math.max(stage.width, window.innerWidth - stage.left);
+    const left = Math.min(boundsW - w / 2 - 4, Math.max(w / 2 + 4, centerX));
     let top = a.top - stage.top - 8;
     let flip = false;
     if (top - h < 4) {
@@ -874,69 +1015,40 @@ export class Overlay {
       wrap.style.left = `${lc.anchorX * 100}%`;
       wrap.style.top = `${lc.anchorY * 100}%`;
       wrap.style.width = `${lc.maxWidth * 100}%`;
-      // No explicit height = the container hugs the text.
-      wrap.style.height = lc.boxH ? `${lc.boxH * 100}%` : '';
+      // No explicit height: the container hugs the text at the size the user chose.
+      wrap.style.height = '';
       wrap.style.opacity = this.visible[id] ? String(lc.opacity) : '0';
       this.fitBody(id);
     }
   }
 
   /**
-   * Lays the current cue out for the container. Without an explicit box the container hugs the
-   * text at the user's size and the browser wraps it. With a box, the optimizer picks the font,
-   * break positions, line height and tracking that fill `(maxWidth × boxH)` — see layout.ts.
-   *
-   * The font size slider is the starting preference; inside a box the text may grow up to the
-   * slider's own ceiling (MAX_SCALE of the picture height) to fill the rectangle.
+   * Lays the current cue out for the container. The container hugs the text; the browser wraps
+   * it at the container width. The painted font is the user's `fontScale`, so every cue renders
+   * at the same size and the adjustable frame follows the text.
    */
   private fitBody(id: LayerId): void {
     const { wrap } = this.layers[id];
-    const cfg = this.getCfg().layers[id];
     const content = this.content[id];
-    const preferred = this.fontPx(id);
-    if (!content || !content.paragraphs.length) {
-      wrap.style.fontSize = `${preferred}px`;
-      wrap.style.lineHeight = '';
-      wrap.style.letterSpacing = '';
-      this.paint(id, content ? content.paragraphs.map(() => [0]) : []);
-      return;
-    }
-    if (!cfg.boxH) {
-      wrap.style.fontSize = `${preferred}px`;
-      wrap.style.lineHeight = '';
-      wrap.style.letterSpacing = '';
-      this.paint(id, content.paragraphs.map(() => [0]));
-      return;
-    }
-    const width = Math.max(1, cfg.maxWidth * this.picture.width);
-    const height = Math.max(1, cfg.boxH * this.picture.height);
-    const maxFont = Math.max(preferred, MAX_SCALE * this.picture.height);
-    // A resize drag rewrites the box on every frame; the cache keeps a scroll-only rect update
-    // from re-running the DP with identical inputs.
-    const key = `${Math.round(width)}|${Math.round(height)}|${preferred}|${content.ruby}`;
-    let cached = this.layoutCache[id];
-    if (!cached || cached.key !== key) {
-      const paragraphs = content.paragraphs.map((para) => this.unitsOf(para));
-      cached = {
-        key,
-        plan: optimizeLayout({
-          paragraphs,
-          width,
-          height,
-          minFont: MIN_FONT_PX,
-          maxFont,
-          preferredFont: preferred,
-          // Ruby sits above the base glyphs and enlarges the line box.
-          rubyFactor: content.ruby ? 1.28 : 1,
-        }),
-      };
-      this.layoutCache[id] = cached;
-    }
-    const plan = cached.plan;
-    wrap.style.fontSize = `${plan.fontPx}px`;
-    wrap.style.lineHeight = String(plan.lineHeight);
-    wrap.style.letterSpacing = plan.letterSpacingEm >= 0.005 ? `${plan.letterSpacingEm}em` : '';
-    this.paint(id, plan.lineStarts);
+    wrap.style.fontSize = `${this.fontPx(id)}px`;
+    wrap.style.lineHeight = '';
+    wrap.style.letterSpacing = '';
+    this.paint(id, content ? content.paragraphs.map(() => [0]) : []);
+    this.placeHandles(id);
+  }
+
+  /** Handles sit on the text block — i.e. on the painted subtitle box — not on the wrap width. */
+  private placeHandles(id: LayerId): void {
+    const { wrap, body, grip, rz } = this.layers[id];
+    const wrapRect = wrap.getBoundingClientRect();
+    const bodyRect = body.getBoundingClientRect();
+    const left = bodyRect.left - wrapRect.left;
+    const top = bodyRect.top - wrapRect.top;
+    grip.style.left = `${left - 10}px`;
+    grip.style.top = `${top - 10}px`;
+    // 24px handle centred on the bottom-right corner.
+    rz.style.left = `${left + bodyRect.width - 12}px`;
+    rz.style.top = `${top + bodyRect.height - 12}px`;
   }
 
   /** Renders the cue with the optimizer's break plan; unchanged plans keep the existing DOM. */
@@ -965,46 +1077,6 @@ export class Overlay {
       });
     }
     this.planKey[id] = key;
-  }
-
-  /** Break units for the optimizer: tokens keep words intact; plain text is segmented first. */
-  private unitsOf(para: ParaContent): LayoutUnit[] {
-    if (para.kind === 'plain') {
-      return para.segments.map((text) => ({ text, width: this.unitWidth(text), ...classifyBreak(text) }));
-    }
-    return para.tokens.map((token) => ({
-      text: token.surface,
-      width: this.unitWidth(token.surface),
-      // 助詞 / 助動詞: a line break on either side of them reads badly.
-      particle: token.pos.startsWith('助'),
-      ...classifyBreak(token.surface),
-    }));
-  }
-
-  /**
-   * Glyph width at font-size 1px. Canvas measurement matches the layer's own font (weight 700,
-   * the shadow host's family) and is cached: the same tokens repeat across every cue.
-   */
-  private unitWidth(text: string): number {
-    if (!text) return 0;
-    const cached = this.unitWidths.get(text);
-    if (cached !== undefined) return cached;
-    if (this.measureCtx === undefined) {
-      this.fontFamily = getComputedStyle(this.host).fontFamily || 'sans-serif';
-      this.measureCtx = document.createElement('canvas').getContext('2d');
-    }
-    let px: number;
-    if (this.measureCtx) {
-      this.measureCtx.font = `700 100px ${this.fontFamily}`;
-      px = this.measureCtx.measureText(text).width;
-    } else {
-      // Rough fallback when no canvas is available: CJK ≈ 1em, everything else ≈ 0.55em.
-      const CJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
-      px = [...text].reduce((sum, char) => sum + (CJK.test(char) ? 100 : 55), 0);
-    }
-    const width = px / 100;
-    this.unitWidths.set(text, width);
-    return width;
   }
 
   /** Handles show while the pointer moves over a layer, then fade out on their own. */
@@ -1082,13 +1154,16 @@ export class Overlay {
     grip.addEventListener('pointercancel', finish);
   }
 
-  /** The single corner handle resizes both axes at once. */
+  /**
+   * The corner handle sizes the subtitle itself: horizontal drag sets the wrap width, vertical
+   * drag sets the text size. The frame hugs the text, so what you see is what is being resized.
+   */
   private startResize(event: PointerEvent, layer: LayerId): void {
     if (event.button !== 0) return;
     event.preventDefault();
     event.stopPropagation();
     const handle = event.currentTarget as HTMLElement;
-    const { wrap } = this.layers[layer];
+    const { wrap, body } = this.layers[layer];
     const cfg = this.getCfg().layers[layer];
     handle.setPointerCapture(event.pointerId);
     window.clearTimeout(this.handleTimers[layer]);
@@ -1099,39 +1174,39 @@ export class Overlay {
     const picW = Math.max(1, this.picture.width);
     const picH = Math.max(1, this.picture.height);
     const startWidth = cfg.maxWidth;
+    const startScale = cfg.fontScale;
     const startAnchorY = cfg.anchorY;
-    // The rendered container height, whether it hugs the text or was set explicitly.
-    const startHeight = Math.max(1, wrap.getBoundingClientRect().height);
+    const startHeight = Math.max(1, body.getBoundingClientRect().height);
 
-    // The container is the unit being sized: width drives wrapping, height drives how much
-    // room the text gets (it shrinks to fit when the box is too small).
     // Events are coalesced to one update per frame: pointermove can fire well above 60 Hz and
     // each update reflows the text block, so unthrottled handling is what makes it feel stuck.
     let last: PointerEvent | null = null;
     let raf = 0;
     let moved = false;
-    let endH = startHeight;
+    /** How far the box is shifted on screen; the bottom edge tracks the pointer. */
+    let shift = 0;
+    /** Applies the size for a pointer position; returns the wrap width for the tip. */
+    const sizeTo = (clientX: number, clientY: number): number => {
+      // The container is centered, so moving the right edge by dx widens it by 2*dx.
+      const width = clamp(startWidth + (2 * (clientX - startX)) / picW, MIN_WIDTH, MAX_WIDTH);
+      // Height is font-driven now: scale by how much the pointer pulled the bottom edge.
+      const wanted = clamp(startHeight + (clientY - startY), startHeight * 0.25, picH);
+      const scale = clamp((startScale * wanted) / startHeight, MIN_SCALE, MAX_SCALE);
+      // Use the clamped scale, so the preview does not drift past the min/max font size.
+      shift = (startHeight * scale) / startScale - startHeight;
+      wrap.style.width = `${width * 100}%`;
+      wrap.style.transform = `translate(-50%, calc(-100% + ${shift}px))`;
+      this.cb.onMaxWidthChange(layer, Math.round(width * 1000) / 1000);
+      this.cb.onFontScaleChange(layer, Math.round(scale * 10000) / 10000);
+      this.fitBody(layer);
+      return width;
+    };
     const apply = (): void => {
       raf = 0;
       const e = last;
       if (!e) return;
-      // The container is centered, so moving the right edge by dx widens it by 2*dx.
-      const width = clamp(
-        startWidth + (2 * (e.clientX - startX)) / picW,
-        MIN_WIDTH,
-        MAX_WIDTH,
-      );
-      endH = clamp(startHeight + (e.clientY - startY), MIN_BOX_H, picH);
-      const grown = endH - startHeight;
-      wrap.style.width = `${width * 100}%`;
-      this.cb.onMaxWidthChange(layer, Math.round(width * 1000) / 1000);
-      wrap.style.height = `${endH}px`;
-      // The container is bottom-anchored; shift it by the same amount it grows so the top
-      // edge stays put and the bottom edge keeps tracking the cursor.
-      wrap.style.transform = `translate(-50%, calc(-100% + ${grown}px))`;
-      this.cb.onBoxHeightChange(layer, Math.round((endH / picH) * 10000) / 10000);
-      this.fitBody(layer);
-      this.showSizeTip(e.clientX, e.clientY, `${Math.round(endH)}px · ${Math.round(width * 100)}%`);
+      const width = sizeTo(e.clientX, e.clientY);
+      this.showSizeTip(e.clientX, e.clientY, `${Math.round(this.fontPx(layer))}px · ${Math.round(width * 100)}%`);
     };
     const move = (e: PointerEvent) => {
       if (e.pointerId !== event.pointerId) return;
@@ -1149,10 +1224,11 @@ export class Overlay {
       last = null;
       this.sizeTip.classList.remove('show');
       wrap.classList.remove('resizing');
-      // The preview shift becomes a real anchor move, so the container does not snap back to
-      // its bottom-anchored position on release.
       if (moved) {
-        this.cb.onAnchorChange(layer, cfg.anchorX, clamp(startAnchorY + (endH - startHeight) / picH, 0, 1));
+        // A release can land before the pending frame ran; commit the final pointer position.
+        if (e.type === 'pointerup') sizeTo(e.clientX, e.clientY);
+        // The preview shift becomes a real anchor move, so the box does not snap back.
+        this.cb.onAnchorChange(layer, cfg.anchorX, clamp(startAnchorY + shift / picH, 0, 1));
       }
       wrap.style.transform = '';
       this.applyLayout();
@@ -1175,6 +1251,42 @@ export class Overlay {
     this.setPanelOpen(true);
   }
 
+  closePanel(): void {
+    this.setPanelOpen(false);
+  }
+
+  /** Drawer container for the transcript; created lazily and wired to the dictionary surface once. */
+  transcriptRoot(): HTMLDivElement {
+    if (this.transcriptEl) return this.transcriptEl;
+    this.transcriptEl = el('div', 'transcript');
+    this.transcriptEl.hidden = true;
+    this.stage.appendChild(this.transcriptEl);
+    // Word hover/click inside the transcript opens the same card as the subtitle layers.
+    this.transcriptEl.addEventListener('click', (event) => this.onWordClick(event, 'doc'));
+    this.transcriptEl.addEventListener('mouseover', (event) => this.onWordOver(event, 'doc'));
+    this.transcriptEl.addEventListener('mouseout', this.onWordOut);
+    this.transcriptEl.addEventListener('pointerdown', (event) => {
+      if ((event.target as HTMLElement | null)?.closest?.('.dict-word')) event.stopPropagation();
+    });
+    return this.transcriptEl;
+  }
+
+  setTranscriptOpen(open: boolean): void {
+    this.transcriptBtn.classList.toggle('on', open);
+    this.host.classList.toggle('transcript-open', open);
+    if (open && !this.panel.hidden) this.setPanelOpen(false);
+  }
+
+  /** Records the entries behind a transcript line so `entryFor` can resolve its word spans. */
+  registerDictLine(line: HTMLElement, entries: DictEntry[]): void {
+    this.lineDict.set(line, entries);
+  }
+
+  /** Dictionary card for a word outside the subtitle layers (currently the transcript). */
+  showDictCard(entry: DictEntry, anchor: HTMLElement): void {
+    this.showCard(entry, anchor, 'doc');
+  }
+
   private togglePanel(): void {
     this.setPanelOpen(this.panel.hidden);
   }
@@ -1183,6 +1295,7 @@ export class Overlay {
     this.panel.hidden = !open;
     this.host.classList.toggle('panel-open', open);
     if (open) {
+      this.cb.onPanelOpen();
       this.fitPanelHeight();
       this.syncPanel();
     } else {
@@ -1588,6 +1701,20 @@ export class Overlay {
     const title = el('h4', '', t('overlay.panel.title'));
     panel.appendChild(title);
 
+    // Switching presets is a viewing decision, so it belongs next to the subtitles, not only on
+    // the options page. The write goes through storage; the content script repaints on change.
+    const presetRow = el('div', 'row');
+    presetRow.appendChild(el('label', '', t('overlay.panel.mode')));
+    const presetSelect = el('select', 'preset-select');
+    this.presetSelect = presetSelect;
+    presetSelect.addEventListener('change', () => {
+      this.subtitleStyle = { ...this.subtitleStyle, activePresetId: presetSelect.value };
+      void saveSubtitleStyle(this.subtitleStyle);
+    });
+    presetRow.appendChild(presetSelect);
+    panel.appendChild(presetRow);
+    this.fillPresetOptions();
+
     const packRow = el('div', 'row');
     packRow.appendChild(el('label', '', t('overlay.panel.pack')));
     const pack = el('input', 'lib-search');
@@ -1744,8 +1871,8 @@ export class Overlay {
       const sync = (): void => {
         const value = this.getCfg().layers[id].fontScale;
         if (this.shadow.activeElement !== range) range.value = String(value);
-        // Inside a sized box the optimizer may grow the font past the slider, so report what
-        // is actually painted rather than the slider's own value.
+        // Report what is actually painted: a resize drag writes its computed size back here,
+        // so the number stays the single source of truth even inside a box.
         const painted = Number.parseFloat(this.layers[id].wrap.style.fontSize);
         if (this.shadow.activeElement !== px) {
           px.value = String(Math.round(Number.isFinite(painted) ? painted : this.fontPx(id)));

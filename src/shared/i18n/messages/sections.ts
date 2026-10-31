@@ -3,12 +3,13 @@ import { content } from './content';
 import { errors } from './errors';
 import { meta } from './meta';
 import { optionsBinds } from './options-binds';
-import { optionsColors } from './options-colors';
 import { optionsDict } from './options-dict';
 import { optionsKeys } from './options-keys';
+import { optionsModes } from './options-modes';
 import { optionsNav } from './options-nav';
 import { optionsPacks } from './options-packs';
 import { optionsRules } from './options-rules';
+import { optionsVocab } from './options-vocab';
 import { overlay } from './overlay';
 import { popup } from './popup';
 import { pos } from './pos';
@@ -27,8 +28,9 @@ export const sections = {
   optionsRules,
   optionsBinds,
   optionsDict,
+  optionsVocab,
   optionsKeys,
-  optionsColors,
+  optionsModes,
   overlay,
   content,
 } as const;

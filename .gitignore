@@ -1,4 +1,7 @@
 node_modules/
+.env
+.env.*.local
+.env.cws
 dist/
 .cache/
 .DS_Store
@@ -9,5 +12,9 @@ storybook-static/
 test-results/
 playwright-report/
 public/dict/*.dat.gz
+python/server/.venv/
+python/server/.data/
 python/vocabulary/.venv/
 python/vocabulary/reports/
+__pycache__/
+.pytest_cache/

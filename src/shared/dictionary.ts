@@ -11,7 +11,10 @@ export type DictEntry = {
   g: string[];
   x: DictExample[];
   id: string;
+  /** Simplified-Chinese glosses, when a source covers the word. */
   z?: string[];
+  /** OpenMoji hexcode for the word's reviewed mnemonic image. */
+  img?: string;
 };
 
 export type DictFile = { v: number; entries: DictEntry[] };

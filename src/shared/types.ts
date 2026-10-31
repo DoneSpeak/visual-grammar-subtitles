@@ -14,6 +14,10 @@ export type Token = {
   reading: string;
   /** Index into the dictionary entries returned alongside the tokenized line. */
   dictIdx?: number;
+  grammar?: string[];
+  /** Annotation layer → annotation id. Adjacent tokens share an id when they share a chunk. */
+  groups?: Record<string, string>;
+  studyProfile?: string;
 };
 
 export type LayerCfg = {
@@ -22,9 +26,10 @@ export type LayerCfg = {
   /** Anchor for `displayCapMs`: false = counts from cue start (look, then listen); true = the cue
    *  stays hidden until its last `displayCapMs` (listen, then look). */
   displayCapFromEnd: boolean;
-  fontScale: number; // font size as a fraction of picture height
+  // Rendered font size as a fraction of picture height. Fixed output: every cue paints at this
+  // size; a resize drag computes it once and writes it back here.
+  fontScale: number;
   maxWidth: number; // container width as a fraction of picture width; text wraps inside it
-  boxH: number; // container height as a fraction of picture height; 0 = hug the text
   colorize: boolean;
   furigana: boolean;
   anchorX: number; // 0..1 of picture width
@@ -72,6 +77,11 @@ export type PageCfg = {
   offset: number; // seconds; subtitles are scheduled at videoTime - offset (positive = subtitles later)
   subs: { a: SubSource; b: SubSource };
   layers: { a: LayerCfg; b: LayerCfg };
+  /** How the transcript was last shown: floating over the picture, or a split strip. */
+  transcriptSplit?: 'overlay' | 'side' | 'bottom';
+  /** Divider size in CSS px (width for `side`, height for `bottom`), per direction. */
+  transcriptSide?: number;
+  transcriptBottom?: number;
 };
 
 export const defaultLayer = (overrides: Partial<LayerCfg> = {}): LayerCfg => ({
@@ -80,7 +90,6 @@ export const defaultLayer = (overrides: Partial<LayerCfg> = {}): LayerCfg => ({
   displayCapFromEnd: false,
   fontScale: 0.038,
   maxWidth: 0.92,
-  boxH: 0,
   colorize: true,
   furigana: true,
   anchorX: 0.5,
