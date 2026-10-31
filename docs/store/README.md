@@ -9,15 +9,18 @@
 | `listing.md` | 商店信息：名称、简短/详细说明、类别、语言 |
 | `privacy-questionnaire.md` | 隐私权实践：单一用途、权限理由、数据用途、远程代码 |
 | `reviewer-notes.md` | 审核 → 给审核员的备注 |
-| `screenshots.md` | 截图与宣传图规格、拍摄清单 |
+| `screenshots.md` | 截图与宣传图的来源、生成命令、上传对应关系 |
+| `assets/en/` `assets/zh/` | 各 5 张 1280×800 截图，已生成 |
+| `assets/promo/` | 440×280 与 1400×560 宣传图，已生成 |
 | `../site/privacy/index.html` | 隐私政策页（部署后填其 URL） |
 | `../site/sample.ja.srt` | 审核用的示例字幕 |
 
-## 必须先补的三处
+## 必须先补的两处
 
 1. **联系邮箱**：`REPLACE-ME@example.com` 出现在 `docs/site/index.html`、`docs/site/privacy/index.html`。换成真实可收信的地址。
-2. **截图**：0 张，商店至少 1 张。见 `screenshots.md`。
-3. **隐私政策 URL**：Pages 首次部署后才存在。
+2. **隐私政策 URL**：Pages 首次部署后才存在。
+
+截图与宣传图已生成；改 UI 后执行 `node scripts/capture-store-assets.mjs` 重出。
 
 ## 隐私政策托管
 
