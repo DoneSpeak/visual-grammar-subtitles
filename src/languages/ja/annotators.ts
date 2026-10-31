@@ -1,6 +1,6 @@
 import type { DictEntry } from '@/shared/dictionary';
 import { EXPRESSION_ELEMENT, LEVEL_ELEMENT, type FeatureId } from '@/shared/studyFeatures';
-import type { Token } from '@/shared/types';
+import type { Pos, Token } from '@/shared/types';
 import { EXPRESSION_SOURCES } from './grammarPatterns';
 
 /**
@@ -14,7 +14,14 @@ import { EXPRESSION_SOURCES } from './grammarPatterns';
 export const CHUNK_GROUP_KEY = 'chunk.bunsetsu';
 
 /** A bunsetsu ends on a particle, an auxiliary, a conjugable word or punctuation. */
-const ENDS_CHUNK = new Set(['助詞', '助動詞', '動詞', '形容詞', '記号', '接続詞', '感動詞']);
+const ENDS_CHUNK = new Set<Pos>(['ADP', 'AUX', 'VERB', 'ADJ', 'PUNCT', 'CCONJ', 'INTJ']);
+
+/**
+ * 連体詞 (こんな, その) is `ADJ` in Universal POS, but it modifies the following noun and so stays
+ * inside the bunsetsu. Only the native tag can tell it apart from a real 形容詞.
+ */
+const endsChunk = (token: Token): boolean =>
+  ENDS_CHUNK.has(token.pos) && token.posRaw !== '連体詞';
 
 const withGrammar = (token: Token, label: string): Token => ({
   ...token,
@@ -25,13 +32,13 @@ const withGrammar = (token: Token, label: string): Token => ({
 export const chunks = (tokens: Token[]): Token[] => {
   let group = 0;
   return tokens.map((token, index) => {
-    if (!token.surface.trim() || token.pos === '記号') {
+    if (!token.surface.trim() || token.pos === 'PUNCT') {
       group++;
       return token;
     }
     const id = `rule-${group}`;
     const next = tokens[index + 1];
-    if (!next || ENDS_CHUNK.has(token.pos)) group++;
+    if (!next || endsChunk(token)) group++;
     return { ...token, groups: { ...token.groups, [CHUNK_GROUP_KEY]: id } };
   });
 };

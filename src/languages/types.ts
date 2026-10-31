@@ -1,6 +1,6 @@
 import type { DictEntry } from '@/shared/dictionary';
 import type { FeatureId } from '@/shared/studyFeatures';
-import type { PosGroup, Token } from '@/shared/types';
+import type { Pos, PosGroup, Token } from '@/shared/types';
 
 /**
  * The language seam.
@@ -55,6 +55,8 @@ export type LanguagePack = {
   displayName: string;
   /** 0..1 script-based confidence; the registry picks the highest score above its threshold. */
   detect(text: string): number;
+  /** The tokenizer's native tag → the shared POS skeleton. */
+  toPos(raw: string): Pos;
   posGroup(token: Token): PosGroup;
   isInflected(token: Token): boolean;
   /** POS values that carry no dictionary meaning (particles, auxiliaries, punctuation). */

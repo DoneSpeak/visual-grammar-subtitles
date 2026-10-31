@@ -1,3 +1,5 @@
+import { posGroupForPos } from '@/shared/posGroup';
+import { normalizePos } from '@/shared/types';
 import type { LanguagePack } from './types';
 
 /**
@@ -12,7 +14,8 @@ export const plain: LanguagePack = {
   shortLabel: '',
   displayName: 'Plain',
   detect: () => 0,
-  posGroup: () => 'other',
+  toPos: normalizePos,
+  posGroup: (token) => posGroupForPos(token.pos),
   isInflected: () => false,
   functionWords: new Set(),
   lookupKeys: () => [],
