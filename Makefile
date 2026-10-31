@@ -44,3 +44,27 @@ clean: ## 删除构建与测试产物
 
 distclean: clean ## 连 node_modules 一起删除
 	rm -rf node_modules
+
+UV ?= uv
+VOCAB_DIR ?= python/vocabulary
+VOCAB_PYTHON ?= .venv/bin/python
+.PHONY: vocab-install vocab-fetch vocab-match vocab-build vocab-validate vocab-test vocab-check
+vocab-install: ## 安装视觉词汇构建器（uv，Python 3.12）
+	cd $(VOCAB_DIR) && $(UV) sync --python 3.12
+
+vocab-fetch: ## 下载并校验固定版本的 OpenMoji / OpenJLPT 源
+	cd $(VOCAB_DIR) && $(VOCAB_PYTHON) -m vocabulary fetch
+
+vocab-match: vocab-fetch ## 生成待人工审核的图片候选清单
+	cd $(VOCAB_DIR) && $(VOCAB_PYTHON) -m vocabulary match
+
+vocab-build: vocab-fetch ## 生成 dist/vocabulary.ja.yaml 与 SVG 资源
+	cd $(VOCAB_DIR) && $(VOCAB_PYTHON) -m vocabulary build
+
+vocab-validate: ## 校验已生成的词汇包
+	cd $(VOCAB_DIR) && $(VOCAB_PYTHON) -m vocabulary validate
+
+vocab-test: ## 构建器单元测试
+	cd $(VOCAB_DIR) && $(VOCAB_PYTHON) -m pytest -q
+
+vocab-check: vocab-build vocab-validate ## 构建 + 校验

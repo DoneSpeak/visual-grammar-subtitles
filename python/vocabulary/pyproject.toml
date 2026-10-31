@@ -1,0 +1,19 @@
+[project]
+name = "sanno-visual-vocabulary"
+version = "0.1.0"
+description = "Offline builder for the OpenMoji visual vocabulary cards consumed by the extension"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "PyYAML>=6.0.2,<7",
+  "janome>=0.5.0,<0.6",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<9"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

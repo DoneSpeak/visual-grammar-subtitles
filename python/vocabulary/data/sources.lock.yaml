@@ -1,0 +1,29 @@
+schemaVersion: 1
+
+# Both artifacts are pinned by version/commit AND SHA-256. A hash mismatch aborts
+# the build; re-pin only after reviewing the upstream change.
+openmoji:
+  version: "17.0.0"
+  license: "CC-BY-SA-4.0"
+  homepage: "https://github.com/hfg-gmuend/openmoji"
+  release: "https://github.com/hfg-gmuend/openmoji/releases/tag/17.0.0"
+  # The npm artifact is the published 17.0.0 package (registry mirror of the
+  # GitHub release). 4.3 MB, contains data/openmoji.json + color/svg/*.svg.
+  tarballUrl: "https://registry.npmjs.org/openmoji/-/openmoji-17.0.0.tgz"
+  tarballSha256: "55ee7d13485dec86e9f38c1f3a645a13382d33ff97c0cd845ee824b0aef45e68"
+  metadataPath: "package/data/openmoji.json"
+  svgDir: "package/color/svg"
+  licensePath: "package/LICENSE.txt"
+
+openjlpt:
+  repo: "evanclan/OpenJLPT"
+  commit: "0d1d3410bec90bd4098a7c72de820543cb4f707c"
+  license: "CC-BY-SA-4.0"
+  homepage: "https://github.com/evanclan/OpenJLPT"
+  tarballUrl: "https://codeload.github.com/evanclan/OpenJLPT/tar.gz/0d1d3410bec90bd4098a7c72de820543cb4f707c"
+  tarballSha256: "e691a04374949ce19dad780814e205558936c30a33030a86c7a3f850d6d8a29d"
+  licensePath: "LICENSE"
+  noticePath: "NOTICE.md"
+  vocabCsv:
+    N5: "data/csv/vocab-n5.csv"
+    N4: "data/csv/vocab-n4.csv"

@@ -9,3 +9,5 @@ storybook-static/
 test-results/
 playwright-report/
 public/dict/*.dat.gz
+python/vocabulary/.venv/
+python/vocabulary/reports/
