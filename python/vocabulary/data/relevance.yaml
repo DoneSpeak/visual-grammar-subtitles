@@ -1,0 +1,25 @@
+schemaVersion: 1
+
+# L: learning relevance. These are configured targets for everyday dialogue,
+# daily-life scenes and common anime/film content -- NOT measured data.
+default: 60
+categories:
+  people: 90
+  body: 85
+  food: 85
+  transport: 80
+  places: 80
+  nature: 75
+  animals: 80
+  time: 85
+  weather: 80
+  actions: 90
+  states: 70
+  objects: 80
+  clothing: 85
+  home: 85
+  color: 75
+  education: 75
+  work: 75
+  health: 80
+  emotion: 80

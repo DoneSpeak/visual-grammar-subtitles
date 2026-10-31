@@ -1,0 +1,1314 @@
+# Curated Japanese vocabulary -> semantic concept -> OpenMoji mapping.
+#
+# This is the review artifact for the visual vocabulary build. Rules:
+# - Only entries here are publishable; the builder never auto-approves a mapping.
+# - reviewedBy records who signed off. "claude-assisted" means an AI drafted the
+#   mapping and a human must spot-check it before a public release.
+# - visualScore is a reviewed recognisability judgement (0-100), not a measurement.
+# - A concept may be reused by several words; keep one concept id per meaning.
+# - Remove a mapping rather than keeping a weak picture/meaning match.
+
+schemaVersion: 1
+language: ja
+concepts:
+- id: animals.dog
+  category: animals
+  hexcode: "1F415"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: dog
+    zh-Hans: 狗
+- id: animals.cat
+  category: animals
+  hexcode: "1F408"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: cat
+    zh-Hans: 猫
+- id: animals.fish
+  category: animals
+  hexcode: "1F41F"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: fish
+    zh-Hans: 鱼
+- id: animals.bird
+  category: animals
+  hexcode: "1F426"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: bird
+    zh-Hans: 鸟
+- id: animals.insect
+  category: animals
+  hexcode: "1F41B"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: insect
+    zh-Hans: 昆虫
+- id: nature.flower
+  category: nature
+  hexcode: "1F33C"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: flower
+    zh-Hans: 花
+- id: nature.tree
+  category: nature
+  hexcode: "1F333"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: tree
+    zh-Hans: 树
+- id: nature.mountain
+  category: nature
+  hexcode: "26F0"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: mountain
+    zh-Hans: 山
+- id: nature.sea
+  category: nature
+  hexcode: "1F30A"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: sea
+    zh-Hans: 海
+- id: nature.fire
+  category: nature
+  hexcode: "1F525"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: fire
+    zh-Hans: 火
+- id: nature.water
+  category: nature
+  hexcode: "1F4A7"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: water
+    zh-Hans: 水
+- id: weather.rain
+  category: weather
+  hexcode: "1F327"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: rain
+    zh-Hans: 雨
+- id: weather.snow
+  category: weather
+  hexcode: "1F328"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: snow
+    zh-Hans: 雪
+- id: weather.sunny
+  category: weather
+  hexcode: "1F31E"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: clear weather
+    zh-Hans: 晴天
+- id: time.moon
+  category: time
+  hexcode: "1F319"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: moon
+    zh-Hans: 月亮
+- id: time.star
+  category: time
+  hexcode: "2B50"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: star
+    zh-Hans: 星星
+- id: time.morning
+  category: time
+  hexcode: "1F305"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: morning
+    zh-Hans: 早晨
+- id: time.night
+  category: time
+  hexcode: "1F303"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: night
+    zh-Hans: 夜晚
+- id: food.fruit
+  category: food
+  hexcode: "1F34E"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: fruit
+    zh-Hans: 水果
+- id: food.grapes
+  category: food
+  hexcode: "1F347"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: grapes
+    zh-Hans: 葡萄
+- id: food.vegetables
+  category: food
+  hexcode: "1F966"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: vegetable
+    zh-Hans: 蔬菜
+- id: food.rice
+  category: food
+  hexcode: "1F33E"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: rice
+    zh-Hans: 米
+- id: food.bread
+  category: food
+  hexcode: "1F35E"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: bread
+    zh-Hans: 面包
+- id: food.egg
+  category: food
+  hexcode: "1F95A"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: egg
+    zh-Hans: 鸡蛋
+- id: food.meat
+  category: food
+  hexcode: "1F356"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: meat
+    zh-Hans: 肉
+- id: food.chicken
+  category: food
+  hexcode: "1F357"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: chicken meat
+    zh-Hans: 鸡肉
+- id: food.beef
+  category: food
+  hexcode: "1F969"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: beef
+    zh-Hans: 牛肉
+- id: food.milk
+  category: food
+  hexcode: "1F95B"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: milk
+    zh-Hans: 牛奶
+- id: food.tea
+  category: food
+  hexcode: "1F375"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: green tea
+    zh-Hans: 茶
+- id: food.coffee
+  category: food
+  hexcode: '2615'
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: coffee
+    zh-Hans: 咖啡
+- id: food.cake
+  category: food
+  hexcode: "1F370"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: cake
+    zh-Hans: 蛋糕
+- id: transport.bicycle
+  category: transport
+  hexcode: "1F6B2"
+  visualScore: 95
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: bicycle
+    zh-Hans: 自行车
+- id: transport.car
+  category: transport
+  hexcode: "1F697"
+  visualScore: 95
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: car
+    zh-Hans: 汽车
+- id: transport.train
+  category: transport
+  hexcode: "1F686"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: train
+    zh-Hans: 电车
+- id: transport.bus
+  category: transport
+  hexcode: "1F68C"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: bus
+    zh-Hans: 公交车
+- id: transport.airplane
+  category: transport
+  hexcode: '2708'
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: aeroplane
+    zh-Hans: 飞机
+- id: transport.ship
+  category: transport
+  hexcode: "1F6A2"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: ship
+    zh-Hans: 船
+- id: transport.taxi
+  category: transport
+  hexcode: "1F695"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: taxi
+    zh-Hans: 出租车
+- id: place.station
+  category: places
+  hexcode: "1F689"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: station
+    zh-Hans: 车站
+- id: place.hospital
+  category: places
+  hexcode: "1F3E5"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: hospital
+    zh-Hans: 医院
+- id: place.school
+  category: places
+  hexcode: "1F3EB"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: school
+    zh-Hans: 学校
+- id: place.bank
+  category: places
+  hexcode: "1F3E6"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: bank
+    zh-Hans: 银行
+- id: place.post_office
+  category: places
+  hexcode: "1F3E4"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: post office
+    zh-Hans: 邮局
+- id: place.house
+  category: places
+  hexcode: "1F3E0"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: house
+    zh-Hans: 家
+- id: place.shop
+  category: places
+  hexcode: "1F3EA"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: shop
+    zh-Hans: 商店
+- id: body.eye
+  category: body
+  hexcode: "1F441"
+  visualScore: 95
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: eye
+    zh-Hans: 眼睛
+- id: body.ear
+  category: body
+  hexcode: "1F442"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: ear
+    zh-Hans: 耳朵
+- id: body.mouth
+  category: body
+  hexcode: "1F444"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: mouth
+    zh-Hans: 嘴
+- id: body.nose
+  category: body
+  hexcode: "1F443"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: nose
+    zh-Hans: 鼻子
+- id: body.hand
+  category: body
+  hexcode: "270B"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: hand
+    zh-Hans: 手
+- id: body.foot
+  category: body
+  hexcode: "1F9B6"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: foot
+    zh-Hans: 脚
+- id: body.tooth
+  category: body
+  hexcode: "1F9B7"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: tooth
+    zh-Hans: 牙齿
+- id: people.man
+  category: people
+  hexcode: "1F468"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: man
+    zh-Hans: 男人
+- id: people.woman
+  category: people
+  hexcode: "1F469"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: woman
+    zh-Hans: 女人
+- id: people.boy
+  category: people
+  hexcode: "1F466"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: boy
+    zh-Hans: 男孩
+- id: people.girl
+  category: people
+  hexcode: "1F467"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: girl
+    zh-Hans: 女孩
+- id: people.baby
+  category: people
+  hexcode: "1F476"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: baby
+    zh-Hans: 婴儿
+- id: people.teacher
+  category: people
+  hexcode: "1F9D1-200D-1F3EB"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: teacher
+    zh-Hans: 老师
+- id: people.doctor
+  category: people
+  hexcode: "1F9D1-200D-2695-FE0F"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: medical doctor
+    zh-Hans: 医生
+- id: action.eat
+  category: actions
+  hexcode: "1F37D"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to eat
+    zh-Hans: 吃
+- id: action.drink
+  category: actions
+  hexcode: "1F964"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to drink
+    zh-Hans: 喝
+- id: action.run
+  category: actions
+  hexcode: "1F3C3"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to run
+    zh-Hans: 跑
+- id: action.walk
+  category: actions
+  hexcode: "1F6B6"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to walk
+    zh-Hans: 走
+- id: action.sleep
+  category: actions
+  hexcode: "1F634"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to sleep
+    zh-Hans: 睡觉
+- id: action.laugh
+  category: actions
+  hexcode: "1F602"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to laugh
+    zh-Hans: 笑
+- id: action.cry
+  category: actions
+  hexcode: "1F622"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to weep
+    zh-Hans: 哭
+- id: action.sing
+  category: actions
+  hexcode: "1F3A4"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to sing
+    zh-Hans: 唱歌
+- id: action.read
+  category: actions
+  hexcode: "1F4D6"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to read
+    zh-Hans: 读
+- id: action.write
+  category: actions
+  hexcode: "1F58B"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to write
+    zh-Hans: 写
+- id: action.work
+  category: actions
+  hexcode: "1F4BC"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: to work
+    zh-Hans: 工作
+- id: object.book
+  category: objects
+  hexcode: "1F4D5"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: book
+    zh-Hans: 书
+- id: object.pencil
+  category: objects
+  hexcode: "270F"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: pencil
+    zh-Hans: 铅笔
+- id: object.pen
+  category: objects
+  hexcode: "1F58A"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: pen
+    zh-Hans: 钢笔
+- id: object.bag
+  category: objects
+  hexcode: "1F45C"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: bag
+    zh-Hans: 包
+- id: object.umbrella
+  category: objects
+  hexcode: '2602'
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: umbrella
+    zh-Hans: 伞
+- id: object.watch
+  category: objects
+  hexcode: "231A"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: watch
+    zh-Hans: 钟表
+- id: object.telephone
+  category: objects
+  hexcode: "260E"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: telephone
+    zh-Hans: 电话
+- id: object.television
+  category: objects
+  hexcode: "1F4FA"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: television
+    zh-Hans: 电视
+- id: object.camera
+  category: objects
+  hexcode: "1F4F7"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: camera
+    zh-Hans: 相机
+- id: object.laptop
+  category: objects
+  hexcode: "1F4BB"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: personal computer
+    zh-Hans: 电脑
+- id: object.chair
+  category: objects
+  hexcode: "1FA91"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: chair
+    zh-Hans: 椅子
+- id: object.bed
+  category: objects
+  hexcode: "1F6CF"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: bed
+    zh-Hans: 床
+- id: object.door
+  category: objects
+  hexcode: "1F6AA"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: door
+    zh-Hans: 门
+- id: object.window
+  category: objects
+  hexcode: "1FA9F"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: window
+    zh-Hans: 窗户
+- id: object.key
+  category: objects
+  hexcode: "1F511"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: key
+    zh-Hans: 钥匙
+- id: object.glasses
+  category: objects
+  hexcode: "1F453"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: glasses
+    zh-Hans: 眼镜
+- id: object.hat
+  category: objects
+  hexcode: "1F452"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: hat
+    zh-Hans: 帽子
+- id: object.shoes
+  category: objects
+  hexcode: "1F45E"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: shoes
+    zh-Hans: 鞋
+- id: object.wallet
+  category: objects
+  hexcode: "1F45B"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: wallet
+    zh-Hans: 钱包
+- id: object.letter
+  category: objects
+  hexcode: '2709'
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: letter
+    zh-Hans: 信
+- id: object.ticket
+  category: objects
+  hexcode: "1F3AB"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: ticket
+    zh-Hans: 车票
+- id: object.movie
+  category: objects
+  hexcode: "1F3AC"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: movie
+    zh-Hans: 电影
+- id: color.red
+  category: color
+  hexcode: "1F7E5"
+  visualScore: 95
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: red
+    zh-Hans: 红色
+- id: color.blue
+  category: color
+  hexcode: "1F7E6"
+  visualScore: 95
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: blue
+    zh-Hans: 蓝色
+- id: color.white
+  category: color
+  hexcode: "26AA"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: white
+    zh-Hans: 白色
+- id: color.black
+  category: color
+  hexcode: "26AB"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: black
+    zh-Hans: 黑色
+- id: color.yellow
+  category: color
+  hexcode: "1F7E8"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: yellow
+    zh-Hans: 黄色
+- id: color.green
+  category: color
+  hexcode: "1F7E9"
+  visualScore: 90
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: green
+    zh-Hans: 绿色
+- id: color.brown
+  category: color
+  hexcode: "1F7E4"
+  visualScore: 85
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: brown
+    zh-Hans: 棕色
+- id: color.palette
+  category: color
+  hexcode: "1F3A8"
+  visualScore: 80
+  reviewStatus: approved
+  reviewedBy: claude-assisted
+  reviewedAt: '2026-10-31'
+  gloss:
+    en: colour
+    zh-Hans: 颜色
+mappings:
+- lemma: 犬
+  reading: いぬ
+  concept: animals.dog
+- lemma: 猫
+  reading: ねこ
+  concept: animals.cat
+- lemma: 魚
+  reading: さかな
+  concept: animals.fish
+- lemma: 鳥
+  reading: とり
+  concept: animals.bird
+- lemma: 虫
+  reading: むし
+  concept: animals.insect
+- lemma: 花
+  reading: はな
+  concept: nature.flower
+- lemma: 木
+  reading: き
+  concept: nature.tree
+- lemma: 山
+  reading: やま
+  concept: nature.mountain
+- lemma: 海
+  reading: うみ
+  concept: nature.sea
+- lemma: 火
+  reading: ひ
+  concept: nature.fire
+- lemma: 水
+  reading: みず
+  concept: nature.water
+- lemma: 雨
+  reading: あめ
+  concept: weather.rain
+- lemma: 雪
+  reading: ゆき
+  concept: weather.snow
+- lemma: 晴れ
+  reading: はれ
+  concept: weather.sunny
+- lemma: つき
+  reading: つき
+  concept: time.moon
+- lemma: 星
+  reading: ほし
+  concept: time.star
+- lemma: 朝
+  reading: あさ
+  concept: time.morning
+- lemma: 夜
+  reading: よる
+  concept: time.night
+- lemma: 果物
+  reading: くだもの
+  concept: food.fruit
+- lemma: ぶどう
+  reading: ぶどう
+  concept: food.grapes
+- lemma: 野菜
+  reading: やさい
+  concept: food.vegetables
+- lemma: 米
+  reading: こめ
+  concept: food.rice
+- lemma: パン
+  reading: パン
+  concept: food.bread
+- lemma: 卵
+  reading: たまご
+  concept: food.egg
+- lemma: 肉
+  reading: にく
+  concept: food.meat
+- lemma: 鶏肉
+  reading: とりにく
+  concept: food.chicken
+- lemma: 牛肉
+  reading: ぎゅうにく
+  concept: food.beef
+- lemma: 牛乳
+  reading: ぎゅうにゅう
+  concept: food.milk
+- lemma: お茶
+  reading: おちゃ
+  concept: food.tea
+- lemma: コーヒー
+  reading: コーヒー
+  concept: food.coffee
+- lemma: ケーキ
+  reading: ケーキ
+  concept: food.cake
+- lemma: 自転車
+  reading: じてんしゃ
+  concept: transport.bicycle
+- lemma: 車
+  reading: くるま
+  concept: transport.car
+- lemma: 電車
+  reading: でんしゃ
+  concept: transport.train
+- lemma: バス
+  reading: バス
+  concept: transport.bus
+- lemma: 飛行機
+  reading: ひこうき
+  concept: transport.airplane
+- lemma: 舟
+  reading: ふね
+  concept: transport.ship
+- lemma: タクシー
+  reading: タクシー
+  concept: transport.taxi
+- lemma: 駅
+  reading: えき
+  concept: place.station
+- lemma: 病院
+  reading: びょういん
+  concept: place.hospital
+- lemma: 学校
+  reading: がっこう
+  concept: place.school
+- lemma: 銀行
+  reading: ぎんこう
+  concept: place.bank
+- lemma: 郵便局
+  reading: ゆうびんきょく
+  concept: place.post_office
+- lemma: 家
+  reading: いえ
+  concept: place.house
+- lemma: 店
+  reading: みせ
+  concept: place.shop
+- lemma: 目
+  reading: め
+  concept: body.eye
+- lemma: 耳
+  reading: みみ
+  concept: body.ear
+- lemma: 口
+  reading: くち
+  concept: body.mouth
+- lemma: 鼻
+  reading: はな
+  concept: body.nose
+- lemma: 手
+  reading: て
+  concept: body.hand
+- lemma: 足
+  reading: あし
+  concept: body.foot
+- lemma: 歯
+  reading: は
+  concept: body.tooth
+- lemma: 男
+  reading: おとこ
+  concept: people.man
+- lemma: 女
+  reading: おんな
+  concept: people.woman
+- lemma: 男の子
+  reading: おとこのこ
+  concept: people.boy
+- lemma: 女の子
+  reading: おんなのこ
+  concept: people.girl
+- lemma: 赤ん坊
+  reading: あかんぼう
+  concept: people.baby
+- lemma: 先生
+  reading: せんせい
+  concept: people.teacher
+- lemma: 医者
+  reading: いしゃ
+  concept: people.doctor
+- lemma: 食べる
+  reading: たべる
+  concept: action.eat
+- lemma: 飲む
+  reading: のむ
+  concept: action.drink
+- lemma: 走る
+  reading: はしる
+  concept: action.run
+- lemma: 歩く
+  reading: あるく
+  concept: action.walk
+- lemma: 寝る
+  reading: ねる
+  concept: action.sleep
+- lemma: 笑う
+  reading: わらう
+  concept: action.laugh
+- lemma: 泣く
+  reading: なく
+  concept: action.cry
+- lemma: 歌う
+  reading: うたう
+  concept: action.sing
+- lemma: 読む
+  reading: よむ
+  concept: action.read
+- lemma: 書く
+  reading: かく
+  concept: action.write
+- lemma: 働く
+  reading: はたらく
+  concept: action.work
+- lemma: 本
+  reading: ほん
+  concept: object.book
+- lemma: 鉛筆
+  reading: えんぴつ
+  concept: object.pencil
+- lemma: ペン
+  reading: ペン
+  concept: object.pen
+- lemma: かばん
+  reading: かばん
+  concept: object.bag
+- lemma: 傘
+  reading: かさ
+  concept: object.umbrella
+- lemma: 時計
+  reading: とけい
+  concept: object.watch
+- lemma: 電話
+  reading: でんわ
+  concept: object.telephone
+- lemma: テレビ
+  reading: テレビ
+  concept: object.television
+- lemma: カメラ
+  reading: カメラ
+  concept: object.camera
+- lemma: パソコン
+  reading: パソコン
+  concept: object.laptop
+- lemma: いす
+  reading: いす
+  concept: object.chair
+- lemma: ベッド
+  reading: ベッド
+  concept: object.bed
+- lemma: ドア
+  reading: ドア
+  concept: object.door
+- lemma: 窓
+  reading: まど
+  concept: object.window
+- lemma: かぎ
+  reading: かぎ
+  concept: object.key
+- lemma: 眼鏡
+  reading: めがね
+  concept: object.glasses
+- lemma: 帽子
+  reading: ぼうし
+  concept: object.hat
+- lemma: 靴
+  reading: くつ
+  concept: object.shoes
+- lemma: 財布
+  reading: さいふ
+  concept: object.wallet
+- lemma: 手紙
+  reading: てがみ
+  concept: object.letter
+- lemma: 切符
+  reading: きっぷ
+  concept: object.ticket
+- lemma: 映画
+  reading: えいが
+  concept: object.movie
+- lemma: 赤
+  reading: あか
+  concept: color.red
+- lemma: 青
+  reading: あお
+  concept: color.blue
+- lemma: 白
+  reading: しろ
+  concept: color.white
+- lemma: 黒
+  reading: くろ
+  concept: color.black
+- lemma: 黄色
+  reading: きいろ
+  concept: color.yellow
+- lemma: 緑
+  reading: みどり
+  concept: color.green
+- lemma: 茶色
+  reading: ちゃいろ
+  concept: color.brown
+- lemma: 色
+  reading: いろ
+  concept: color.palette
