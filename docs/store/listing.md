@@ -13,9 +13,9 @@
 | 语言 | English (United Kingdom)；再添加 Chinese (Simplified) | 与 `default_locale: en_GB` 一致 |
 | 价格 | Free | — |
 | 地区 | All regions | — |
-| 官方网站 | `https://<owner>.github.io/<repo>/` | 可选 |
-| 支持网址 | `https://github.com/<owner>/<repo>/issues` | 强烈建议填，审核会看 |
-| 隐私政策网址 | `https://<owner>.github.io/<repo>/privacy/` | **必填**，见 `docs/site/privacy/index.html` |
+| 官方网站 | `https://donespeak.github.io/visual-grammar-subtitles/` | 可选 |
+| 支持网址 | `https://github.com/DoneSpeak/visual-grammar-subtitles/issues` | 强烈建议填，审核会看 |
+| 隐私政策网址 | `https://donespeak.github.io/visual-grammar-subtitles/privacy/` | **必填**，见 `privacy/index.html` |
 | 图标 | `public/icon/128.png` | 128×128，已有 |
 | 截图 | 3–5 张 1280×800 或 640×400 | **尚未准备**，见 `screenshots.md` |
 | 小型宣传图 | 440×280 | 可选 |
@@ -67,7 +67,7 @@ BUILT FOR DAILY USE
 • No account, no sign-in, no ads, no analytics. Your subtitle library stays in local extension storage.
 
 PRIVACY
-The extension reads pages only to find video elements, synchronise subtitles and restore per-page settings. Network requests happen only for the optional online subtitle import, query translation and, if you enable it, an analysis server you configure yourself. Full policy: <privacy policy URL>.
+The extension reads pages only to find video elements, synchronise subtitles and restore per-page settings. Network requests happen only for the optional online subtitle import, query translation and, if you enable it, an analysis server you configure yourself. Full policy: https://donespeak.github.io/visual-grammar-subtitles/privacy/.
 
 Not affiliated with Bilibili, kitsunekko.net, JMdict/EDRDG, or OpenMoji. Subtitle and dictionary credits are listed in the package's NOTICE files.
 ```
@@ -89,13 +89,12 @@ Not affiliated with Bilibili, kitsunekko.net, JMdict/EDRDG, or OpenMoji. Subtitl
 • 分词完全离线，词典随扩展打包。
 
 隐私
-扩展只在页面上查找视频元素、同步字幕与恢复页面设置。仅在在线导入、搜索词翻译，或你自行配置分析服务时发起网络请求。完整政策：<privacy policy URL>。
+扩展只在页面上查找视频元素、同步字幕与恢复页面设置。仅在在线导入、搜索词翻译，或你自行配置分析服务时发起网络请求。完整政策：https://donespeak.github.io/visual-grammar-subtitles/privacy/。
 
 与 B 站、kitsunekko.net、JMdict/EDRDG、OpenMoji 无关联。字幕与词典来源见安装包内的 NOTICE 文件。
 ```
 
-## 提交前替换
+## 提交前自测
 
-- `<privacy policy URL>` → 实际页面地址。
-- `<owner>/<repo>` → 实际 GitHub 路径。
-- `REPLACE-ME@example.com` → 真实联系邮箱（隐私政策页与本文档）。
+- 隐私政策 URL 已定为 `https://donespeak.github.io/visual-grammar-subtitles/privacy/`，提交前用无痕窗口打开确认可访问。
+- 联系邮箱已填 `guanrong.young@foxmail.com`（`privacy/index.html` 两处）。

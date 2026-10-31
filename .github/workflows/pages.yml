@@ -1,11 +1,12 @@
 name: pages
 
-# 只发布 docs/site/（隐私政策、示例字幕）。git 仓库本身不需要公开。
+# 只发布仓库根的 privacy/（隐私政策、示例字幕），拼出的 URL 为 /privacy/。
+# 站点目录在根目录，但 artifact 只取它，仓库源码不会被 Pages 公开。
 on:
   push:
     branches: [main]
     paths:
-      - 'docs/site/**'
+      - 'privacy/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -27,8 +28,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      - run: mkdir -p _site && cp -r privacy _site/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/site
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4

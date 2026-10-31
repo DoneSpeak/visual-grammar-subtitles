@@ -3,6 +3,7 @@ import * as React from 'react';
 import {
   loadVocabularyFile,
   vocabularyGallery,
+  VOCABULARY_FILES,
   type VocabularyGalleryItem,
 } from '@/shared/vocabulary';
 
@@ -20,9 +21,9 @@ export const useVocabulary = (): VocabularyController => {
 
   React.useEffect(() => {
     let alive = true;
-    void loadVocabularyFile()
-      .then((file) => {
-        if (alive) setItems(vocabularyGallery(file));
+    void Promise.all(VOCABULARY_FILES.map((name) => loadVocabularyFile(name)))
+      .then((files) => {
+        if (alive) setItems(files.flatMap((file) => vocabularyGallery(file)));
       })
       .catch(() => {
         if (alive) setFailed(true);

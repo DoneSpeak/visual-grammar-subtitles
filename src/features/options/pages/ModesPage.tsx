@@ -4,8 +4,8 @@ import { Copy, RotateCcw, Server, Trash2 } from 'lucide-react';
 import { Button, Card, CardTitle, Input, PageHeader, PillGroup, Switch, cn } from '@/design-system';
 import { renderTokens } from '@/features/overlay/tokenize/render';
 import { elementEnabled, matchedByPriority, tokenElements } from '@/features/overlay/tokenize/style';
-import { EXPRESSION_ELEMENT, LEVEL_ELEMENT } from '@/languages/ja/features';
-import { DEFAULT_LANGUAGE, featuresFor } from '@/languages/registry';
+import { featuresFor } from '@/languages/registry';
+import type { BandSelection, LanguageId } from '@/languages/types';
 import { withAlpha } from '@/shared/elementStyle';
 import { t, type MessageKey } from '@/shared/i18n';
 import { POS_GROUP_LABELS, POS_GROUPS } from '@/shared/posColors';
@@ -36,9 +36,9 @@ import {
   type ElementStyle,
   type StudyPreset,
 } from '@/shared/subtitleStyle';
-import type { PosGroup } from '@/shared/types';
+import type { PosGroup, Token } from '@/shared/types';
 import { useSubtitleStyle } from '../hooks/use-subtitle-style';
-import { PREVIEW_TOKENS, SAMPLE_TOKENS } from '../lib/study-fixtures';
+import { previewFor } from '../lib/study-fixtures';
 import { NlpPanel } from './NlpPanel';
 
 /**
@@ -73,40 +73,69 @@ const GROUP_LABEL: Record<FeatureGroupId, MessageKey> = {
   remote: 'modes.group.remote',
 };
 
-const ELEMENT_LABEL: Record<string, MessageKey> = {
+const STATIC_ELEMENT_LABEL: Record<string, MessageKey> = {
   'syntax.role:topic': 'modes.element.syntax.topic',
   'syntax.role:subject': 'modes.element.syntax.subject',
   'syntax.role:object': 'modes.element.syntax.object',
   'syntax.role:predicate': 'modes.element.syntax.predicate',
   'syntax.role:modifier': 'modes.element.syntax.modifier',
+  'syntax.role:attributive': 'modes.element.syntax.attributive',
   'syntax.role:adverbial': 'modes.element.syntax.adverbial',
+  'syntax.role:complement': 'modes.element.syntax.complement',
+  'syntax.clause:attributive': 'modes.element.syntax.clauseAttributive',
+  'syntax.clause:nominal': 'modes.element.syntax.clauseNominal',
+  'syntax.clause:adverbial': 'modes.element.syntax.clauseAdverbial',
+  [READING_ELEMENT]: 'modes.element.reading',
+};
+
+/** Chunk element ids are namespaced by the registry's `chunkGroupKey`. */
+const CHUNK_LABEL: Record<string, MessageKey> = {
   'chunk.bunsetsu:first': 'modes.element.chunk.first',
   'chunk.bunsetsu:middle': 'modes.element.chunk.middle',
   'chunk.bunsetsu:last': 'modes.element.chunk.last',
   'chunk.bunsetsu:only': 'modes.element.chunk.only',
-  [EXPRESSION_ELEMENT]: 'modes.element.expression',
-  [LEVEL_ELEMENT]: 'modes.element.level',
-  [READING_ELEMENT]: 'modes.element.reading',
+  'chunk.phrase:first': 'modes.en.element.chunk.first',
+  'chunk.phrase:middle': 'modes.en.element.chunk.middle',
+  'chunk.phrase:last': 'modes.en.element.chunk.last',
+  'chunk.phrase:only': 'modes.en.element.chunk.only',
+};
+
+const EXPRESSION_LABEL: Record<string, MessageKey> = {
+  'expression.grammar:all': 'modes.element.expression',
+  'expression.phrase:all': 'modes.en.element.expression',
+};
+
+const LEVEL_LABEL: Record<string, MessageKey> = {
+  'token.level:plan': 'modes.element.level',
+  'exam.tags:all': 'modes.en.element.exam',
 };
 
 const GROUP_BY_ELEMENT = Object.fromEntries(
   POS_GROUPS.map((group) => [POS_ELEMENT[group], group]),
 ) as Record<string, PosGroup>;
 
-const featureLabel = (id: FeatureId): string => {
+const featureLabel = (registry: FeatureRegistry, id: FeatureId): string => {
+  const fromRegistry = featureById(registry, id)?.labelKey;
+  if (fromRegistry) return t(fromRegistry);
   const key = FEATURE_LABEL[id];
   return key ? t(key) : id;
 };
 
-const featureDetail = (id: FeatureId): string => {
+const featureDetail = (registry: FeatureRegistry, id: FeatureId): string => {
+  const fromRegistry = featureById(registry, id)?.detailKey;
+  if (fromRegistry) return t(fromRegistry);
   const key = FEATURE_DETAIL[id];
   return key ? t(key) : id;
 };
 
-const elementName = (id: ElementId): string => {
+const elementName = (registry: FeatureRegistry, id: ElementId): string => {
   const group = GROUP_BY_ELEMENT[id];
   if (group) return t(POS_GROUP_LABELS[group].nameKey);
-  const key = ELEMENT_LABEL[id];
+  const key =
+    (registry.expressionElement === id ? EXPRESSION_LABEL[id] : undefined) ??
+    (registry.levelElement === id ? LEVEL_LABEL[id] : undefined) ??
+    (registry.chunkGroupKey && id.startsWith(`${registry.chunkGroupKey}:`) ? CHUNK_LABEL[id] : undefined) ??
+    STATIC_ELEMENT_LABEL[id];
   return key ? t(key) : id;
 };
 
@@ -114,19 +143,24 @@ const elementDetail = (registry: FeatureRegistry, id: ElementId): string => {
   const group = GROUP_BY_ELEMENT[id];
   if (group) return t(POS_GROUP_LABELS[group].detailKey);
   const feature = featureOfElement(registry, id);
-  return feature ? featureDetail(feature) : '';
+  return feature ? featureDetail(registry, feature) : '';
 };
 
 const hex6 = (value: string | undefined, fallback: string): string =>
   value && /^#[0-9a-f]{6}/i.test(value) ? value.slice(0, 7) : fallback;
 
-/** The sample string an element could render, taken from the annotated fixture. */
-const sampleFor = (registry: FeatureRegistry, id: ElementId, features: FeatureId[]): string => {
-  if (id === READING_ELEMENT) return SAMPLE_TOKENS.find((token) => token.reading)?.reading ?? '—';
-  const index = SAMPLE_TOKENS.findIndex((_, i) =>
-    tokenElements(registry, SAMPLE_TOKENS, i, features).some((match) => match.element === id),
+/** The sample string an element could render, taken from the language's annotated fixture. */
+const sampleFor = (
+  registry: FeatureRegistry,
+  id: ElementId,
+  features: FeatureId[],
+  sample: Token[],
+): string => {
+  if (id === READING_ELEMENT) return sample.find((token) => token.reading)?.reading ?? '—';
+  const index = sample.findIndex((_, i) =>
+    tokenElements(registry, sample, i, features).some((match) => match.element === id),
   );
-  return index >= 0 ? SAMPLE_TOKENS[index].surface : '—';
+  return index >= 0 ? sample[index].surface : '—';
 };
 
 /**
@@ -138,16 +172,17 @@ const overriddenBy = (
   id: ElementId,
   features: FeatureId[],
   elements: Record<ElementId, ElementStyle>,
+  sample: Token[],
 ): FeatureId | undefined => {
-  const index = SAMPLE_TOKENS.findIndex((_, i) =>
-    tokenElements(registry, SAMPLE_TOKENS, i, features).some((match) => match.element === id),
+  const index = sample.findIndex((_, i) =>
+    tokenElements(registry, sample, i, features).some((match) => match.element === id),
   );
   if (index < 0) return undefined;
   const own = elements[id];
   if (!own || !elementEnabled(elements, id)) return undefined;
   const matched = matchedByPriority(
     registry,
-    tokenElements(registry, SAMPLE_TOKENS, index, features),
+    tokenElements(registry, sample, index, features),
   ).filter((match) => elementEnabled(elements, match.element));
   const self = matched.find((match) => match.element === id);
   if (!self) return undefined;
@@ -164,21 +199,24 @@ type PreviewProps = {
   preset: StudyPreset;
   /** Effective box style: the preset's override or the global one. */
   box: BoxStyle;
+  /** The language whose preview tokens and reading presentation apply. */
+  language: LanguageId;
+  tokens: Token[];
   className?: string;
 };
 
 /** The real renderer, so the preview cannot drift from playback. */
-function PresetPreview({ registry, preset, box, className }: PreviewProps) {
+function PresetPreview({ registry, preset, box, language, tokens, className }: PreviewProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const elements = React.useMemo(() => presetElements(registry, preset), [registry, preset]);
   React.useEffect(() => {
     if (!ref.current) return;
-    renderTokens(ref.current, PREVIEW_TOKENS, {
+    renderTokens(ref.current, tokens, {
       colorize: true,
       furigana: preset.features.includes('reading'),
-      style: { preset, elements, registry },
+      style: { preset, elements, registry, language },
     });
-  }, [registry, preset, elements]);
+  }, [registry, preset, elements, language, tokens]);
   const { backgroundColor, backgroundOpacity } = box;
   return (
     <div
@@ -198,6 +236,7 @@ function PresetPreview({ registry, preset, box, className }: PreviewProps) {
 }
 
 type RowProps = {
+  registry: FeatureRegistry;
   id: ElementId;
   sample: string;
   detail: string;
@@ -207,7 +246,7 @@ type RowProps = {
   onReset: () => void;
 };
 
-function ElementRow({ id, sample, detail, style, overridden, onChange, onReset }: RowProps) {
+function ElementRow({ registry, id, sample, detail, style, overridden, onChange, onReset }: RowProps) {
   const [open, setOpen] = React.useState(false);
   const underline = style.underline;
   const underlineOnly = style.textColorMode === 'underline-only';
@@ -223,7 +262,7 @@ function ElementRow({ id, sample, detail, style, overridden, onChange, onReset }
         <input
           type="color"
           value={hex6(style.color, '#FFFFFF')}
-          aria-label={`${elementName(id)} ${t('modes.style.color')}`}
+          aria-label={`${elementName(registry, id)} ${t('modes.style.color')}`}
           disabled={!enabled || underlineOnly}
           onChange={(event) => onChange({ color: event.target.value.toUpperCase() })}
           className="size-5 flex-none cursor-pointer rounded-sm border-0 bg-transparent p-0 disabled:opacity-40"
@@ -231,16 +270,16 @@ function ElementRow({ id, sample, detail, style, overridden, onChange, onReset }
         <button
           type="button"
           aria-expanded={open}
-          aria-label={t('modes.element.expand', { name: elementName(id) })}
+          aria-label={t('modes.element.expand', { name: elementName(registry, id) })}
           onClick={() => setOpen((value) => !value)}
           className="flex min-w-0 flex-1 items-center gap-2 text-left"
         >
-          <span className="w-14 flex-none truncate text-xs font-medium">{elementName(id)}</span>
+          <span className="w-14 flex-none truncate text-xs font-medium">{elementName(registry, id)}</span>
           <span className="min-w-0 flex-1 truncate text-2xs text-text-faint">
             {!enabled
               ? t('modes.element.off')
               : overridden
-                ? t('modes.overridden.by', { name: featureLabel(overridden) })
+                ? t('modes.overridden.by', { name: featureLabel(registry, overridden) })
                 : detail}
           </span>
           <span className="flex-none text-2xs text-muted-foreground">{sample}</span>
@@ -249,7 +288,7 @@ function ElementRow({ id, sample, detail, style, overridden, onChange, onReset }
         <Switch
           checked={enabled}
           onCheckedChange={(checked) => onChange({ enabled: checked })}
-          aria-label={t('modes.element.toggle', { name: elementName(id) })}
+          aria-label={t('modes.element.toggle', { name: elementName(registry, id) })}
         />
       </div>
       {open ? (
@@ -366,7 +405,7 @@ function ElementRow({ id, sample, detail, style, overridden, onChange, onReset }
           />
           <div>
             <Button size="sm" variant="default" onClick={onReset}>
-              {t('modes.element.reset', { name: elementName(id) })}
+              {t('modes.element.reset', { name: elementName(registry, id) })}
             </Button>
           </div>
         </div>
@@ -447,11 +486,17 @@ function BoxControls(props: {
   );
 }
 
-export function ModesPage() {
-  // P4 makes the language a per-layer setting and adds a picker; until then the options page
-  // edits the default language's preset list.
-  const language = DEFAULT_LANGUAGE;
+export function ModesPage({
+  language,
+  bands,
+}: {
+  /** Which language's preset bucket this page edits; the options sidebar picks it. */
+  language: LanguageId;
+  /** The dictionary band selection for that language, so the preview matches playback. */
+  bands?: BandSelection;
+}) {
   const registry = React.useMemo(() => featuresFor(language), [language]);
+  const preview = React.useMemo(() => previewFor(language, bands), [language, bands]);
   const {
     style,
     setPreset,
@@ -550,7 +595,8 @@ export function ModesPage() {
                       const detailKey = presetDetailKey(registry, candidate);
                       return detailKey
                         ? t(detailKey)
-                        : candidate.features.map(featureLabel).join(' · ') || t('modes.features.empty');
+                        : candidate.features.map((id) => featureLabel(registry, id)).join(' · ') ||
+                          t('modes.features.empty');
                     })()}
                   </span>
                   <span className="mt-1 block rounded-sm bg-neutral-900 px-1.5 py-1 text-[13px] leading-normal">
@@ -558,6 +604,8 @@ export function ModesPage() {
                       registry={registry}
                       preset={candidate}
                       box={effectiveBox(style, candidate)}
+                      language={language}
+                      tokens={preview.tokens}
                       className="text-white"
                     />
                   </span>
@@ -657,7 +705,13 @@ export function ModesPage() {
             bright ? 'bg-neutral-100 text-neutral-900' : 'bg-neutral-900 text-white',
           )}
         >
-          <PresetPreview registry={registry} preset={preset} box={effectiveBox(style, preset)} />
+          <PresetPreview
+            registry={registry}
+            preset={preset}
+            box={effectiveBox(style, preset)}
+            language={language}
+            tokens={preview.tokens}
+          />
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
           <span className="text-xs font-medium">{t('modes.box.modeSubtitle')}</span>
@@ -718,7 +772,9 @@ export function ModesPage() {
                   options={groupFeatures.map((feature) => ({
                     value: feature.id,
                     label: (
-                      <span title={featureDetail(feature.id)}>{featureLabel(feature.id)}</span>
+                      <span title={featureDetail(registry, feature.id)}>
+                        {featureLabel(registry, feature.id)}
+                      </span>
                     ),
                   }))}
                 />
@@ -728,7 +784,7 @@ export function ModesPage() {
         </div>
         {conflict ? (
           <p className="mt-2 text-2xs text-text-faint">
-            {t('modes.feature.conflict', { name: featureLabel(conflict) })}
+            {t('modes.feature.conflict', { name: featureLabel(registry, conflict) })}
           </p>
         ) : null}
         <p className="mt-2 text-2xs text-text-faint">{t('modes.priority')}</p>
@@ -740,15 +796,16 @@ export function ModesPage() {
         <div className="mt-2 flex flex-col gap-3">
           {elementGroups.map((group) => (
             <div key={group.feature} className="grid gap-1">
-              <span className="text-2xs font-medium text-muted-foreground">{featureLabel(group.feature)}</span>
+              <span className="text-2xs font-medium text-muted-foreground">{featureLabel(registry, group.feature)}</span>
               {group.elements.map((id) => (
                 <ElementRow
                   key={id}
+                  registry={registry}
                   id={id}
-                  sample={sampleFor(registry, id, features)}
+                  sample={sampleFor(registry, id, features, preview.sample)}
                   detail={elementDetail(registry, id)}
                   style={elements[id] ?? {}}
-                  overridden={overriddenBy(registry, id, features, elements)}
+                  overridden={overriddenBy(registry, id, features, elements, preview.sample)}
                   onChange={(patch) => updateElement(preset.id, id, patch)}
                   onReset={() => resetElement(preset.id, id)}
                 />

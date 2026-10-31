@@ -33,6 +33,16 @@
   --color-switch-knob: var(--switch-knob);
   --color-switch-knob-on: var(--switch-knob-on);
   --color-image-tile: var(--image-tile);
+  --animate-progress-indeterminate: progress-indeterminate 1.2s ease-in-out infinite;
+}
+
+@keyframes progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
 }
 
 @layer base {

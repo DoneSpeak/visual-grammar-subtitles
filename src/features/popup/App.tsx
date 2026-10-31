@@ -20,8 +20,9 @@ import {
 import { DurationInput } from '@/features/dict/duration-input';
 import { useLanguage } from '@/features/i18n/use-language';
 import { useTheme } from '@/features/theme/use-theme';
+import { DEFAULT_LANGUAGE, resolveLanguage } from '@/languages/registry';
 import { packTitleForDisplay, ruleNameForDisplay, t, type MessageKey } from '@/shared/i18n';
-import type { LibraryEntry } from '@/shared/library';
+import type { LibraryEntry, LibraryPack } from '@/shared/library';
 import type { DictTrigger } from '@/shared/dictSettings';
 import type { SubFile } from '@/features/scraper/kitsunekko';
 import { orderEntries } from './entries';
@@ -32,14 +33,6 @@ const themeOptions: { value: 'light' | 'dark' | 'system'; labelKey: MessageKey }
   { value: 'dark', labelKey: 'popup.theme.dark' },
   { value: 'system', labelKey: 'popup.theme.system' },
 ];
-
-const levelOptions = [
-  { value: '1', label: 'N1' },
-  { value: '2', label: 'N2' },
-  { value: '3', label: 'N3' },
-  { value: '4', label: 'N4' },
-  { value: '5', label: 'N5' },
-] as const;
 
 const triggerOptions: { value: DictTrigger; labelKey: MessageKey }[] = [
   { value: 'click', labelKey: 'popup.trigger.click' },
@@ -216,6 +209,7 @@ function PackGroup({ popup, packId }: { popup: PopupController; packId: string }
       >
         <Package className="size-3.5 flex-none text-text-faint" />
         <span className="min-w-0 flex-1 truncate font-medium">{packTitleForDisplay(pack.title, t)}</span>
+        <Badge className="flex-none">{resolveLanguage(pack.language).shortLabel || pack.language}</Badge>
         <Badge className="flex-none">{t('popup.pack.fileCount', { count: packEntries.length })}</Badge>
         {popup.query.trim() ? null : open ? (
           <ChevronDown className="size-3.5 flex-none text-text-faint" />
@@ -304,7 +298,26 @@ function SubsResults({ popup }: { popup: PopupController }) {
       ) : null}
       {popup.packs.length ? (
         popup.visiblePacks.length ? (
-          popup.visiblePacks.map((pack) => <PackGroup key={pack.id} popup={popup} packId={pack.id} />)
+          (() => {
+            const groups = new Map<string, LibraryPack[]>();
+            for (const pack of popup.visiblePacks) {
+              const list = groups.get(pack.language);
+              if (list) list.push(pack);
+              else groups.set(pack.language, [pack]);
+            }
+            return [...groups].map(([language, packs]) => (
+              <React.Fragment key={language}>
+                {groups.size > 1 ? (
+                  <div className="px-2 pt-1 pb-0.5 text-2xs font-medium text-text-faint">
+                    {resolveLanguage(language).displayName}
+                  </div>
+                ) : null}
+                {packs.map((pack) => (
+                  <PackGroup key={pack.id} popup={popup} packId={pack.id} />
+                ))}
+              </React.Fragment>
+            ));
+          })()
         ) : (
           query && <EmptyState className="px-2">{t('popup.local.noMatch')}</EmptyState>
         )
@@ -390,36 +403,42 @@ function DictCard({ popup }: { popup: PopupController }) {
   const { dict } = popup;
   const off = !dict.enabled;
 
-  const levels = levelOptions
-    .filter((option) => dict.levels[Number(option.value) as keyof typeof dict.levels])
-    .map((option) => option.value);
+  // Bands belong to the subtitle's language: JLPT for Japanese, exam tags for English, none for
+  // a pack without a lexicon. The row disappears rather than showing another language's levels.
+  const language = popup.status?.language ?? DEFAULT_LANGUAGE;
+  const bandOptions = (resolveLanguage(language).bands?.definitions ?? []).map((band) => ({
+    value: band.id,
+    label: band.label,
+  }));
+  const selected = bandOptions.filter((option) => dict.bands[language]?.[option.value]).map((option) => option.value);
+
+  const bandRow: { title: string; control: React.ReactNode } | null = bandOptions.length
+    ? {
+        title: t('popup.dict.levels'),
+        control: (
+          <PillGroup
+            name="dictBands"
+            multiple
+            options={bandOptions}
+            value={selected}
+            disabled={off}
+            aria-label={t('popup.dict.levels')}
+            onChange={(next) => {
+              const checked = new Set(next as string[]);
+              void popup.saveDict({
+                bands: {
+                  ...dict.bands,
+                  [language]: Object.fromEntries(bandOptions.map((option) => [option.value, checked.has(option.value)])),
+                },
+              });
+            }}
+          />
+        ),
+      }
+    : null;
 
   const rows: { title: string; control: React.ReactNode }[] = [
-    {
-      title: t('popup.dict.levels'),
-      control: (
-        <PillGroup
-          name="dictLevels"
-          multiple
-          options={levelOptions}
-          value={levels}
-          disabled={off}
-          aria-label={t('popup.dict.levels')}
-          onChange={(next) => {
-            const selected = new Set(next as string[]);
-            void popup.saveDict({
-              levels: {
-                1: selected.has('1'),
-                2: selected.has('2'),
-                3: selected.has('3'),
-                4: selected.has('4'),
-                5: selected.has('5'),
-              },
-            });
-          }}
-        />
-      ),
-    },
+    ...(bandRow ? [bandRow] : []),
     {
       title: t('popup.dict.trigger'),
       control: (

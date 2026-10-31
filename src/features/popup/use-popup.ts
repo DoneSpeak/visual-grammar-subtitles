@@ -5,7 +5,6 @@ import {
   defaultDictSettings,
   loadDictSettings,
   patchDictSettings,
-  type DictLevel,
   type DictSettings,
 } from '@/shared/dictSettings';
 import { packTitleForDisplay, ruleNameForDisplay, t } from '@/shared/i18n';
@@ -26,7 +25,7 @@ import { toast } from '@/design-system';
 
 export type PopupTab = 'subs' | 'sites';
 
-type PopupStatus = { hasVideo: boolean; subtitle: string; theater: boolean };
+type PopupStatus = { hasVideo: boolean; subtitle: string; theater: boolean; language: string };
 
 type OnlineState =
   | { mode: 'idle' }
@@ -344,4 +343,4 @@ export const usePopup = () => {
 };
 
 export type PopupController = ReturnType<typeof usePopup>;
-export type { DictLevel, SeriesDir, SubFile };
+export type { SeriesDir, SubFile };

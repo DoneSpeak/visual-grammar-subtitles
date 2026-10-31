@@ -92,4 +92,4 @@ grep -rnE "eval\(|new Function\(|import\(" .output/chrome-mv3 --include='*.js' |
 ## 5. 无需提交的文件
 
 - Chrome Web Store **不要求 EULA / 服务条款**。开发者协议与计划政策在注册开发者账号时勾选接受，不在条目里上传。
-- 唯一必须提供 URL 的法律文档是**隐私政策**：`docs/site/privacy/index.html`。
+- 唯一必须提供 URL 的法律文档是**隐私政策**：`privacy/index.html`。

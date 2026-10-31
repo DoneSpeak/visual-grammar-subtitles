@@ -12,31 +12,31 @@
 | `screenshots.md` | 截图与宣传图的来源、生成命令、上传对应关系 |
 | `assets/en/` `assets/zh/` | 各 5 张 1280×800 截图，已生成 |
 | `assets/promo/` | 440×280 与 1400×560 宣传图，已生成 |
-| `../site/privacy/index.html` | 隐私政策页（部署后填其 URL） |
-| `../site/sample.ja.srt` | 审核用的示例字幕 |
+| `../../privacy/index.html` | 隐私政策页（样式已内联，单文件） |
+| `../../privacy/sample.ja.srt` | 审核用的示例字幕 |
 
-## 必须先补的两处
+## 提交前必须完成
 
-1. **联系邮箱**：`REPLACE-ME@example.com` 出现在 `docs/site/index.html`、`docs/site/privacy/index.html`。换成真实可收信的地址。
-2. **隐私政策 URL**：Pages 首次部署后才存在。
+1. **Pages 上线**：Settings → Pages → Source 选 GitHub Actions，否则隐私政策 URL 打不开。
+2. **联系邮箱**已填 `guanrong.young@foxmail.com`（`privacy/index.html:83,146`），换地址改这两处。
 
 截图与宣传图已生成；改 UI 后执行 `node scripts/capture-store-assets.mjs` 重出。
 
 ## 隐私政策托管
 
-`docs/site/` 已配好 `.github/workflows/pages.yml`，推 `main` 即部署，只发布该目录。
+`privacy/` 已配好 `.github/workflows/pages.yml`，推 `main` 即部署。workflow 只把 `privacy/` 拷进 artifact，所以 URL 是 `/privacy/` 且源码不经 Pages 暴露。
 
 1. 仓库 Settings → Pages → Source 选 **GitHub Actions**。
 2. 推一次 `main`，等 `pages` workflow 变绿。
-3. URL 形如 `https://<owner>.github.io/<repo>/privacy/`；示例字幕在 `.../sample.ja.srt`。
+3. URL 为 `https://donespeak.github.io/visual-grammar-subtitles/privacy/`；示例字幕在 `.../privacy/sample.ja.srt`。
 
 私有仓库的 Pages 需要付费计划（Pro/Team）。不想开 Pages 的替代方案：
 
 | 方案 | 成本 | 说明 |
 |---|---|---|
 | GitHub Pages | 免费（公开仓库） | 最简单，但源码公开 |
-| Cloudflare Pages / Netlify / Vercel | 免费 | 连私有仓库，构建目录填 `docs/site`，无构建命令 |
-| 任意静态托管 | 视情况 | 上传 `docs/site/` 即可 |
+| Cloudflare Pages / Netlify / Vercel | 免费 | 连私有仓库，输出目录填 `.`（需含 `privacy/` 的根） |
+| 任意静态托管 | 视情况 | 上传 `privacy/` 到站点的同名子路径 |
 
 ## 不存在的“申请协议”
 
