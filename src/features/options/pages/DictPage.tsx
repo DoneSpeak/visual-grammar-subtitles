@@ -5,14 +5,6 @@ import { t } from '@/shared/i18n';
 import type { DictTrigger } from '@/shared/dictSettings';
 import type { DictSettingsController } from '../hooks/use-dict-settings';
 
-const levelOptions = [
-  { value: '1', label: 'N1' },
-  { value: '2', label: 'N2' },
-  { value: '3', label: 'N3' },
-  { value: '4', label: 'N4' },
-  { value: '5', label: 'N5' },
-] as const;
-
 const triggerOptions: { value: DictTrigger; labelKey: MessageKey }[] = [
   { value: 'click', labelKey: 'dict.trigger.click' },
   { value: 'hover', labelKey: 'dict.trigger.hover' },
@@ -27,13 +19,10 @@ const pronounceOptions: { value: 'romaji'; labelKey: MessageKey }[] = [
   { value: 'romaji', labelKey: 'dict.pronounce.romaji' },
 ];
 
+/** Global lookup behaviour. Vocabulary bands are per language and live on `BandsPage`. */
 export function DictPage({ dict }: { dict: DictSettingsController }) {
   const { settings } = dict;
   const off = !settings.enabled;
-
-  const levels = levelOptions
-    .filter((option) => settings.levels[Number(option.value) as keyof typeof settings.levels])
-    .map((option) => option.value);
 
   return (
     <>
@@ -44,29 +33,6 @@ export function DictPage({ dict }: { dict: DictSettingsController }) {
             checked={settings.enabled}
             aria-label={t('dict.enable')}
             onCheckedChange={(enabled) => void dict.save({ enabled })}
-          />
-        </SettingRow>
-
-        <SettingRow title={t('dict.levels')} description={t('dict.levelsDescription')}>
-          <PillGroup
-            name="dictLevels"
-            multiple
-            disabled={off}
-            options={levelOptions}
-            value={levels}
-            aria-label={t('dict.levels')}
-            onChange={(next) => {
-              const selected = new Set(next as string[]);
-              void dict.save({
-                levels: {
-                  1: selected.has('1'),
-                  2: selected.has('2'),
-                  3: selected.has('3'),
-                  4: selected.has('4'),
-                  5: selected.has('5'),
-                },
-              });
-            }}
           />
         </SettingRow>
 
@@ -124,7 +90,6 @@ export function DictPage({ dict }: { dict: DictSettingsController }) {
           />
         </SettingRow>
       </Card>
-      <p className="text-2xs text-text-faint">{t('dict.footnote')}</p>
     </>
   );
 }

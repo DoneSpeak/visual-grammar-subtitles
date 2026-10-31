@@ -1,15 +1,15 @@
 import { nlpMessage } from '@/nlp/background';
 import { defineBackground } from 'wxt/utils/define-background';
-import kuromoji from '@sglkc/kuromoji';
-import type { IpadicFeatures } from '@sglkc/kuromoji';
-import type { DictEntry, DictFile } from '@/shared/dictionary';
-import { DictIndex } from '@/shared/dictionary';
+import { loadLanguageRuntime } from '@/languages/tokenizers';
+import type { DictEntry } from '@/shared/dictionary';
 import type { Token } from '@/shared/types';
-import { hydrateVocabulary, type VocabularyFile } from '@/shared/vocabulary';
 import { pageKeyFromUrl } from '@/shared/storage';
 import { listDir, mergeSeries, searchSeries } from '@/features/scraper/kitsunekko';
 import { translateToEnglish } from '@/shared/translate';
 import { importKitsunekkoArchive, loadKitsunekkoIndex } from '@/shared/kitsunekkoLibrary';
+import { providerFor } from '@/features/scraper/providers';
+import { PROVIDER_KEYS_KEY, sanitizeProviderKeys } from '@/shared/providerSettings';
+import { importLibraryFiles } from '@/shared/library';
 import { fetchPgcSeason } from '@/shared/bilibiliPgc';
 import { initI18n, t } from '@/shared/i18n';
 
@@ -38,10 +38,6 @@ const translateCached = (query: string): Promise<string | null> => {
     });
 };
 
-type Tokenizer = { tokenize: (text: string) => IpadicFeatures[] };
-
-let tokenizerPromise: Promise<{ tokenizer: Tokenizer | null; error?: string }> | null = null;
-
 // kuromoji joins dicPath with a slash-collapsing regex, turning
 // "chrome-extension://<id>/dict/..." into "chrome-extension:/<id>/dict/...".
 const normalizeExtensionUrl = (url: string): string => url.replace(/^chrome-extension:\/+/, 'chrome-extension://');
@@ -53,53 +49,7 @@ self.fetch = ((input: RequestInfo | URL, init?: RequestInit) => {
   return rawFetch(input, init);
 }) as typeof fetch;
 
-const getTokenizer = (): Promise<{ tokenizer: Tokenizer | null; error?: string }> => {
-  if (tokenizerPromise) return tokenizerPromise;
-  tokenizerPromise = new Promise((resolve) => {
-    kuromoji.builder({ dicPath: chrome.runtime.getURL('dict/') }).build((err, built) => {
-      if (err) {
-        const error = `kuromoji init failed: ${String(err)}`;
-        console.error('[jp-sub]', error);
-        resolve({ tokenizer: null, error });
-        return;
-      }
-      resolve({ tokenizer: built as unknown as Tokenizer });
-    });
-  });
-  return tokenizerPromise;
-};
-
-const toToken = (raw: IpadicFeatures): Token => ({
-  surface: raw.surface_form ?? '',
-  pos: raw.pos ?? '',
-  posDetail1: raw.pos_detail_1 ?? '',
-  conjType: raw.conjugated_type ?? '',
-  conjForm: raw.conjugated_form ?? '',
-  baseForm: raw.basic_form ?? '',
-  reading: raw.reading ?? '',
-});
-
-let dictPromise: Promise<DictIndex | null> | null = null;
-
-const getDictIndex = (): Promise<DictIndex | null> => {
-  if (dictPromise) return dictPromise;
-  dictPromise = Promise.all([
-    fetch(chrome.runtime.getURL('dict/jlpt-dict.json')).then((res) => {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json() as Promise<DictFile>;
-    }),
-    // Optional: a build without the visual vocabulary still yields a text-only card.
-    fetch(chrome.runtime.getURL('dict/vocabulary.json'))
-      .then((res) => (res.ok ? (res.json() as Promise<VocabularyFile>) : null))
-      .catch(() => null),
-  ])
-    .then(([file, vocabulary]) => new DictIndex(hydrateVocabulary(file.entries, vocabulary)))
-    .catch((err) => {
-      console.error('[jp-sub] dictionary load failed', err);
-      return null;
-    });
-  return dictPromise;
-};
+const languageOf = (value: unknown): string => (typeof value === 'string' && value ? value : 'ja');
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg?.type === 'nlp') {
@@ -129,13 +79,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg?.type === 'lookupTokens') {
     const tokens = msg.tokens as Token[];
     if (!Array.isArray(tokens) || tokens.length > 20000) { sendResponse({ error: 'Invalid tokens' }); return false; }
-    void getDictIndex().then(dict => {
+    void loadLanguageRuntime(languageOf(msg.language)).then((runtime) => {
+      const lexicon = runtime?.lexicon ?? null;
       const entries: DictEntry[] = [];
-      const result = tokens.map(token => {
-        const index = dict?.find(token);
-        if (index === undefined || !dict) return token;
+      const result = tokens.map((token) => {
+        const index = lexicon?.find(token);
+        if (index === undefined || !lexicon) return token;
         const dictIdx = entries.length;
-        entries.push(dict.entry(index));
+        entries.push(lexicon.entry(index));
         return { ...token, dictIdx };
       });
       sendResponse({ tokens: result, entries });
@@ -145,20 +96,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg?.type === 'tokenize') {
     const lines: string[] = msg.lines ?? [];
-    void Promise.all([getTokenizer(), getDictIndex()]).then(([{ tokenizer, error }, dict]) => {
-      if (!tokenizer) {
-        sendResponse({ error: error ?? 'tokenizer unavailable' });
+    void loadLanguageRuntime(languageOf(msg.language)).then((runtime) => {
+      if (!runtime) {
+        sendResponse({ error: 'tokenizer unavailable' });
         return;
       }
       try {
         const entries: DictEntry[] = [];
         const result = lines.map((line) =>
-          tokenizer.tokenize(line).map((raw) => {
-            const token = toToken(raw);
-            const idx = dict?.find(token);
-            if (idx !== undefined && dict) {
+          runtime.tokenizer.tokenize(line).map((token) => {
+            const idx = runtime.lexicon?.find(token);
+            if (idx !== undefined && runtime.lexicon) {
               token.dictIdx = entries.length;
-              entries.push(dict.entry(idx));
+              entries.push(runtime.lexicon.entry(idx));
             }
             return token;
           }),
@@ -203,6 +153,70 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           errors,
         }),
       )
+      .catch((err) => sendResponse({ error: errText(err) }));
+    return true;
+  }
+
+  // Provider traffic stays in the service worker: MV3 content scripts cannot fetch cross-origin
+  // even with host permissions, and the API key must never leave storage.
+  if (
+    msg?.type === 'providerSearch' ||
+    msg?.type === 'providerList' ||
+    msg?.type === 'providerImport'
+  ) {
+    const language = typeof msg.language === 'string' ? msg.language : '';
+    const descriptor = providerFor(language);
+    const resolve = async () => {
+      if (!descriptor || (typeof msg.provider === 'string' && msg.provider !== descriptor.id)) {
+        return { error: 'no-provider' } as const;
+      }
+      const raw = await chrome.storage.local.get(PROVIDER_KEYS_KEY);
+      const key = sanitizeProviderKeys(raw[PROVIDER_KEYS_KEY])[descriptor.id] ?? '';
+      if (descriptor.requiresKey && !key) return { error: 'no-key' } as const;
+      return { provider: descriptor.create(key, language), descriptor } as const;
+    };
+    void resolve()
+      .then(async (found) => {
+        if ('error' in found) {
+          sendResponse({ error: found.error });
+          return;
+        }
+        const { provider, descriptor } = found;
+        if (msg.type === 'providerSearch') {
+          const hits = await provider.search(String(msg.query ?? '').trim());
+          sendResponse({ hits });
+          return;
+        }
+        if (msg.type === 'providerList') {
+          const files = await provider.listEpisodes(msg.hit, {});
+          sendResponse({ files });
+          return;
+        }
+        const fetched = await provider.fetch(msg.file);
+        if (!fetched.length) {
+          sendResponse({ error: 'empty-file' });
+          return;
+        }
+        const files = fetched.map((item) => new File([item.text], item.name, { type: 'text/plain' }));
+        const { pack, added, errors } = await importLibraryFiles(files, {
+          title: String(msg.hit?.title ?? ''),
+          language,
+          origin: {
+            kind: 'provider',
+            provider: descriptor.id,
+            seriesId: msg.hit?.id,
+            release: msg.file?.release,
+            url: msg.file?.url,
+            sourceUrl: msg.file?.sourceUrl,
+            importedAt: Date.now(),
+          },
+        });
+        sendResponse({
+          packTitle: pack.title,
+          entries: added.map((entry) => ({ id: entry.id, name: entry.name })),
+          errors: errors.length,
+        });
+      })
       .catch((err) => sendResponse({ error: errText(err) }));
     return true;
   }

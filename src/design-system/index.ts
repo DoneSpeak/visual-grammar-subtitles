@@ -19,6 +19,8 @@ export {
 export { Input, Textarea } from './components/input';
 export { Label } from './components/label';
 export { PillGroup } from './components/pill-group';
+export { Popover } from './components/popover';
+export { Progress } from './components/progress';
 export { SegmentedControl, type SegmentedOption } from './components/segmented-control';
 export {
   Select,
@@ -37,6 +39,7 @@ export { Chip } from './patterns/chip';
 export { ColorSwatch } from './patterns/color-swatch';
 export { useConfirm, type ConfirmOptions } from './patterns/confirm-dialog';
 export { EmptyState } from './patterns/empty-state';
+export { Hint } from './patterns/hint';
 export { Kbd } from './patterns/kbd';
 export { ListRow } from './patterns/list-row';
 export { PageHeader } from './patterns/page-header';

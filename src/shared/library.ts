@@ -1,3 +1,5 @@
+import { DEFAULT_LANGUAGE, detectLanguageId } from '@/languages/registry';
+import type { LanguageId } from '@/languages/types';
 import { parseSubtitles } from '@/features/overlay/subtitles/parse';
 import { LEGACY_ORIGIN_NOTE, UNFILED_TITLE } from './persistedText';
 import { t } from './i18n';
@@ -15,12 +17,27 @@ export type SubtitleOrigin =
       archiveModified: string;
       importedAt: number;
     }
+  | {
+      kind: 'provider';
+      provider: string;
+      seriesId?: string;
+      season?: number;
+      episode?: number;
+      release?: string;
+      /** Direct download URL of the imported archive. */
+      url?: string;
+      /** Human-facing page for the downloaded subtitle, kept so the pack can link back to it. */
+      sourceUrl?: string;
+      importedAt: number;
+    }
   | { kind: 'local'; note?: string; importedAt: number };
 
-/** One anime = one pack. Entries inside a pack are episodes of that series. */
+/** One series = one pack. Entries inside a pack are episodes of that series. */
 export type LibraryPack = {
   id: string;
   title: string;
+  /** The language the subtitles are written in; the packs page groups by it. */
+  language: LanguageId;
   origin: SubtitleOrigin;
   addedAt: number;
   updatedAt: number;
@@ -37,7 +54,7 @@ export type LibraryEntry = {
 
 export type LibrarySettings = { lastId: string; autoApply: boolean };
 
-export type PackInput = { title: string; origin: SubtitleOrigin };
+export type PackInput = { title: string; origin: SubtitleOrigin; language?: LanguageId };
 
 const PACKS_KEY = 'lib:packs';
 const INDEX_KEY = 'lib:index';
@@ -67,38 +84,69 @@ export const inferPackTitle = (fileName: string): string => {
 
 let migration: Promise<void> | null = null;
 
-/** Older imports were a flat list with no pack; group them by inferred series title. */
+/** Legacy packs predate `language`; infer it from the first subtitle in the pack. */
+const hasLanguage = (pack: LibraryPack): boolean =>
+  typeof (pack as Partial<LibraryPack>).language === 'string';
+
+const detectPackLanguage = async (pack: LibraryPack, index: LibraryEntry[]): Promise<LanguageId> => {
+  if (pack.origin.kind === 'kitsunekko') return 'ja';
+  const first = index.find((entry) => entry.packId === pack.id);
+  if (!first) return DEFAULT_LANGUAGE;
+  const raw = await chrome.storage.local.get(itemKey(first.id));
+  const text = raw[itemKey(first.id)];
+  if (typeof text !== 'string') return DEFAULT_LANGUAGE;
+  const detected = detectLanguageId(text.slice(0, 4000));
+  return detected === 'plain' ? DEFAULT_LANGUAGE : detected;
+};
+
+/** Older imports were a flat list with no pack and no language; fill both in once. */
 const ensureMigrated = (): Promise<void> => {
   if (migration) return migration;
   migration = (async () => {
     const [index, packs] = await Promise.all([readIndex(), readPacks()]);
     const known = new Set(packs.map((p) => p.id));
     const orphans = index.filter((e) => !e.packId || !known.has(e.packId));
-    if (!orphans.length) return;
+    let nextPacks = packs;
+    let changed = false;
 
-    const byTitle = new Map(packs.map((p) => [p.title, p]));
-    const now = Date.now();
-    const created: LibraryPack[] = [];
-    for (const entry of orphans) {
-      const title = inferPackTitle(entry.name);
-      let pack = byTitle.get(title);
-      if (!pack) {
-        pack = {
-          id: crypto.randomUUID(),
-          title,
-          origin: { kind: 'local', note: LEGACY_ORIGIN_NOTE, importedAt: now },
-          addedAt: entry.addedAt,
-          updatedAt: entry.addedAt,
-        };
-        byTitle.set(title, pack);
-        created.push(pack);
+    if (orphans.length) {
+      const byTitle = new Map(packs.map((p) => [p.title, p]));
+      const now = Date.now();
+      const created: LibraryPack[] = [];
+      for (const entry of orphans) {
+        const title = inferPackTitle(entry.name);
+        let pack = byTitle.get(title);
+        if (!pack) {
+          pack = {
+            id: crypto.randomUUID(),
+            title,
+            language: DEFAULT_LANGUAGE,
+            origin: { kind: 'local', note: LEGACY_ORIGIN_NOTE, importedAt: now },
+            addedAt: entry.addedAt,
+            updatedAt: entry.addedAt,
+          };
+          byTitle.set(title, pack);
+          created.push(pack);
+        }
+        entry.packId = pack.id;
       }
-      entry.packId = pack.id;
+      nextPacks = [...packs, ...created];
+      changed = true;
     }
 
+    if (nextPacks.some((pack) => !hasLanguage(pack))) {
+      nextPacks = await Promise.all(
+        nextPacks.map(async (pack) =>
+          hasLanguage(pack) ? pack : { ...pack, language: await detectPackLanguage(pack, index) },
+        ),
+      );
+      changed = true;
+    }
+
+    if (!changed) return;
     await Promise.all([
       chrome.storage.local.set({ [INDEX_KEY]: index }),
-      chrome.storage.local.set({ [PACKS_KEY]: [...packs, ...created] }),
+      chrome.storage.local.set({ [PACKS_KEY]: nextPacks }),
     ]);
   })().catch((err) => {
     migration = null;
@@ -128,8 +176,19 @@ const samePack = (pack: LibraryPack, input: PackInput): boolean => {
   if (pack.origin.kind === 'kitsunekko' && input.origin.kind === 'kitsunekko') {
     return pack.origin.seriesPath === input.origin.seriesPath;
   }
+  if (pack.origin.kind === 'provider' && input.origin.kind === 'provider') {
+    // The same series id exists on every language's source; language keeps EN and TH packs apart.
+    return (
+      pack.origin.provider === input.origin.provider &&
+      pack.origin.seriesId === input.origin.seriesId &&
+      pack.language === packLanguage(input)
+    );
+  }
   return pack.title === input.title;
 };
+
+const packLanguage = (input: PackInput): LanguageId =>
+  input.language ?? (input.origin.kind === 'kitsunekko' ? 'ja' : DEFAULT_LANGUAGE);
 
 /** Reuse the pack for the same series; a newer archive just refreshes its origin. */
 const resolvePack = async (input: PackInput): Promise<LibraryPack> => {
@@ -141,6 +200,7 @@ const resolvePack = async (input: PackInput): Promise<LibraryPack> => {
     const pack: LibraryPack = {
       id: crypto.randomUUID(),
       title: input.title,
+      language: packLanguage(input),
       origin: input.origin,
       addedAt: now,
       updatedAt: now,
@@ -148,10 +208,15 @@ const resolvePack = async (input: PackInput): Promise<LibraryPack> => {
     await chrome.storage.local.set({ [PACKS_KEY]: [...packs, pack] });
     return pack;
   }
+  const origin =
+    input.origin.kind === 'provider' && existing.origin.kind === 'provider'
+      ? { ...input.origin, sourceUrl: input.origin.sourceUrl ?? existing.origin.sourceUrl }
+      : input.origin;
   const updated: LibraryPack = {
     ...existing,
     title: input.title || existing.title,
-    origin: input.origin,
+    language: input.language ?? existing.language,
+    origin,
     updatedAt: Date.now(),
   };
   await chrome.storage.local.set({ [PACKS_KEY]: packs.map((p) => (p.id === existing.id ? updated : p)) });
@@ -162,14 +227,18 @@ export const importLibraryFiles = async (
   files: File[],
   input: PackInput,
 ): Promise<{ pack: LibraryPack; added: LibraryEntry[]; errors: string[] }> => {
-  const pack = await resolvePack(input);
+  const read = await Promise.all(files.map(async (file) => ({ file, text: await file.text() })));
+  const detected = detectLanguageId(read.map((item) => item.text).join('\n').slice(0, 4000));
+  const pack = await resolvePack({
+    ...input,
+    language: input.language ?? (detected === 'plain' ? undefined : detected),
+  });
   const index = await readIndex();
   const byName = new Map(index.filter((e) => e.packId === pack.id).map((e) => [e.name, e]));
   const added: LibraryEntry[] = [];
   const errors: string[] = [];
 
-  for (const file of files) {
-    const text = await file.text();
+  for (const { file, text } of read) {
     const cues = parseSubtitles(text);
     if (cues.length === 0) {
       errors.push(t('errors.unparsableFile', { name: file.name }));

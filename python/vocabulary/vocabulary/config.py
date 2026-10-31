@@ -12,7 +12,7 @@ SOURCES_LOCK = DATA_DIR / "sources.lock.yaml"
 RELEVANCE_FILE = DATA_DIR / "relevance.yaml"
 CONCEPTS_DIR = DATA_DIR / "concepts"
 
-DEFAULT_SUBTITLES = REPO_ROOT / "subtitles"
+DEFAULT_SUBTITLES = REPO_ROOT / ".local" / "subtitles"
 DEFAULT_LEVELS = ("N5", "N4")
 LEVEL_RANK = {"N5": 0, "N4": 1, "N3": 2, "N2": 3, "N1": 4}
 

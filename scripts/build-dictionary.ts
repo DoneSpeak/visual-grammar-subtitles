@@ -12,6 +12,8 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
 
+import { parseCsv } from './lexicons/parse-csv.ts';
+
 const JLPT_COMMIT = '1ad66734417aca9dbcca6b2d5ee440cb13ab3ba0';
 const JMDICT_VERSION = '3.6.2+20261026175559';
 const JLPT_URL = (level: number) =>
@@ -68,41 +70,6 @@ const untarSingleFile = (tgz: Buffer): Buffer => {
     offset = start + Math.ceil(size / 512) * 512;
   }
   throw new Error('no .json member in archive');
-};
-
-const parseCsv = (text: string): Record<string, string>[] => {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let field = '';
-  let quoted = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (quoted) {
-      if (c === '"' && text[i + 1] === '"') {
-        field += '"';
-        i++;
-      } else if (c === '"') quoted = false;
-      else field += c;
-    } else if (c === '"') quoted = true;
-    else if (c === ',') {
-      row.push(field);
-      field = '';
-    } else if (c === '\n') {
-      row.push(field);
-      rows.push(row);
-      row = [];
-      field = '';
-    } else if (c !== '\r') field += c;
-  }
-  if (field || row.length) {
-    row.push(field);
-    rows.push(row);
-  }
-  const [header, ...body] = rows;
-  if (!header) return [];
-  return body
-    .filter((r) => r.length === header.length)
-    .map((r) => Object.fromEntries(header.map((h, i) => [h, r[i]])));
 };
 
 /** JLPT lists annotate entries as 故～ / こす (みずを～); strip the markers to match JMdict. */

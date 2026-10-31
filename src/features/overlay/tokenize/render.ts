@@ -1,52 +1,27 @@
+import { entryAllowed } from '@/languages/bands';
+import { DEFAULT_LANGUAGE, resolveLanguage } from '@/languages/registry';
+import type { BandSelection, LanguageId } from '@/languages/types';
 import type { DictEntry } from '@/shared/dictionary';
 import { underlineOffset, type ElementStyle } from '@/shared/elementStyle';
-import { READING_ELEMENT } from '@/shared/studyFeatures';
+import { READING_ELEMENT, type FeatureRegistry } from '@/shared/studyFeatures';
 import type { StudyPreset } from '@/shared/subtitleStyle';
 import type { Token } from '@/shared/types';
 import { tokenStyle } from './style';
 
-const KANJI = /[㐀-䶿一-鿿豈-﫿]/;
-const KANA = /[ぁ-ゖァ-ヺ]/;
-
-const toHiragana = (s: string): string =>
-  s.replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
-
-/** Trim okurigana shared by surface and reading so ruby only covers the kanji stem. */
-const alignRuby = (
-  surface: string,
-  reading: string,
-): { prefix: string; base: string; ruby: string; suffix: string } | null => {
-  const kana = toHiragana(reading);
-  let si = surface.length - 1;
-  let ri = kana.length - 1;
-  while (si >= 0 && ri >= 0 && KANA.test(surface[si]) && surface[si] === kana[ri]) {
-    si--;
-    ri--;
-  }
-  let sp = 0;
-  let rp = 0;
-  while (sp <= si && rp <= ri && KANA.test(surface[sp]) && surface[sp] === kana[rp]) {
-    sp++;
-    rp++;
-  }
-  const base = surface.slice(sp, si + 1);
-  const ruby = kana.slice(rp, ri + 1);
-  if (!base || !ruby || !KANJI.test(base)) return null;
-  return {
-    prefix: surface.slice(0, sp),
-    base,
-    ruby,
-    suffix: surface.slice(si + 1),
-  };
-};
-
 export type DictRender = {
   entries: DictEntry[];
   enabled: boolean;
-  levels: Record<number, boolean>;
+  /** Band selection per language; the layer's own language picks the slice. */
+  bands: Record<LanguageId, BandSelection>;
 };
 
-export type RenderStyle = { preset: StudyPreset; elements: Record<string, ElementStyle> };
+export type RenderStyle = {
+  preset: StudyPreset;
+  elements: Record<string, ElementStyle>;
+  registry: FeatureRegistry;
+  /** Which pack's reading presentation applies; absent means the default language. */
+  language?: string;
+};
 
 export type RenderOpts = { colorize: boolean; furigana: boolean; style: RenderStyle; dict?: DictRender };
 
@@ -88,7 +63,10 @@ const applyRubyStyle = (rt: HTMLElement, style: ElementStyle | undefined): void 
 
 export const renderTokens = (container: HTMLElement, tokens: Token[], opts: RenderOpts): void => {
   container.textContent = '';
-  const { preset, elements } = opts.style;
+  const { preset, elements, registry } = opts.style;
+  const languageId = opts.style.language ?? DEFAULT_LANGUAGE;
+  const pack = resolveLanguage(languageId);
+  const align = pack.presentation.reading.align;
   const reading = preset.features.includes('reading') ? elements[READING_ELEMENT] : undefined;
   // Switching the furigana element off hides the ruby entirely; its style carries nothing else.
   const readingOff = elements[READING_ELEMENT]?.enabled === false;
@@ -99,10 +77,10 @@ export const renderTokens = (container: HTMLElement, tokens: Token[], opts: Rend
       return;
     }
     const span = document.createElement('span');
-    if (opts.colorize) applyStyle(span, tokenStyle(tokens, index, preset, elements));
-    if (token.grammar?.length) span.title = token.grammar.join(' · ');
-    const ruby =
-      !readingOff && opts.furigana && token.reading ? alignRuby(token.surface, token.reading) : null;
+    if (opts.colorize) applyStyle(span, tokenStyle(registry, tokens, index, preset, elements));
+    const tooltip = [...(token.grammar ?? []), ...(token.notes ?? [])];
+    if (tooltip.length) span.title = tooltip.join(' · ');
+    const ruby = !readingOff && opts.furigana && token.reading ? align(token.surface, token.reading) : null;
     if (ruby) {
       const r = document.createElement('ruby');
       r.appendChild(document.createTextNode(ruby.base));
@@ -116,7 +94,9 @@ export const renderTokens = (container: HTMLElement, tokens: Token[], opts: Rend
     }
     const dict = opts.dict;
     const entry = dict && token.dictIdx !== undefined ? dict.entries[token.dictIdx] : undefined;
-    if (dict?.enabled && entry && dict.levels[entry.lv]) {
+    // Bands are declared by the language pack: JLPT levels for Japanese, exam tags for English.
+    // An entry outside every band stays lookup-able — the filter only hides words it classifies.
+    if (dict?.enabled && entry && entryAllowed(pack.bands, entry, dict.bands[languageId] ?? {})) {
       span.classList.add('dict-word');
       span.dataset.dictIdx = String(token.dictIdx);
     }
@@ -129,5 +109,5 @@ export const renderPlain = (container: HTMLElement, text: string): void => {
 };
 
 export const plainToken = (text: string): Token[] => [
-  { surface: text, pos: '', posDetail1: '', conjType: '', conjForm: '', baseForm: '', reading: '' },
+  { surface: text, pos: 'X', baseForm: '' },
 ];

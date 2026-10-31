@@ -1,41 +1,69 @@
 import type { ElementStyle, StudyPreset } from '@/shared/subtitleStyle';
 import {
-  EXPRESSION_ELEMENT,
   featureRank,
-  LEVEL_ELEMENT,
   POS_ELEMENT,
+  READING_ELEMENT,
   type FeatureId,
+  type FeatureRegistry,
 } from '@/shared/studyFeatures';
 import type { Token } from '@/shared/types';
 import { isInflected, posGroupOf } from './colors';
 
-/** Layer a token's bunsetsu annotation lands in; also the key of `Token.groups`. */
-export const CHUNK_GROUP_KEY = 'chunk.bunsetsu';
-
 export type MatchedElement = { feature: FeatureId; element: string };
 
-const grammarLabel = (token: Token, prefix: string): string | undefined =>
-  token.grammar?.find((label) => label.startsWith(prefix));
+/**
+ * An element id is `layer:label`. `:all` collects every label under that layer, which is how
+ * expression, aspect and pronunciation layers render through one palette entry. Everything else
+ * matches one exact label. Reading and chunk positions are not grammar labels, so callers skip them.
+ */
+const elementMatchesToken = (token: Token, element: string): boolean => {
+  const colon = element.indexOf(':');
+  if (colon <= 0 || !token.grammar?.length) return false;
+  const layer = element.slice(0, colon);
+  const label = element.slice(colon + 1);
+  return label === 'all'
+    ? token.grammar.some((value) => value.startsWith(`${layer}:`))
+    : token.grammar.includes(element);
+};
 
 /**
- * Position within the bunsetsu holds the style: the outer tokens round only their outer corners,
+ * Position within the chunk holds the style: the outer tokens round only their outer corners,
  * so a chunk paints as one continuous block without any spacing that would break line layout.
  */
-export const chunkElementAt = (tokens: Token[], index: number): string | undefined => {
-  const group = tokens[index]?.groups?.[CHUNK_GROUP_KEY];
+export const chunkElementAt = (
+  tokens: Token[],
+  index: number,
+  groupKey: string,
+): string | undefined => {
+  const group = tokens[index]?.groups?.[groupKey];
   if (!group) return undefined;
   let start = index;
   let end = index;
-  while (start > 0 && tokens[start - 1].groups?.[CHUNK_GROUP_KEY] === group) start--;
-  while (end < tokens.length - 1 && tokens[end + 1].groups?.[CHUNK_GROUP_KEY] === group) end++;
+  while (start > 0 && tokens[start - 1].groups?.[groupKey] === group) start--;
+  while (end < tokens.length - 1 && tokens[end + 1].groups?.[groupKey] === group) end++;
   const size = end - start + 1;
-  if (size === 1) return 'chunk.bunsetsu:only';
-  if (index === start) return 'chunk.bunsetsu:first';
-  return index === end ? 'chunk.bunsetsu:last' : 'chunk.bunsetsu:middle';
+  if (size === 1) return `${groupKey}:only`;
+  if (index === start) return `${groupKey}:first`;
+  return index === end ? `${groupKey}:last` : `${groupKey}:middle`;
+};
+
+/** The enabled feature that owns this language's chunk positions, if any. */
+const chunkFeatureOf = (
+  registry: FeatureRegistry,
+  groupKey: string,
+  features: FeatureId[],
+): FeatureId | undefined => {
+  const probe = `${groupKey}:first`;
+  const owners = registry.features.filter((feature) => feature.elements.includes(probe));
+  // Two chunk features conflict, so at most one is enabled; take the highest-ranked one anyway.
+  return owners
+    .filter((feature) => features.includes(feature.id))
+    .sort((a, b) => featureRank(registry, b.id) - featureRank(registry, a.id))[0]?.id;
 };
 
 /** Every element this token belongs to. Elements are not mutually exclusive. */
 export const tokenElements = (
+  registry: FeatureRegistry,
   tokens: Token[],
   index: number,
   features: FeatureId[],
@@ -44,22 +72,24 @@ export const tokenElements = (
   if (!token) return [];
   const matched: MatchedElement[] = [];
   if (features.includes('pos')) matched.push({ feature: 'pos', element: POS_ELEMENT[posGroupOf(token)] });
-  const role = grammarLabel(token, 'syntax.role:');
-  if (features.includes('syntax') && role) matched.push({ feature: 'syntax', element: role });
-  if (features.includes('expression') && token.grammar?.includes(EXPRESSION_ELEMENT)) {
-    matched.push({ feature: 'expression', element: EXPRESSION_ELEMENT });
+  // Every other layer is declared by the registry: element id `layer:label` matches the labels
+  // the local annotators or the remote service wrote into `Token.grammar`. Role and clause can
+  // both match one token; the merge order decides which property each one wins.
+  for (const feature of registry.features) {
+    if (feature.id === 'pos' || !features.includes(feature.id)) continue;
+    for (const element of feature.elements) {
+      // Reading is rendered as ruby and chunk positions come from `Token.groups`.
+      if (element === READING_ELEMENT) continue;
+      if (registry.chunkGroupKey && element.startsWith(`${registry.chunkGroupKey}:`)) continue;
+      if (elementMatchesToken(token, element)) matched.push({ feature: feature.id, element });
+    }
   }
-  if (features.includes('level') && token.grammar?.includes(LEVEL_ELEMENT)) {
-    matched.push({ feature: 'level', element: LEVEL_ELEMENT });
-  }
-  const chunkFeature = features.includes('chunk')
-    ? 'chunk'
-    : features.includes('chunk-rule')
-      ? 'chunk-rule'
-      : undefined;
-  if (chunkFeature) {
-    const element = chunkElementAt(tokens, index);
-    if (element) matched.push({ feature: chunkFeature, element });
+  if (registry.chunkGroupKey) {
+    const chunkFeature = chunkFeatureOf(registry, registry.chunkGroupKey, features);
+    if (chunkFeature) {
+      const element = chunkElementAt(tokens, index, registry.chunkGroupKey);
+      if (element) matched.push({ feature: chunkFeature, element });
+    }
   }
   return matched;
 };
@@ -86,12 +116,13 @@ export const elementEnabled = (
  * the highest-ranked feature that sets that property explicitly; values never multiply or stack.
  */
 export const resolveElementStyle = (
+  registry: FeatureRegistry,
   matched: MatchedElement[],
   elements: Record<string, ElementStyle>,
 ): ElementStyle => {
   const ordered = matched
     .filter((match) => elementEnabled(elements, match.element))
-    .sort((a, b) => featureRank(a.feature) - featureRank(b.feature));
+    .sort((a, b) => featureRank(registry, a.feature) - featureRank(registry, b.feature));
   const style: ElementStyle = {};
   for (const property of MERGE_PROPERTIES) {
     for (const match of ordered) {
@@ -107,14 +138,18 @@ export const resolveElementStyle = (
 };
 
 /** Sorts a token's matches by precedence, high to low — used by the options conflict hints. */
-export const matchedByPriority = (matched: MatchedElement[]): MatchedElement[] =>
-  [...matched].sort((a, b) => featureRank(b.feature) - featureRank(a.feature));
+export const matchedByPriority = (
+  registry: FeatureRegistry,
+  matched: MatchedElement[],
+): MatchedElement[] =>
+  [...matched].sort((a, b) => featureRank(registry, b.feature) - featureRank(registry, a.feature));
 
 /**
  * Resolved style for one token. Tokens outside the preset's focus element are dimmed, the
  * inflected-verb hint stays as a fallback when nothing else sets opacity or underline.
  */
 export const tokenStyle = (
+  registry: FeatureRegistry,
   tokens: Token[],
   index: number,
   preset: StudyPreset,
@@ -122,8 +157,8 @@ export const tokenStyle = (
 ): ElementStyle | undefined => {
   const token = tokens[index];
   if (!token) return undefined;
-  const matched = tokenElements(tokens, index, preset.features);
-  const style = resolveElementStyle(matched, elements);
+  const matched = tokenElements(registry, tokens, index, preset.features);
+  const style = resolveElementStyle(registry, matched, elements);
   const focus = preset.base.focusElement;
   // Focusing an element that is switched off must not dim the whole line.
   if (focus && elementEnabled(elements, focus) && !matched.some((match) => match.element === focus)) {

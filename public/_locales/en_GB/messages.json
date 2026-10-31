@@ -1,14 +1,14 @@
 {
   "extName": {
-    "message": "JP Subtitle Overlay",
+    "message": "Visual Grammar Subtitles",
     "description": "Extension name in the browser UI"
   },
   "extDescription": {
-    "message": "Overlay local subtitles on any web video, with Japanese part-of-speech colouring and display-duration control",
+    "message": "Visual Grammar & Color-Coded Language Learning — overlay local subtitles on any web video with colour-coded grammar, word cards and display-duration control",
     "description": "Extension description in the browser UI"
   },
   "extActionTitle": {
-    "message": "Subtitle Overlay",
+    "message": "Visual Grammar Subtitles",
     "description": "Toolbar button tooltip"
   }
 }

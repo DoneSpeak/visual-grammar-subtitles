@@ -6,16 +6,16 @@
 
 | 后台字段 | 值 | 限制 |
 |---|---|---|
-| 名称 | `JP Subtitle Overlay` | 18/45 |
+| 名称 | `Visual Grammar Subtitles` | 24/45 |
 | 简短说明（English） | 见下 | 126/132 |
 | 详细说明（English） | 见下 | 约 2.3k/16k |
 | 类别 | **Education**（备选 Productivity） | 单选 |
 | 语言 | English (United Kingdom)；再添加 Chinese (Simplified) | 与 `default_locale: en_GB` 一致 |
 | 价格 | Free | — |
 | 地区 | All regions | — |
-| 官方网站 | `https://<owner>.github.io/<repo>/` | 可选 |
-| 支持网址 | `https://github.com/<owner>/<repo>/issues` | 强烈建议填，审核会看 |
-| 隐私政策网址 | `https://<owner>.github.io/<repo>/privacy/` | **必填**，见 `docs/site/privacy/index.html` |
+| 官方网站 | `https://donespeak.github.io/visual-grammar-subtitles/` | 可选 |
+| 支持网址 | `https://github.com/DoneSpeak/visual-grammar-subtitles/issues` | 强烈建议填，审核会看 |
+| 隐私政策网址 | `https://donespeak.github.io/visual-grammar-subtitles/privacy/` | **必填**，见 `privacy/index.html` |
 | 图标 | `public/icon/128.png` | 128×128，已有 |
 | 截图 | 3–5 张 1280×800 或 640×400 | **尚未准备**，见 `screenshots.md` |
 | 小型宣传图 | 440×280 | 可选 |
@@ -26,19 +26,19 @@
 English（126 字符）：
 
 ```text
-Overlay local subtitles on any web video with Japanese part-of-speech colouring, JLPT word cards and display-duration control.
+Visual Grammar & Color-Coded Language Learning: part-of-speech colours, word cards and duration control on any web video.
 ```
 
 Chinese：
 
 ```text
-在任意网页视频上叠加本地字幕，支持日语词性着色、振假名、JLPT 词汇卡与显示时长控制。
+视觉语法与彩色语言学习：在任意网页视频上叠加本地字幕，支持词性着色、振假名、词汇卡与显示时长控制。
 ```
 
 ## 详细说明（English）
 
 ```text
-JP Subtitle Overlay puts the subtitles you already have onto any web video, then turns them into a Japanese reading aid.
+Visual Grammar Subtitles puts the subtitles you already have onto any web video, then turns them into a colour-coded grammar lesson.
 
 IMPORTANT: this extension contains no videos and no subtitle content. You supply the subtitle files (.srt, .vtt, .ass) or import them from the public kitsunekko.net catalogue. It does not bypass DRM, unlock paid content, or host copyrighted material.
 
@@ -67,7 +67,7 @@ BUILT FOR DAILY USE
 • No account, no sign-in, no ads, no analytics. Your subtitle library stays in local extension storage.
 
 PRIVACY
-The extension reads pages only to find video elements, synchronise subtitles and restore per-page settings. Network requests happen only for the optional online subtitle import, query translation and, if you enable it, an analysis server you configure yourself. Full policy: <privacy policy URL>.
+The extension reads pages only to find video elements, synchronise subtitles and restore per-page settings. Network requests happen only for the optional online subtitle import, query translation and, if you enable it, an analysis server you configure yourself. Full policy: https://donespeak.github.io/visual-grammar-subtitles/privacy/.
 
 Not affiliated with Bilibili, kitsunekko.net, JMdict/EDRDG, or OpenMoji. Subtitle and dictionary credits are listed in the package's NOTICE files.
 ```
@@ -75,7 +75,7 @@ Not affiliated with Bilibili, kitsunekko.net, JMdict/EDRDG, or OpenMoji. Subtitl
 ## 详细说明（中文，可选第二语言）
 
 ```text
-「日语字幕叠加」把你自己已有的字幕放到任意网页视频上，并把它变成日语阅读辅助工具。
+「视觉语法字幕」把你自己已有的字幕放到任意网页视频上，并把它变成彩色标注的语法课堂。
 
 重要说明：本扩展不包含任何视频或字幕内容。字幕由你提供（.srt / .vtt / .ass 文件），或从公开的 kitsunekko.net 目录导入。它不绕过 DRM、不解锁付费内容、不托管受版权保护的资源。
 
@@ -89,13 +89,12 @@ Not affiliated with Bilibili, kitsunekko.net, JMdict/EDRDG, or OpenMoji. Subtitl
 • 分词完全离线，词典随扩展打包。
 
 隐私
-扩展只在页面上查找视频元素、同步字幕与恢复页面设置。仅在在线导入、搜索词翻译，或你自行配置分析服务时发起网络请求。完整政策：<privacy policy URL>。
+扩展只在页面上查找视频元素、同步字幕与恢复页面设置。仅在在线导入、搜索词翻译，或你自行配置分析服务时发起网络请求。完整政策：https://donespeak.github.io/visual-grammar-subtitles/privacy/。
 
 与 B 站、kitsunekko.net、JMdict/EDRDG、OpenMoji 无关联。字幕与词典来源见安装包内的 NOTICE 文件。
 ```
 
-## 提交前替换
+## 提交前自测
 
-- `<privacy policy URL>` → 实际页面地址。
-- `<owner>/<repo>` → 实际 GitHub 路径。
-- `REPLACE-ME@example.com` → 真实联系邮箱（隐私政策页与本文档）。
+- 隐私政策 URL 已定为 `https://donespeak.github.io/visual-grammar-subtitles/privacy/`，提交前用无痕窗口打开确认可访问。
+- 联系邮箱已填 `guanrong.young@foxmail.com`（`privacy/index.html` 两处）。

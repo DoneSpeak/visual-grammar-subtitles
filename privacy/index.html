@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Visual Grammar Subtitles</title>
+<style>
+:root { color-scheme: light dark; --bg:#fff; --fg:#1b1b1f; --muted:#5b5b66; --line:#d9d9e0; --accent:#1e90ff; }
+@media (prefers-color-scheme: dark) { :root { --bg:#101014; --fg:#ececf1; --muted:#a0a0ad; --line:#2c2c34; --accent:#6cb6ff; } }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin:0 auto; max-width:46rem; padding:2.5rem 1.25rem 4rem; background:var(--bg); color:var(--fg); font:16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", "Noto Sans SC", sans-serif; }
+h1 { font-size:1.75rem; line-height:1.25; margin:0 0 .25rem; }
+h2 { font-size:1.15rem; margin:2rem 0 .5rem; }
+p, li { color: var(--fg); }
+.muted { color: var(--muted); font-size:.9rem; }
+a { color: var(--accent); }
+ul { padding-left:1.25rem; }
+li { margin:.25rem 0; }
+hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+code { font-size:.9em; }
+</style>
+</head>
+<body>
+<h1>Privacy Policy</h1>
+<p class="muted">Visual Grammar Subtitles · Effective 31 October 2026</p>
+
+<p>Visual Grammar Subtitles (“the extension”) is a browser extension that displays user-supplied subtitle files over videos on web pages and adds colour-coded language-learning aids. This policy describes what the extension accesses, what it stores on your device, and the limited cases in which it makes network requests.</p>
+
+<p><strong>Summary:</strong> the extension has no user accounts, no analytics, no advertising and no developer-operated servers. Everything you import stays in your browser’s local extension storage. Network requests occur only when you use the online subtitle import, when a search query needs translation, or when you connect an optional analysis server that you configure yourself.</p>
+
+<h2>1. Data stored on your device</h2>
+<p>The extension uses <code>chrome.storage.local</code>. This data stays on your device and is not synchronised to Google or to the developer.</p>
+<ul>
+  <li>Preferences: interface language, theme, subtitle appearance, timing offsets, learning/dictionary settings, shortcut settings.</li>
+  <li>Subtitle library: files you import, their parsed text, pack titles, episode names and the source URL or folder recorded at import time.</li>
+  <li>Per-page state: the subtitle selected for a page path, its offset, and markers you create for advertisement segments.</li>
+  <li>Site rules and series bindings that you create.</li>
+  <li>Caches: the online subtitle index (24-hour cache), offline dictionary data bundled with the extension, and analysis results if you use an optional analysis server.</li>
+  <li>If you configure an optional analysis server: its address and the access token you enter.</li>
+</ul>
+<p>You can delete this data from the extension’s options page, or remove all of it by uninstalling the extension.</p>
+
+<h2>2. Web page access</h2>
+<p>The extension runs a content script on all sites because a video can appear on any page. On a page it:</p>
+<ul>
+  <li>locates <code>&lt;video&gt;</code> elements and reads their geometry, playback state and time so the subtitle layer can be positioned and synchronised;</li>
+  <li>reads the page URL and title to restore per-page subtitle settings;</li>
+  <li>on Bilibili video pages, reads the season or episode identifier present in the page URL;</li>
+  <li>reads subtitle text that you load into the extension, and page text only where needed to attach the overlay and word card.</li>
+</ul>
+<p>It does not read form inputs, passwords, messages, or other page content unrelated to video playback and subtitle display. Browsing history is not recorded or transmitted.</p>
+
+<h2>3. Network requests</h2>
+<p>The extension has no backend. The following requests are made from your browser, only in the situations described:</p>
+<ul>
+  <li><strong>kitsunekko.net</strong> — when you search or import subtitles from the online catalogue. The search query and the requested directory or archive paths are sent to that site; subtitle files are downloaded to local storage.</li>
+  <li><strong>translate.googleapis.com</strong> — when the online search query contains Japanese or Chinese characters, the query text is sent to Google’s public translation endpoint so it can be searched by English title. Only the query string is sent. The response is cached in memory for the session.</li>
+  <li><strong>api.bilibili.com</strong> — on Bilibili pages, the season or episode identifier read from the page is sent to resolve the series title and episode list. The response is cached in memory for 10 minutes.</li>
+  <li><strong>An analysis server you configure</strong> (default <code>http://127.0.0.1:8765</code>) — only if you enable the optional local/remote NLP analysis feature. Subtitle lines and an access token are sent to that address. The developer does not operate this server and does not receive this data; the address is entirely under your control.</li>
+</ul>
+<p>There are no analytics, telemetry, crash reports, advertising, fingerprinting, or remote configuration requests. The extension does not load or execute remote code; all JavaScript is bundled in the package.</p>
+
+<h2>4. Speech synthesis</h2>
+<p>Word and sentence pronunciation uses the browser’s built-in <code>speechSynthesis</code> API and the voices installed on your operating system. The extension sends no audio or text to a speech service.</p>
+
+<h2>5. Sharing, sale and use</h2>
+<p>The developer does not receive, sell, rent, or share your data. Data is not used for advertising, profiling, creditworthiness, or any purpose unrelated to subtitle display. Third-party sites listed in section 3 receive only the specific request described there and handle it under their own privacy policies.</p>
+
+<h2>6. Retention and deletion</h2>
+<p>Imported subtitles, settings and caches remain on your device until you remove them in the options page or uninstall the extension. Uninstalling removes <code>chrome.storage.local</code>. Because the developer holds no copy, there is no server-side deletion request to make.</p>
+
+<h2>7. Security</h2>
+<p>Requests to third-party services use HTTPS. No credentials are sent to the developer. The optional analysis-server token is stored locally and is only sent to the endpoint you configure, over the transport that endpoint uses.</p>
+
+<h2>8. Children</h2>
+<p>The extension is not directed at children under 13 and does not knowingly collect personal information from anyone.</p>
+
+<h2>9. Changes</h2>
+<p>Material changes to this policy will be published on this page with a new effective date, and the extension’s store listing will link to the updated version.</p>
+
+<h2>10. Contact</h2>
+<p>Questions about this policy: <a href="mailto:guanrong.young@foxmail.com">guanrong.young@foxmail.com</a></p>
+
+<hr>
+
+<h1 lang="zh">隐私政策</h1>
+<p class="muted" lang="zh">视觉语法字幕 · 生效日期 2026 年 10 月 31 日</p>
+
+<div lang="zh">
+<p>「视觉语法字幕」（下称“本扩展”）是一个浏览器扩展，在网页视频上显示用户自备的字幕文件，并提供彩色标注的语言学习辅助。本政策说明扩展访问什么、在你的设备上保存什么，以及仅在哪些情况下会发起网络请求。</p>
+
+<p><strong>摘要：</strong>本扩展没有账号、没有统计、没有广告，也没有开发者运营的服务器。你导入的内容保存在浏览器本地的扩展存储中。只有在你使用在线字幕导入、搜索词需要翻译，或你自己配置了可选的分析服务时，才会发起网络请求。</p>
+
+<h2>1. 保存在设备上的数据</h2>
+<p>本扩展使用 <code>chrome.storage.local</code>，数据留在你的设备上，不会同步到 Google 或开发者。</p>
+<ul>
+  <li>偏好设置：界面语言、主题、字幕外观、时间偏移、学习/词典设置、快捷键设置。</li>
+  <li>字幕库：你导入的文件、解析后的文本、包标题、集名，以及导入时记录的来源链接或文件夹。</li>
+  <li>页面状态：按页面路径保存的字幕选择、偏移，以及你标记的广告区间。</li>
+  <li>你创建的站点规则与番剧绑定。</li>
+  <li>缓存：在线字幕索引（缓存 24 小时）、随扩展打包的离线词典数据，以及使用可选分析服务时的分析结果。</li>
+  <li>若你配置了可选的分析服务：其地址和你填写的访问令牌。</li>
+</ul>
+<p>你可以在选项页删除这些数据，或卸载扩展以全部移除。</p>
+
+<h2>2. 网页访问</h2>
+<p>由于视频可能出现在任何网站，扩展会在所有站点运行内容脚本。在页面上它只会：</p>
+<ul>
+  <li>定位 <code>&lt;video&gt;</code> 元素，读取其位置尺寸、播放状态与时间，用于定位和同步字幕层；</li>
+  <li>读取页面 URL 与标题，用于恢复该页面的字幕设置；</li>
+  <li>在 B 站视频页读取 URL 中的季/集标识；</li>
+  <li>读取你载入扩展的字幕文本，以及为挂载字幕层与词汇卡所必需的页面内容。</li>
+</ul>
+<p>它不读取表单输入、密码、消息或其他与视频播放和字幕显示无关的页面内容，也不记录或发送浏览历史。</p>
+
+<h2>3. 网络请求</h2>
+<p>本扩展没有后端。以下请求由你的浏览器发出，且仅发生在所述场景：</p>
+<ul>
+  <li><strong>kitsunekko.net</strong> — 当你使用在线字幕搜索或导入时，搜索词与请求的目录/压缩包路径会发送到该站点，字幕文件下载后保存在本地。</li>
+  <li><strong>translate.googleapis.com</strong> — 当在线搜索词包含日文或中文字符时，搜索词会发送到 Google 的公开翻译接口，以便用英文标题检索。仅发送该搜索词，结果仅在本会话内存中缓存。</li>
+  <li><strong>api.bilibili.com</strong> — 在 B 站页面，从 URL 读取的季/集标识会发送以获取剧集信息，结果在内存中缓存 10 分钟。</li>
+  <li><strong>你自行配置的分析服务</strong>（默认 <code>http://127.0.0.1:8765</code>）— 仅当你启用可选的本地/远程 NLP 分析时，字幕行与访问令牌会发送到该地址。开发者不运营该服务、也收不到这些数据；地址完全由你控制。</li>
+</ul>
+<p>本扩展没有统计、遥测、崩溃上报、广告、指纹识别或远程配置请求，也不加载或执行远程代码；所有 JavaScript 均打包在安装包内。</p>
+
+<h2>4. 语音合成</h2>
+<p>单词与句子的朗读使用浏览器内置的 <code>speechSynthesis</code> 接口和操作系统已安装的语音。扩展不向语音服务发送音频或文本。</p>
+
+<h2>5. 共享、出售与使用</h2>
+<p>开发者不接收、出售、出租或共享你的数据。数据不用于广告、画像、信用评估或与字幕显示无关的任何目的。第 3 节列出的第三方站点只会收到该节描述的具体请求，并按各自的隐私政策处理。</p>
+
+<h2>6. 保留与删除</h2>
+<p>导入的字幕、设置与缓存会一直保存在你的设备上，直到你在选项页删除或卸载扩展。卸载会清除 <code>chrome.storage.local</code>。由于开发者不持有副本，不存在需要向服务器申请删除的数据。</p>
+
+<h2>7. 安全</h2>
+<p>对第三方服务的请求使用 HTTPS。不会有凭据发送给开发者。可选分析服务的令牌保存在本地，只会发送到你配置的端点，并使用该端点自身的传输方式。</p>
+
+<h2>8. 儿童</h2>
+<p>本扩展不面向 13 岁以下儿童，也不会明知地收集任何人的个人信息。</p>
+
+<h2>9. 变更</h2>
+<p>本政策的实质性变更会发布在本页并更新生效日期，商店条目会链接到更新后的版本。</p>
+
+<h2>10. 联系方式</h2>
+<p>如对本政策有疑问：<a href="mailto:guanrong.young@foxmail.com">guanrong.young@foxmail.com</a></p>
+</div>
+
+</body>
+</html>

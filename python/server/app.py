@@ -15,9 +15,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
-from analyzer import analyze, provider
+import providers
 from config import data_directory, load_api_token
-from contract import CAPABILITIES, MAX_FILE, MAX_CUES, digest, parse_file, track_hash
+from contract import MAX_FILE, MAX_CUES, digest, parse_file, track_hash
 
 API = '/api/v1'
 SETUP_PAGE = Path(__file__).with_name('setup.html')
@@ -163,15 +163,17 @@ def create_app(data_dir=None, token=None, origins=None, executor_factory=Process
 
     @app.get(API + '/capabilities')
     async def capabilities():
-        p, fingerprint = provider()
-        return dict(apiVersion='1.0.0', schemaMajor=1, provider=p, providerFingerprint=fingerprint, formats=['srt', 'vtt', 'cue-json-v1'], languages=['ja'], capabilities=CAPABILITIES, limits=dict(uploadBytes=MAX_FILE, cues=MAX_CUES, resultBytes=100*1024*1024))
+        # ``provider`` describes the Japanese analyzer (its historical shape);
+        # ``capabilities`` is the union across every registered provider.
+        p, fingerprint = providers.provider()
+        return dict(apiVersion='1.0.0', schemaMajor=1, provider=p, providerFingerprint=fingerprint, formats=['srt', 'vtt', 'cue-json-v1'], languages=providers.available_languages(), capabilities=providers.available_capabilities(), limits=dict(uploadBytes=MAX_FILE, cues=MAX_CUES, resultBytes=100*1024*1024))
 
-    async def run_job(job_id, cues, source):
+    async def run_job(job_id, cues, source, language):
         try:
             if find(job_id)['status'] == 'cancelled':
                 return
             db.execute("UPDATE jobs SET status='running' WHERE id=?", (job_id,)); db.commit()
-            result = await asyncio.get_running_loop().run_in_executor(app.state.pool, analyze, cues, source)
+            result = await asyncio.get_running_loop().run_in_executor(app.state.pool, providers.analyze, cues, source, language)
             content = json.dumps(result, ensure_ascii=False, separators=(',', ':'))
             if len(content.encode()) > 100 * 1024 * 1024:
                 raise ValueError('result_too_large')
@@ -194,18 +196,20 @@ def create_app(data_dir=None, token=None, origins=None, executor_factory=Process
                 fmt = 'cue-json-v1' if upload.filename.endswith('.json') else upload.filename.rsplit('.', 1)[-1].lower()
             if len(raw) > MAX_FILE:
                 raise ApiError(413, 'too_large', 'Upload exceeds limit')
-            if fmt not in ('srt', 'vtt', 'cue-json-v1') or meta['language'] != 'ja' or meta['schemaMajor'] != 1 or meta['normalizationVersion'] != 'track-v1' or not set(meta['requestedCapabilities']) <= set(CAPABILITIES):
+            language = meta.get('language')
+            if fmt not in ('srt', 'vtt', 'cue-json-v1') or not isinstance(language, str) or language not in providers.PROVIDERS or meta['schemaMajor'] != 1 or meta['normalizationVersion'] != 'track-v1' or not set(meta['requestedCapabilities']) <= set(providers.available_capabilities()):
                 raise ValueError('Unsupported metadata')
             cues = parse_file(raw, fmt, meta.get('encoding', 'utf-8'))
             raw_hash = hashlib.sha256(raw).hexdigest()
-            track = track_hash(cues)
+            track = track_hash(cues, language)
             if meta['rawSha256'] != raw_hash or meta['trackHash'] != track:
                 raise ApiError(422, 'hash_mismatch', 'Source fingerprints do not match')
         except ApiError:
             raise
         except Exception:
             raise ApiError(400, 'invalid_input', 'Invalid subtitle or metadata')
-        request_digest = digest([raw_hash, meta, provider()[1]])
+        provider_fingerprint = providers.PROVIDERS[language].fingerprint
+        request_digest = digest([raw_hash, meta, provider_fingerprint])
         # Retention cleanup also removes idempotency keys, permitting resubmission after expiry.
         db.execute('DELETE FROM jobs WHERE created < ?', (time.time() - 86400,)); db.commit()
         old = db.execute('SELECT * FROM jobs WHERE key=?', (key,)).fetchone()
@@ -218,9 +222,9 @@ def create_app(data_dir=None, token=None, origins=None, executor_factory=Process
         job_id = str(uuid4())
         db.execute('INSERT INTO jobs VALUES (?,?,?,?,?,?,?,?)', (job_id, key, request_digest, 'queued', track, time.time(), None, None)); db.commit()
         source = dict(format=fmt, rawSha256=raw_hash, trackHash=track, normalizationVersion='track-v1')
-        task = asyncio.create_task(run_job(job_id, cues, source))
+        task = asyncio.create_task(run_job(job_id, cues, source, language))
         tasks.add(task); task.add_done_callback(tasks.discard)
-        return status(find(job_id)) | dict(providerFingerprint=provider()[1])
+        return status(find(job_id)) | dict(providerFingerprint=provider_fingerprint)
 
     @app.get(API + '/analyses/{job_id}')
     async def get_status(job_id: str):

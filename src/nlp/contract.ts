@@ -1,25 +1,30 @@
+import { normalizePos, type Cue, type Token } from '@/shared/types';
 import { validateShape } from './schema';
-import type { Cue, Token } from '@/shared/types';
 export type Span = { start: number; end: number };
-export type Annotation = { id: string; layer: string; label: string; quality: string; spans: Span[] };
+export type Annotation = { id: string; layer: string; label: string; quality: string; spans: Span[]; detail?: string; parentId?: string | null };
 export type AnalysisToken = Span & { id: string; surface: string; pos: string; rawPos?: string; lemma?: string; reading?: string };
 export type AnalysisUnit = { id: string; providerId: string; status: 'complete' | 'failed'; capabilities: string[]; text: string; offsetEncoding: 'utf16'; mappings: { unitStart: number; unitEnd: number; cueId: string; cueStart: number; cueEnd: number }[]; tokens: AnalysisToken[]; annotations: Annotation[]; dependencies: { dependentTokenId: string; headTokenId: string | null; relation: string }[] };
 export type TrackCue = { id: string; startMs: number; endMs: number; text: string };
 export type AnalysisDocument = { format: 'subtitle-annotation'; schemaVersion: string; documentId: string; source: { trackHash: string; rawSha256: string; normalizationVersion: 'track-v1'; format: string }; track: { language: string; cues: TrackCue[] }; providers: { id: string; kind: string; capabilities: string[] }[]; units: AnalysisUnit[] };
 export const hash = async (text: string): Promise<string> => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))), n => n.toString(16).padStart(2, '0')).join('');
 export const toTrack = (cues: Cue[]): TrackCue[] => cues.map((c, i) => ({ id: `c${String(i + 1).padStart(6, '0')}`, startMs: Math.round(c.start * 1000), endMs: Math.round(c.end * 1000), text: c.text }));
-export const trackHash = (cues: TrackCue[], language = 'ja') => hash(JSON.stringify(['track-v1', language, cues.map(c => [c.startMs, c.endMs, c.text])]));
+/** Language is part of the fingerprint: the same cues analysed as ja and en are different tracks. */
+export const trackHash = (cues: TrackCue[], language: string) => hash(JSON.stringify(['track-v1', language, cues.map(c => [c.startMs, c.endMs, c.text])]));
+
+const LANGUAGE_ID = /^[a-z]{2,8}(-[A-Za-z0-9]+)?$/;
 
 export async function validateDocument(input: unknown, expectedHash?: string): Promise<AnalysisDocument> {
   validateShape(input);
   const d = input as AnalysisDocument;
-  if (!d || d.format !== 'subtitle-annotation' || !/^1\.\d+\.\d+$/.test(d.schemaVersion) || d.source?.normalizationVersion !== 'track-v1' || !/^[a-f0-9]{64}$/.test(d.source.rawSha256) || d.track?.language !== 'ja' || !Array.isArray(d.track.cues) || d.track.cues.length > 50000 || !Array.isArray(d.units) || !Array.isArray(d.providers)) throw Error('Invalid analysis document');
-  const actualHash = await trackHash(d.track.cues);
+  if (!d || d.format !== 'subtitle-annotation' || !/^1\.\d+\.\d+$/.test(d.schemaVersion) || d.source?.normalizationVersion !== 'track-v1' || !/^[a-f0-9]{64}$/.test(d.source.rawSha256) || typeof d.track?.language !== 'string' || !LANGUAGE_ID.test(d.track.language) || !Array.isArray(d.track.cues) || d.track.cues.length > 50000 || !Array.isArray(d.units) || !Array.isArray(d.providers)) throw Error('Invalid analysis document');
+  const actualHash = await trackHash(d.track.cues, d.track.language);
   if (actualHash !== d.source.trackHash || (expectedHash && expectedHash !== actualHash)) throw Error('Subtitle fingerprint mismatch');
   const cues = new Map(d.track.cues.map(c => [c.id, c]));
   if (cues.size !== d.track.cues.length) throw Error('Duplicate cue');
   for (const c of cues.values()) if (typeof c.text !== 'string' || !Number.isSafeInteger(c.startMs) || !Number.isSafeInteger(c.endMs) || c.startMs < 0 || c.endMs < c.startMs) throw Error('Invalid cue');
-  const segmenter = new Intl.Segmenter('ja', { granularity: 'grapheme' });
+  // Grapheme boundaries are locale-independent for this purpose; any locale would produce the
+  // same UTF-16 offsets, so do not pin the segmenter to Japanese.
+  const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
   const boundaryCache = new Map<string, Set<number>>();
   const slice = (text: string, start: number, end: number) => {
     let boundaries = boundaryCache.get(text);
@@ -44,18 +49,22 @@ export async function validateDocument(input: unknown, expectedHash?: string): P
       if (spans.some(s => m.cueStart < s.end && s.start < m.cueEnd)) throw Error('Overlapping mappings');
       spans.push({ start: m.cueStart, end: m.cueEnd }); covered.set(c.id, spans);
     }
-    for (const a of u.annotations) for (const s of a.spans) slice(u.text, s.start, s.end);
+    const annotationIds = new Set(u.annotations.map(a => a.id));
+    if (annotationIds.size !== u.annotations.length) throw Error('Duplicate annotation');
+    for (const a of u.annotations) {
+      for (const s of a.spans) slice(u.text, s.start, s.end);
+      if (a.parentId != null && (a.parentId === a.id || !annotationIds.has(a.parentId))) throw Error('Invalid annotation parent');
+    }
     for (const e of u.dependencies) if (!ids.has(e.dependentTokenId) || (e.headTokenId !== null && !ids.has(e.headTokenId))) throw Error('Invalid dependency');
   }
   return d;
 }
 
-const POS: Record<string, string> = { NOUN: '名詞', PROPN: '名詞', PRON: '代名詞', VERB: '動詞', AUX: '助動詞', ADJ: '形容詞', ADV: '副詞', ADP: '助詞', PART: '助詞', SCONJ: '接続詞', CCONJ: '接続詞', PUNCT: '記号', SYM: '記号' };
 // Compile intersecting annotations into disjoint pieces. A split token retains its reading in details only.
 export function cueTokens(d: AnalysisDocument, cueId: string, profile: string): Token[] | null {
   const cue = d.track.cues.find(c => c.id === cueId);
   if (!cue) return null;
-  const parts: { start: number; end: number; token?: AnalysisToken; labels: string[]; groups: Record<string, string> }[] = [];
+  const parts: { start: number; end: number; token?: AnalysisToken; labels: string[]; groups: Record<string, string>; notes: string[] }[] = [];
   const mappings = d.units.flatMap(u => u.mappings.filter(m => m.cueId === cueId).map(m => ({ u, m }))).sort((a, b) => a.m.cueStart - b.m.cueStart);
   let end = 0;
   for (const { u, m } of mappings) {
@@ -72,12 +81,15 @@ export function cueTokens(d: AnalysisDocument, cueId: string, profile: string): 
       parts.push({ start: start - m.unitStart + m.cueStart, end: finish - m.unitStart + m.cueStart,
         token: u.tokens.find(t => t.start <= start && t.end >= finish),
         labels: covering.map(a => `${a.layer}:${a.label}`),
-        groups: Object.fromEntries(covering.map(a => [a.layer, a.id])) });
+        groups: Object.fromEntries(covering.map(a => [a.layer, a.id])),
+        // Only the extended modes carry a human-readable explanation; the label alone is enough
+        // for roles and chunks.
+        notes: covering.flatMap(a => a.detail ? [a.detail] : []) });
     }
   }
   if (end !== cue.text.length) return null;
   return parts.map(p => {
     const surface = cue.text.slice(p.start, p.end), t = p.token;
-    return { surface, pos: POS[t?.pos ?? ''] ?? '', posDetail1: '', conjType: '', conjForm: '', baseForm: t?.lemma ?? '', reading: surface === t?.surface ? t.reading ?? '' : '', grammar: p.labels, groups: p.groups, studyProfile: profile };
+    return { surface, pos: normalizePos(t?.pos), posRaw: t?.rawPos, baseForm: t?.lemma ?? '', reading: surface === t?.surface ? t.reading ?? '' : '', grammar: p.labels, groups: p.groups, notes: p.notes.length ? p.notes : undefined, studyProfile: profile };
   });
 }

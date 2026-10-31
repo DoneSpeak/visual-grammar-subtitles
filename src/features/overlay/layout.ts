@@ -82,14 +82,6 @@ const ALPHA = 1;
 const BETA = 0.35;
 const GAMMA = 0.6;
 
-const NO_LINE_START = /^[、。，．,.:;!?！？)）】」』〉》\]｝｠ゝゞーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮ々]/u;
-const NO_LINE_END = /[「『（【〈《\[｛｠]$/u;
-
-export const classifyBreak = (text: string): Pick<LayoutUnit, 'noLineStart' | 'noLineEnd'> => ({
-  noLineStart: NO_LINE_START.test(text),
-  noLineEnd: NO_LINE_END.test(text),
-});
-
 /** Break costs, in the same units as a normalised raggedness term (~0..1 per line). */
 const PENALTY_NO_LINE_START = 0.6;
 const PENALTY_NO_LINE_END = 0.6;
@@ -97,23 +89,6 @@ const PENALTY_PARTICLE_START = 0.3;
 const PENALTY_PARTICLE_END = 0.1;
 
 const clamp = (v: number, min: number, max: number): number => Math.min(max, Math.max(min, v));
-
-/** Splits plain text into break units without a dictionary. */
-export const segmentPlain = (text: string): string[] => {
-  const Segmenter = (Intl as unknown as {
-    Segmenter?: new (locale: string, opts: { granularity: 'word' }) => {
-      segment: (input: string) => Iterable<{ segment: string }>;
-    };
-  }).Segmenter;
-  if (Segmenter) {
-    const segments = [...new Segmenter('ja', { granularity: 'word' }).segment(text)]
-      .map((part) => part.segment)
-      .filter((part) => part.length > 0);
-    if (segments.length) return segments;
-  }
-  const CHUNK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]|[^\s\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]+|\s+/gu;
-  return text.match(CHUNK) ?? [text];
-};
 
 const breakPenalty = (prev: LayoutUnit, next: LayoutUnit): number => {
   if (prev.hardBreak) return 0;

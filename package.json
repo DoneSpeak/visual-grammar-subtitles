@@ -1,9 +1,9 @@
 {
-  "name": "jp-subtitle-overlay",
+  "name": "visual-grammar-subtitles",
   "version": "0.4.0",
   "private": true,
   "type": "module",
-  "description": "Chrome extension: overlay local subtitles on any video, with Japanese POS coloring",
+  "description": "Chrome extension: turn subtitles into visual grammar lessons with colour-coded language learning",
   "scripts": {
     "dev": "wxt",
     "build": "wxt build",
@@ -12,6 +12,7 @@
     "predev": "node scripts/sync-dict.mjs",
     "prebuild": "node scripts/sync-dict.mjs",
     "prezip": "node scripts/sync-dict.mjs",
+    "lexicon:build": "node scripts/build-lexicon.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

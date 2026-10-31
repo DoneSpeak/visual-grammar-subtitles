@@ -51,9 +51,8 @@
       "type": "object",
       "properties": {
         "language": {
-          "enum": [
-            "ja"
-          ]
+          "type": "string",
+          "pattern": "^[a-z]{2,8}(-[A-Za-z0-9]+)?$"
         },
         "cues": {
           "type": "array",
@@ -285,6 +284,15 @@
                     "heuristic",
                     "model",
                     "reviewed"
+                  ]
+                },
+                "detail": {
+                  "type": "string"
+                },
+                "parentId": {
+                  "type": [
+                    "string",
+                    "null"
                   ]
                 },
                 "spans": {

@@ -1,0 +1,26 @@
+schemaVersion: 1
+
+# Both sources are pinned by URL + SHA-256. The build warns when a hash is null;
+# run the build once on a networked machine, then paste the printed hash here.
+# Provenance, licence and field mapping are documented per language:
+#   docs/dict/en.md
+#   docs/dict/th.md
+
+en:
+  # ECDICT — Free English to Chinese Dictionary Database.
+  # LICENSE: MIT (verify the upstream file before publishing derived data).
+  repo: "skywind3000/ECDICT"
+  url: "https://raw.githubusercontent.com/skywind3000/ECDICT/master/ecdict.csv"
+  file: "ecdict.csv"
+  sha256: "d1ecbdf9ee2b920afb6f430ca6b6bb9f559588cf0dff86e04bd255f9390843cc"
+
+th:
+  # Curated Chinese glosses live in this repo; only Kaikki is downloaded.
+  curated: "data/dictionary/th.curated.yaml"
+  kaikki:
+    # Wiktionary-derived Thai extraction. The download is marked deprecated on
+    # kaikki.org, so pin the URL and hash, and keep the cached copy.
+    url: "https://kaikki.org/dictionary/Thai/kaikki.org-dictionary-Thai.jsonl"
+    extractedAt: "2026-03-25"
+    license: "CC-BY-SA-3.0"
+    sha256: null

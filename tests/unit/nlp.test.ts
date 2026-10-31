@@ -8,12 +8,36 @@ vi.stubGlobal('crypto', webcrypto);
 
 describe('subtitle annotation contract', () => {
   it('matches the Python normalization fingerprint and validates real GiNZA output', async () => {
-    expect(await trackHash(fixture.track.cues)).toBe(fixture.source.trackHash);
+    expect(await trackHash(fixture.track.cues, fixture.track.language)).toBe(fixture.source.trackHash);
     const doc = await validateDocument(fixture);
     for (const cue of doc.track.cues) {
       const tokens = cueTokens(doc, cue.id, 'syntax-focus');
       expect(tokens?.map(t => t.surface).join('')).toBe(cue.text);
     }
+  });
+  it('carries annotation detail to the token and rejects dangling parents', async () => {
+    type Unit = { id: string; tokens: { start: number; end: number }[]; annotations: Record<string, unknown>[] };
+    const doc = structuredClone(fixture) as unknown as { units: Unit[] };
+    const unit = doc.units[0];
+    const token = unit.tokens[0];
+    const detail = "I'm → I am";
+    unit.annotations.push({
+      id: `${unit.id}-detail`,
+      layer: 'morph.form',
+      label: 'contraction',
+      quality: 'heuristic',
+      spans: [{ start: token.start, end: token.end }],
+      detail,
+    });
+
+    const validated = await validateDocument(doc);
+    const cue = validated.track.cues[0];
+    const tokens = cueTokens(validated, cue.id, 'syntax-focus');
+    expect(tokens?.some((candidate) => candidate.notes?.includes(detail))).toBe(true);
+
+    const broken = structuredClone(doc);
+    broken.units[0].annotations[broken.units[0].annotations.length - 1].parentId = 'missing';
+    await expect(validateDocument(broken)).rejects.toThrow();
   });
   it('rejects another track, broken references, and split surrogate pairs', async () => {
     await expect(validateDocument(fixture, '0'.repeat(64))).rejects.toThrow();
@@ -36,6 +60,31 @@ describe('subtitle annotation contract', () => {
     failed.units[0].status = 'failed';
     expect(cueTokens(failed, failed.track.cues[0].id, 'syntax-focus')).toBeNull();
   });
+  it('keys the fingerprint by language and accepts any well-formed track language', async () => {
+    const jaHash = await trackHash(fixture.track.cues, 'ja');
+    const enHash = await trackHash(fixture.track.cues, 'en');
+    expect(jaHash).not.toBe(enHash);
+
+    type MutableDoc = {
+      track: { language: string; cues: { id: string; startMs: number; endMs: number; text: string }[] };
+      source: { trackHash: string };
+    };
+    const en = structuredClone(fixture) as unknown as MutableDoc;
+    en.track.language = 'en';
+    en.source.trackHash = enHash;
+    await expect(validateDocument(en)).resolves.toBeTruthy();
+
+    // A document claiming a language it was not hashed under must fail.
+    const mismatched = structuredClone(en);
+    mismatched.track.language = 'ja';
+    await expect(validateDocument(mismatched)).rejects.toThrow();
+
+    for (const language of ['EN', 'ja_JP', 'ja!']) {
+      const bad = structuredClone(en);
+      bad.track.language = language;
+      await expect(validateDocument(bad)).rejects.toThrow();
+    }
+  });
   it('allows loopback HTTP and HTTPS but rejects credential and redirect-shaped URLs', () => {
     expect(endpoint('http://127.0.0.1:8765')).toBe('http://127.0.0.1:8765');
     expect(endpoint('https://nlp.example.com')).toBe('https://nlp.example.com');
@@ -56,10 +105,10 @@ it('does not attach a completed old-track analysis to a new selection', async ()
   }) } });
   const controller = new TrackAnalysis();
   const oldCues = fixture.track.cues.map(c => ({ start: c.startMs / 1000, end: c.endMs / 1000, text: c.text }));
-  const first = controller.select(oldCues);
+  const first = controller.select(oldCues, 'ja');
   await vi.waitFor(() => expect(starts).toBe(1));
   const newCue = { start: 0, end: 1, text: '別の字幕' };
-  await controller.select([newCue]);
+  await controller.select([newCue], 'ja');
   finishOld({ document: fixture });
   await first;
   expect(controller.tokens(newCue)).toBeNull();

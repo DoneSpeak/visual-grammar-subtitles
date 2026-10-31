@@ -10,14 +10,18 @@ type Status = { key: MessageKey; params?: Record<string, string | number> } | nu
 
 const SAVE_DELAY_MS = 400;
 
-/** Grammar-analysis settings. Only rendered for modes whose elements come from remote analysis. */
-export function NlpPanel() {
+/**
+ * Grammar-analysis settings. Only rendered for modes that can use remote analysis; `optional`
+ * marks hybrid modes, which produce a reduced result locally when the service is off.
+ */
+export function NlpPanel({ optional = false }: { optional?: boolean }) {
   const [cfg, setCfg] = useState<NlpSettings>(defaults);
   const [token, setToken] = useState('');
   const [open, setOpen] = useState(true);
   const [status, setStatus] = useState<Status>(null);
   const [testing, setTesting] = useState(false);
   const timer = useRef<number | undefined>(undefined);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     void loadNlpSettings().then((next) => {
@@ -114,7 +118,9 @@ export function NlpPanel() {
       </div>
       {open ? (
         <>
-          <p className="my-2 text-sm text-muted-foreground">{t('modes.nlp.required')}</p>
+          <p className="my-2 text-sm text-muted-foreground">
+            {t(optional ? 'modes.nlp.optional' : 'modes.nlp.required')}
+          </p>
           <label className="my-2 flex items-center gap-2">
             <input type="checkbox" checked={cfg.enabled} onChange={(event) => update({ enabled: event.target.checked })} />
             {t('modes.nlp.enable')}
@@ -147,15 +153,20 @@ export function NlpPanel() {
             <Button disabled={testing} onClick={() => void test()}>
               {t(testing ? 'modes.nlp.testing' : 'modes.nlp.test')}
             </Button>
-            <label className="inline-flex cursor-pointer items-center rounded-md border border-border-strong px-3 py-1.5 text-sm hover:border-foreground/25">
+            <Button variant="default" onClick={() => fileRef.current?.click()}>
               {t('modes.nlp.import')}
-              <input
-                type="file"
-                accept=".json"
-                className="sr-only"
-                onChange={(event) => void importDocument(event.target.files?.[0])}
-              />
-            </label>
+            </Button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".json"
+              hidden
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = '';
+                void importDocument(file);
+              }}
+            />
             <Button variant="default" onClick={() => void exportDocuments()}>
               {t('modes.nlp.export')}
             </Button>

@@ -8,7 +8,7 @@
 Thank you for reviewing.
 
 WHAT IT DOES
-JP Subtitle Overlay draws a subtitle layer over a <video> element and colours Japanese words by part of speech. It ships no videos and no subtitles; the user provides a subtitle file or imports one from the public kitsunekko.net catalogue. Nothing is unlocked, decrypted, or bypassed. The extension is free, has no account and no ads.
+Visual Grammar Subtitles draws a subtitle layer over a <video> element and colours words by part of speech. It ships no videos and no subtitles; the user provides a subtitle file or imports one from the public kitsunekko.net catalogue. Nothing is unlocked, decrypted, or bypassed. The extension is free, has no account and no ads.
 
 HOW TO TEST (about 2 minutes)
 1. Install the extension. No sign-in is required.
@@ -17,7 +17,7 @@ HOW TO TEST (about 2 minutes)
    Move the pointer over the video: a small round button labelled "字" appears at the top-right of the video.
 3. Click it to open the subtitle panel. With no subtitle loaded the layer is intentionally empty.
 4. Download the sample subtitle:
-   https://<owner>.github.io/<repo>/sample.ja.srt
+   https://donespeak.github.io/visual-grammar-subtitles/privacy/sample.ja.srt
 5. Open the extension's options page (chrome://extensions → Details → Extension options), go to the subtitle library, import the sample .srt, then apply it to the current page from the panel or the toolbar popup.
 6. The Japanese lines appear over the video with part-of-speech colours. Hover a word to see the dictionary card; the word cards use a bundled offline dictionary and work with the network disabled.
 7. Use Alt+[ and Alt+] to shift timing, and drag the subtitle layer by its top-left handle.
@@ -43,13 +43,12 @@ The full privacy policy is linked on the listing and in the extension's options 
 1. 安装后无需登录。
 2. 打开任一含 `<video>` 的页面（示例：`https://www.w3schools.com/html/html5_video.asp`），鼠标移到视频上，右上角出现「字」按钮。
 3. 点开面板；未载入字幕时字幕层为空，这是预期行为。
-4. 从 Pages 下载示例字幕 `sample.ja.srt`。
+4. 从 Pages 下载示例字幕 `privacy/sample.ja.srt`。
 5. 选项页 → 字幕包 → 导入该文件 → 在面板或工具栏弹窗中套用。
 6. 视频上出现带词性颜色的日语字幕；悬停单词弹出词典卡（离线词典，断网可用）。
 7. `Alt+[` / `Alt+]` 调整时间偏移，左上角手柄拖动位置。
 
 ## 提交前核对
 
-- `sample.ja.srt` 的 URL 必须真实可访问（Pages 部署后自测一次）。
+- `https://donespeak.github.io/visual-grammar-subtitles/privacy/sample.ja.srt` 部署后用无痕窗口自测一次。
 - 示例页不要用需要登录或地区限制的站点；B 站页面仅作为可选项提及。
-- 备注里的 `<owner>/<repo>` 全部替换。

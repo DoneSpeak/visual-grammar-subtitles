@@ -8,19 +8,17 @@ import {
 import {
   chunkElementAt,
   resolveElementStyle,
+  tokenElements,
   tokenStyle,
 } from '@/features/overlay/tokenize/style';
-import {
-  EXPRESSION_ELEMENT,
-  LEVEL_ELEMENT,
-  POS_ELEMENT,
-  resolveFeatures,
-  toggleFeatureIn,
-} from '@/shared/studyFeatures';
+import { enFeatures as E } from '@/languages/en/features';
+import { EXPRESSION_ELEMENT, LEVEL_ELEMENT, jaFeatures as J } from '@/languages/ja/features';
+import { POS_ELEMENT, resolveFeatures, toggleFeatureIn } from '@/shared/studyFeatures';
 import { withAlpha } from '@/shared/elementStyle';
 import {
   LEGACY_POS_COLORS_KEY,
   SUBTITLE_STYLE_KEY,
+  SUBTITLE_STYLE_V3_BACKUP_KEY,
   copyPreset,
   defaultPreset,
   defaultSubtitleStyle,
@@ -31,15 +29,16 @@ import {
   normalizeElementStyle,
   normalizeSubtitleStyle,
   presetElements,
-  presetRequiresRemote,
+  presetSources,
+  presetUsesRemote,
   type StudyPreset,
   type SubtitleStyle,
 } from '@/shared/subtitleStyle';
-import type { Token } from '@/shared/types';
+import type { Pos, Token } from '@/shared/types';
 
 const token = (
   surface: string,
-  pos: string,
+  pos: Pos,
   extra: Partial<Token> = {},
 ): Token => ({
   surface,
@@ -53,7 +52,7 @@ const token = (
 });
 
 const preset = (features: StudyPreset['features'], overrides: StudyPreset['elements'] = {}): StudyPreset => ({
-  ...defaultPreset('pos-basic'),
+  ...defaultPreset(J, 'pos-basic'),
   features,
   base: { dimOpacity: 1, focusElement: null },
   elements: overrides,
@@ -91,7 +90,7 @@ describe('element style', () => {
   it('uses the global box unless the preset overrides it', () => {
     const style = defaultSubtitleStyle();
     style.box = { backgroundColor: '#000000', backgroundOpacity: 0.4 };
-    const shared = defaultPreset('pos-basic');
+    const shared = defaultPreset(J, 'pos-basic');
     expect(effectiveBox(style, shared)).toEqual(style.box);
     const own = { ...shared, box: { backgroundColor: '#FFFFFF', backgroundOpacity: 0.7 } };
     expect(effectiveBox(style, own)).toEqual(own.box);
@@ -101,26 +100,26 @@ describe('element style', () => {
     const style = defaultSubtitleStyle();
     style.box = { backgroundColor: '#000000', backgroundOpacity: 0.4 };
     // Turning the mode box on before picking a colour must not hide the global one.
-    const own = { ...defaultPreset('pos-basic'), box: { backgroundOpacity: 1 } };
+    const own = { ...defaultPreset(J, 'pos-basic'), box: { backgroundOpacity: 1 } };
     expect(effectiveBox(style, own)).toEqual({ backgroundColor: '#000000', backgroundOpacity: 1 });
     // Explicit transparency is how a mode says "no box", so it must win.
-    const off = { ...defaultPreset('pos-basic'), box: { backgroundColor: '#00000000', backgroundOpacity: 1 } };
+    const off = { ...defaultPreset(J, 'pos-basic'), box: { backgroundColor: '#00000000', backgroundOpacity: 1 } };
     expect(effectiveBox(style, off)).toEqual({ backgroundColor: '#00000000', backgroundOpacity: 1 });
   });
 });
 
 describe('feature points', () => {
   it('resolves dependencies and mutual exclusion', () => {
-    expect(resolveFeatures(['nouns'])).toEqual([]);
-    expect(resolveFeatures(['pos', 'nouns'])).toEqual(['pos', 'nouns']);
-    expect(resolveFeatures(['chunk-rule', 'chunk'])).toEqual(['chunk-rule']);
+    expect(resolveFeatures(J, ['nouns'])).toEqual([]);
+    expect(resolveFeatures(J, ['pos', 'nouns'])).toEqual(['pos', 'nouns']);
+    expect(resolveFeatures(J, ['chunk-rule', 'chunk'])).toEqual(['chunk-rule']);
   });
 
   it('lets a click displace the rival feature instead of being dropped', () => {
-    expect(toggleFeatureIn(['chunk-rule'], 'chunk')).toEqual(['chunk']);
-    expect(toggleFeatureIn(['chunk'], 'chunk-rule')).toEqual(['chunk-rule']);
-    expect(toggleFeatureIn([], 'nouns')).toEqual(['pos', 'nouns']);
-    expect(toggleFeatureIn(['pos', 'nouns'], 'pos')).toEqual([]);
+    expect(toggleFeatureIn(J, ['chunk-rule'], 'chunk')).toEqual(['chunk']);
+    expect(toggleFeatureIn(J, ['chunk'], 'chunk-rule')).toEqual(['chunk-rule']);
+    expect(toggleFeatureIn(J, [], 'nouns')).toEqual(['pos', 'nouns']);
+    expect(toggleFeatureIn(J, ['pos', 'nouns'], 'pos')).toEqual([]);
   });
 });
 
@@ -133,7 +132,7 @@ describe('per-property resolution', () => {
   };
 
   it('takes one winner per property, highest feature first', () => {
-    const style = resolveElementStyle(
+    const style = resolveElementStyle(J, 
       [
         { feature: 'pos', element: POS_ELEMENT.noun },
         { feature: 'level', element: LEVEL_ELEMENT },
@@ -148,7 +147,7 @@ describe('per-property resolution', () => {
   });
 
   it('lets a chunk background beat the token colour layer', () => {
-    const style = resolveElementStyle(
+    const style = resolveElementStyle(J, 
       [
         { feature: 'pos', element: POS_ELEMENT.noun },
         { feature: 'chunk-rule', element: 'chunk.bunsetsu:only' },
@@ -162,7 +161,7 @@ describe('per-property resolution', () => {
   });
 
   it('ranks a level background above a chunk background', () => {
-    const style = resolveElementStyle(
+    const style = resolveElementStyle(J, 
       [
         { feature: 'chunk-rule', element: 'chunk.bunsetsu:only' },
         { feature: 'level', element: LEVEL_ELEMENT },
@@ -174,7 +173,7 @@ describe('per-property resolution', () => {
   });
 
   it('lets a switched-off element contribute nothing at all', () => {
-    const style = resolveElementStyle(
+    const style = resolveElementStyle(J, 
       [
         { feature: 'pos', element: POS_ELEMENT.noun },
         { feature: 'expression', element: EXPRESSION_ELEMENT },
@@ -188,7 +187,7 @@ describe('per-property resolution', () => {
   });
 
   it('drops the text colour when the element is underline-only', () => {
-    const style = resolveElementStyle([{ feature: 'pos', element: POS_ELEMENT.noun }], {
+    const style = resolveElementStyle(J, [{ feature: 'pos', element: POS_ELEMENT.noun }], {
       [POS_ELEMENT.noun]: { color: '#111111', textColorMode: 'underline-only' },
     });
     expect(style.color).toBeUndefined();
@@ -198,7 +197,7 @@ describe('per-property resolution', () => {
 
 describe('chunk positions', () => {
   const withGroup = (surface: string, group: string): Token =>
-    token(surface, '名詞', { groups: { 'chunk.bunsetsu': group } });
+    token(surface, 'NOUN', { groups: { 'chunk.bunsetsu': group } });
 
   it('derives first, middle, last and only from the group run', () => {
     const tokens = [
@@ -208,35 +207,52 @@ describe('chunk positions', () => {
       withGroup('d', 'g2'),
       withGroup('e', 'g2'),
       withGroup('f', 'g3'),
-      token('g', '名詞'),
+      token('g', 'NOUN'),
     ];
-    expect(chunkElementAt(tokens, 0)).toBe('chunk.bunsetsu:first');
-    expect(chunkElementAt(tokens, 1)).toBe('chunk.bunsetsu:last');
-    expect(chunkElementAt(tokens, 2)).toBe('chunk.bunsetsu:first');
-    expect(chunkElementAt(tokens, 3)).toBe('chunk.bunsetsu:middle');
-    expect(chunkElementAt(tokens, 4)).toBe('chunk.bunsetsu:last');
-    expect(chunkElementAt(tokens, 5)).toBe('chunk.bunsetsu:only');
-    expect(chunkElementAt(tokens, 6)).toBeUndefined();
+    expect(chunkElementAt(tokens, 0, 'chunk.bunsetsu')).toBe('chunk.bunsetsu:first');
+    expect(chunkElementAt(tokens, 1, 'chunk.bunsetsu')).toBe('chunk.bunsetsu:last');
+    expect(chunkElementAt(tokens, 2, 'chunk.bunsetsu')).toBe('chunk.bunsetsu:first');
+    expect(chunkElementAt(tokens, 3, 'chunk.bunsetsu')).toBe('chunk.bunsetsu:middle');
+    expect(chunkElementAt(tokens, 4, 'chunk.bunsetsu')).toBe('chunk.bunsetsu:last');
+    expect(chunkElementAt(tokens, 5, 'chunk.bunsetsu')).toBe('chunk.bunsetsu:only');
+    expect(chunkElementAt(tokens, 6, 'chunk.bunsetsu')).toBeUndefined();
   });
 
   it('marks the middle of a three-token chunk', () => {
     const tokens = ['とても', '静か', 'に'].map((surface) =>
-      token(surface, '名詞', { groups: { 'chunk.bunsetsu': 'g1' } }),
+      token(surface, 'NOUN', { groups: { 'chunk.bunsetsu': 'g1' } }),
     );
-    expect(chunkElementAt(tokens, 1)).toBe('chunk.bunsetsu:middle');
+    expect(chunkElementAt(tokens, 1, 'chunk.bunsetsu')).toBe('chunk.bunsetsu:middle');
+  });
+});
+
+describe('english syntax clauses', () => {
+  it('keeps the role colour and lets the clause underline win', () => {
+    const tokens = [
+      token('who', 'PRON', {
+        grammar: ['syntax.role:attributive', 'syntax.clause:attributive'],
+      }),
+    ];
+    const style = resolveElementStyle(
+      E,
+      tokenElements(E, tokens, 0, ['syntax', 'clause']),
+      E.elementDefaults,
+    );
+    expect(style.color).toBe(E.elementDefaults['syntax.role:attributive'].color);
+    expect(style.underline).toEqual(E.elementDefaults['syntax.clause:attributive'].underline);
   });
 });
 
 describe('local annotations', () => {
   it('groups tokens into rule chunks and splits on particles and punctuation', () => {
     const tokens = [
-      token('私', '代名詞'),
-      token('は', '助詞'),
-      token('静かに', '副詞'),
-      token('、', '記号'),
-      token('本', '名詞'),
-      token('を', '助詞'),
-      token('読んだ', '動詞'),
+      token('私', 'PRON'),
+      token('は', 'ADP'),
+      token('静かに', 'ADV'),
+      token('、', 'PUNCT'),
+      token('本', 'NOUN'),
+      token('を', 'ADP'),
+      token('読んだ', 'VERB'),
     ];
     const groups = annotateChunks(tokens).map((t) => t.groups?.['chunk.bunsetsu']);
     expect(groups).toEqual(['rule-0', 'rule-0', 'rule-1', undefined, 'rule-2', 'rule-2', 'rule-3']);
@@ -244,10 +260,10 @@ describe('local annotations', () => {
 
   it('tags fixed expressions across token boundaries', () => {
     const tokens = [
-      token('食べ', '動詞'),
-      token('なければ', '助動詞'),
-      token('ならない', '動詞'),
-      token('。', '記号'),
+      token('食べ', 'VERB'),
+      token('なければ', 'AUX'),
+      token('ならない', 'VERB'),
+      token('。', 'PUNCT'),
     ];
     const tagged = annotateExpressions(tokens);
     expect(tagged[0].grammar).toBeUndefined();
@@ -260,7 +276,7 @@ describe('local annotations', () => {
       { w: '勉強', r: 'ベンキョウ', lv: 3, p: [], g: [], x: [], id: '勉強' },
       { w: '本', r: 'ホン', lv: 5, p: [], g: [], x: [], id: '本' },
     ];
-    const tokens = [token('勉強', '名詞', { dictIdx: 0 }), token('本', '名詞', { dictIdx: 1 })];
+    const tokens = [token('勉強', 'NOUN', { dictIdx: 0 }), token('本', 'NOUN', { dictIdx: 1 })];
     const tagged = annotateLevels(tokens, entries, { 3: true });
     expect(tagged[0].grammar).toContain(LEVEL_ELEMENT);
     expect(tagged[1].grammar).toBeUndefined();
@@ -273,18 +289,18 @@ describe('presets', () => {
       activeProfileId: 'syntax-focus',
       profiles: { 'pos-basic': { elements: { 'token.pos:NOUN': { color: '#123456' } } } },
     });
-    expect(style.activePresetId).toBe('syntax-focus');
-    expect(style.presets['pos-basic'].elements['token.pos:NOUN'].color).toBe('#123456');
-    expect(style.presets['pos-basic'].customized).toBe(true);
-    expect(presetElements(style.presets['syntax-focus'])['syntax.role:topic'].color).toBe('#C084FC');
-    expect(presetElements(style.presets['syntax-focus'])['token.pos:NOUN']).toBeUndefined();
+    expect(style.activePresetId.ja).toBe('syntax-focus');
+    expect(style.presets.ja['pos-basic'].elements['token.pos:NOUN'].color).toBe('#123456');
+    expect(style.presets.ja['pos-basic'].customized).toBe(true);
+    expect(presetElements(J, style.presets.ja['syntax-focus'])['syntax.role:topic'].color).toBe('#C084FC');
+    expect(presetElements(J, style.presets.ja['syntax-focus'])['token.pos:NOUN']).toBeUndefined();
   });
 
   it('fans the v2 chunk element out to every position', () => {
     const style = normalizeSubtitleStyle({
       profiles: { 'chunk-focus': { elements: { 'chunk.bunsetsu:all': { backgroundColor: '#112233' } } } },
     });
-    const elements = style.presets['chunk-focus'].elements;
+    const elements = style.presets.ja['chunk-focus'].elements;
     expect(elements['chunk.bunsetsu:first'].backgroundColor).toBe('#112233');
     expect(elements['chunk.bunsetsu:only'].backgroundColor).toBe('#112233');
     expect(elements['chunk.bunsetsu:all']).toBeUndefined();
@@ -296,7 +312,23 @@ describe('presets', () => {
       activePresetId: 'pos-basic',
       presets: { 'chunk-focus': { id: 'chunk-focus', elements: {} } },
     });
-    expect(style.presets['chunk-focus'].features).toEqual(['chunk-rule']);
+    expect(style.presets.ja['chunk-focus'].features).toEqual(['chunk-rule']);
+  });
+
+  it('drops a stored built-in the current pack no longer ships', () => {
+    const style = normalizeSubtitleStyle({
+      version: 4,
+      activePresetId: { en: 'phrase-focus' },
+      presets: {
+        en: {
+          'phrase-focus': { id: 'phrase-focus', features: ['expression'], elements: {} },
+          'custom:x': { id: 'custom:x', features: ['pos'], elements: {} },
+        },
+      },
+    });
+    expect(style.presets.en['phrase-focus']).toBeUndefined();
+    expect(style.presets.en['custom:x']).toBeDefined();
+    expect(style.activePresetId.en).toBe('chunk-focus');
   });
 
   it('stores a switched-off element through normalization', () => {
@@ -311,12 +343,12 @@ describe('presets', () => {
         },
       },
     });
-    expect(style.presets['pos-basic'].elements[POS_ELEMENT.verb]).toEqual({ enabled: false });
+    expect(style.presets.ja['pos-basic'].elements[POS_ELEMENT.verb]).toEqual({ enabled: false });
   });
 
   it('copies a preset whole, leaving the source untouched', () => {
     const source: StudyPreset = {
-      ...defaultPreset('pos-basic'),
+      ...defaultPreset(J, 'pos-basic'),
       features: ['pos', 'nouns'],
       base: { dimOpacity: 0.35, focusElement: POS_ELEMENT.noun },
       elements: {
@@ -340,58 +372,135 @@ describe('presets', () => {
     expect(source.elements[POS_ELEMENT.noun].underline?.color).toBe('#654321');
   });
 
-  it('drops remote features when the grammar service is unavailable', () => {
+  it('drops remote-only features when the grammar service is unavailable', () => {
     const remote = preset(['pos', 'syntax']);
-    expect(presetRequiresRemote(remote)).toBe(true);
-    const local = localOnlyPreset(remote);
+    expect(presetUsesRemote(J, remote)).toBe(true);
+    const local = localOnlyPreset(J, remote);
     expect(local.features).toEqual(['pos']);
-    expect(presetRequiresRemote(local)).toBe(false);
+    expect(presetUsesRemote(J, local)).toBe(false);
+  });
+
+  it('keeps hybrid features when the grammar service is unavailable', () => {
+    const hybrid = preset(['pos', 'syntax']);
+    expect(presetSources(E, hybrid)).toEqual(['local', 'remote']);
+    expect(localOnlyPreset(E, hybrid).features).toEqual(['pos', 'syntax']);
   });
 });
 
 describe('token style', () => {
   it('dims everything outside the focus element', () => {
-    const tokens = [token('本', '名詞'), token('読んだ', '動詞')];
-    const style: StudyPreset = { ...defaultPreset('pos-basic'), features: ['pos', 'nouns'] };
+    const tokens = [token('本', 'NOUN'), token('読んだ', 'VERB')];
+    const style: StudyPreset = { ...defaultPreset(J, 'pos-basic'), features: ['pos', 'nouns'] };
     style.base = { dimOpacity: 0.35, focusElement: POS_ELEMENT.noun };
-    const elements = presetElements(style);
-    expect(tokenStyle(tokens, 0, style, elements)?.opacity).toBeUndefined();
-    expect(tokenStyle(tokens, 1, style, elements)?.opacity).toBe(0.35);
+    const elements = presetElements(J, style);
+    expect(tokenStyle(J, tokens, 0, style, elements)?.opacity).toBeUndefined();
+    expect(tokenStyle(J, tokens, 1, style, elements)?.opacity).toBe(0.35);
   });
 
   it('leaves a token unstyled when its element is switched off', () => {
-    const tokens = [token('本', '名詞'), token('読んだ', '動詞', { conjForm: '連用タ接続' })];
+    const tokens = [token('本', 'NOUN'), token('読んだ', 'VERB', { conjForm: '連用タ接続' })];
     const off = preset(['pos'], {
       [POS_ELEMENT.noun]: { enabled: false },
       [POS_ELEMENT.verb]: { enabled: false },
     });
-    const elements = presetElements(off);
+    const elements = presetElements(J, off);
     expect(elements[POS_ELEMENT.noun]).toMatchObject({ enabled: false });
-    expect(tokenStyle(tokens, 0, off, elements)).toBeUndefined();
-    expect(tokenStyle(tokens, 1, off, elements)).toBeUndefined();
+    expect(tokenStyle(J, tokens, 0, off, elements)).toBeUndefined();
+    expect(tokenStyle(J, tokens, 1, off, elements)).toBeUndefined();
   });
 
   it('does not dim when the focus element itself is switched off', () => {
-    const tokens = [token('本', '名詞'), token('読んだ', '動詞')];
+    const tokens = [token('本', 'NOUN'), token('読んだ', 'VERB')];
     const style: StudyPreset = {
-      ...defaultPreset('pos-basic'),
+      ...defaultPreset(J, 'pos-basic'),
       features: ['pos', 'nouns'],
       elements: { [POS_ELEMENT.noun]: { enabled: false } },
     };
     style.base = { dimOpacity: 0.35, focusElement: POS_ELEMENT.noun };
-    expect(tokenStyle(tokens, 1, style, presetElements(style))?.opacity).toBeUndefined();
+    expect(tokenStyle(J, tokens, 1, style, presetElements(J, style))?.opacity).toBeUndefined();
   });
 
   it('keeps the inflected-verb hint unless the element overrides it', () => {
-    const inflected = token('読んだ', '動詞', { conjForm: '連用タ接続' });
-    const base = defaultPreset('pos-basic');
-    expect(tokenStyle([inflected], 0, base, presetElements(base))?.opacity).toBe(0.78);
+    const inflected = token('読んだ', 'VERB', { conjForm: '連用タ接続' });
+    const base = defaultPreset(J, 'pos-basic');
+    expect(tokenStyle(J, [inflected], 0, base, presetElements(J, base))?.opacity).toBe(0.78);
     const custom = preset(['pos'], {
       [POS_ELEMENT.verb]: { opacity: 1, underline: { enabled: false } },
     });
-    const style = tokenStyle([inflected], 0, custom, presetElements(custom));
+    const style = tokenStyle(J, [inflected], 0, custom, presetElements(J, custom));
     expect(style?.opacity).toBe(1);
     expect(style?.underline?.enabled).toBe(false);
+  });
+});
+
+describe('v4 migration', () => {
+  it('moves a v3 document into the ja bucket and keeps the user presets with it', () => {
+    const style = normalizeSubtitleStyle({
+      version: 3,
+      activePresetId: 'chunk-focus',
+      box: { backgroundColor: '#000000', backgroundOpacity: 0.5 },
+      presets: {
+        'chunk-focus': {
+          id: 'chunk-focus',
+          features: ['chunk-rule'],
+          elements: { 'chunk.bunsetsu:first': { backgroundColor: '#112233' } },
+          customized: true,
+        },
+        'custom:x': { id: 'custom:x', name: '我的', features: ['pos'], elements: {} },
+      },
+    });
+    expect(style.version).toBe(4);
+    expect(style.activePresetId.ja).toBe('chunk-focus');
+    expect(style.presets.ja['chunk-focus'].elements['chunk.bunsetsu:first'].backgroundColor).toBe('#112233');
+    expect(style.presets.ja['chunk-focus'].customized).toBe(true);
+    expect(style.presets.ja['custom:x'].name).toBe('我的');
+    // Built-ins the v3 document never mentioned still come from the seed.
+    expect(style.presets.ja['pos-basic'].features).toEqual(['pos']);
+    expect(style.box).toEqual({ backgroundColor: '#000000', backgroundOpacity: 0.5 });
+  });
+
+  it('reads per-language buckets and drops features the language does not have', () => {
+    const style = normalizeSubtitleStyle({
+      version: 4,
+      activePresetId: { ja: 'custom:a', xx: 'nope' },
+      presets: {
+        ja: { 'custom:a': { id: 'custom:a', features: ['pos', 'nope'], elements: {} } },
+        xx: { 'custom:b': { id: 'custom:b', features: ['pos'], elements: {} } },
+      },
+    });
+    expect(style.activePresetId.ja).toBe('custom:a');
+    expect(style.presets.ja['custom:a'].features).toEqual(['pos']);
+    expect(style.presets.ja['plain']).toBeDefined();
+    // A language with no registry is not carried forward, and its active id falls back.
+    expect(style.presets.xx).toBeUndefined();
+    expect(style.activePresetId.xx).toBeUndefined();
+  });
+
+  it('falls back to the language default when the stored active preset is gone', () => {
+    const style = normalizeSubtitleStyle({ version: 4, activePresetId: { ja: 'custom:gone' }, presets: { ja: {} } });
+    expect(style.activePresetId.ja).toBe('pos-basic');
+  });
+
+  it('backs up a pre-v4 document once, before the first v4 save', async () => {
+    const stored = { version: 3, activePresetId: 'pos-basic', presets: {} };
+    const set = vi.fn(async () => undefined);
+    const get = vi.fn(async () => ({ [SUBTITLE_STYLE_KEY]: stored }));
+    vi.stubGlobal('chrome', { storage: { local: { get, set } } });
+    const style = await loadSubtitleStyle();
+    expect(style.version).toBe(4);
+    expect(set).toHaveBeenCalledWith({ [SUBTITLE_STYLE_V3_BACKUP_KEY]: stored });
+  });
+
+  it('never overwrites an existing backup', async () => {
+    const stored = { version: 3, activePresetId: 'pos-basic', presets: {} };
+    const set = vi.fn(async () => undefined);
+    const get = vi.fn(async () => ({
+      [SUBTITLE_STYLE_KEY]: stored,
+      [SUBTITLE_STYLE_V3_BACKUP_KEY]: { version: 3, marker: 'original' },
+    }));
+    vi.stubGlobal('chrome', { storage: { local: { get, set } } });
+    await loadSubtitleStyle();
+    expect(set).not.toHaveBeenCalled();
   });
 });
 
@@ -400,8 +509,8 @@ describe('storage', () => {
     const get = vi.fn(async () => ({ [LEGACY_POS_COLORS_KEY]: { noun: '#112233' } }));
     vi.stubGlobal('chrome', { storage: { local: { get, set: vi.fn(async () => undefined) } } });
     const style = await loadSubtitleStyle();
-    expect(style.presets['pos-basic'].elements['token.pos:NOUN'].color).toBe('#112233');
-    expect(style.activePresetId).toBe('pos-basic');
+    expect(style.presets.ja['pos-basic'].elements['token.pos:NOUN'].color).toBe('#112233');
+    expect(style.activePresetId.ja).toBe('pos-basic');
   });
 
   it('prefers a saved preset set over the legacy key', async () => {
@@ -418,7 +527,7 @@ describe('storage', () => {
       },
     });
     const style = await loadSubtitleStyle();
-    expect(style.activePresetId).toBe('reading-assist');
-    expect(style.presets['pos-basic'].elements['token.pos:NOUN'].color).toBe('#445566');
+    expect(style.activePresetId.ja).toBe('reading-assist');
+    expect(style.presets.ja['pos-basic'].elements['token.pos:NOUN'].color).toBe('#445566');
   });
 });

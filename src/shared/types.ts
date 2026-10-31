@@ -4,17 +4,57 @@ export type Cue = { start: number; end: number; text: string };
 
 export type PosGroup = 'noun' | 'verb' | 'adj' | 'particle' | 'adverb' | 'conjunction' | 'other' | 'symbol';
 
+/** Shared POS skeleton (Universal Dependencies). Language details live in `posRaw`/`posDetail1`. */
+export type Pos =
+  | 'NOUN'
+  | 'PROPN'
+  | 'PRON'
+  | 'VERB'
+  | 'AUX'
+  | 'ADJ'
+  | 'ADV'
+  | 'ADP'
+  | 'PART'
+  | 'SCONJ'
+  | 'CCONJ'
+  | 'DET'
+  | 'NUM'
+  | 'INTJ'
+  | 'PUNCT'
+  | 'SYM'
+  | 'X';
+
+const POS_VALUES = new Set<string>([
+  'NOUN', 'PROPN', 'PRON', 'VERB', 'AUX', 'ADJ', 'ADV', 'ADP', 'PART',
+  'SCONJ', 'CCONJ', 'DET', 'NUM', 'INTJ', 'PUNCT', 'SYM', 'X',
+]);
+
+export const isPos = (value: unknown): value is Pos => typeof value === 'string' && POS_VALUES.has(value);
+
+/** Anything a provider sends that the core does not model degrades to `X`, never to a guess. */
+export const normalizePos = (value: unknown): Pos => (isPos(value) ? value : 'X');
+
 export type Token = {
   surface: string;
-  pos: string;
-  posDetail1: string;
-  conjType: string;
-  conjForm: string;
+  pos: Pos;
+  /** The tokenizer's own part-of-speech tag; only the language pack reads it. */
+  posRaw?: string;
+  /** Fine-grained Japanese POS (形容動詞語幹, 非自立…) or the pack's own subclass. */
+  posDetail1?: string;
+  conjType?: string;
+  /** Japanese conjugation form; English keeps tense/voice in `morph` instead. */
+  conjForm?: string;
+  /** Universal Dependencies morphology: `Tense=Past`, `Voice=Pass`, `Polarity=Neg`… */
+  morph?: Record<string, string>;
+  /** Lemma. */
   baseForm: string;
-  reading: string;
+  /** Kana reading / IPA, when the language has one to show. */
+  reading?: string;
   /** Index into the dictionary entries returned alongside the tokenized line. */
   dictIdx?: number;
   grammar?: string[];
+  /** Human-readable explanations from the analysis (`detail`), e.g. `gonna → going to`. */
+  notes?: string[];
   /** Annotation layer → annotation id. Adjacent tokens share an id when they share a chunk. */
   groups?: Record<string, string>;
   studyProfile?: string;
@@ -37,7 +77,15 @@ export type LayerCfg = {
   opacity: number;
 };
 
-export type SubSource = { name: string; text: string };
+/** Subtitle content, including the language it is written in (not a display property). */
+export type SubSource = {
+  name: string;
+  text: string;
+  /** Language pack id (`ja`, `en`, `plain`…); absent means it has not been resolved yet. */
+  language?: string;
+  /** False once the user picked a language for this layer; absent/true means auto-detect. */
+  languageAuto?: boolean;
+};
 
 /** A baked-in ad insertion: `at` is on the subtitle timeline, `duration` the seconds it occupies. */
 export type AdSlot = { at: number; duration: number };
@@ -76,6 +124,8 @@ export type UrlParts = { id: string | null; season: string | null; episode: numb
 export type PageCfg = {
   offset: number; // seconds; subtitles are scheduled at videoTime - offset (positive = subtitles later)
   subs: { a: SubSource; b: SubSource };
+  /** Online pack search scope (`ja`, `en`, `th`); absent means every available source. */
+  packLanguage?: string;
   layers: { a: LayerCfg; b: LayerCfg };
   /** How the transcript was last shown: floating over the picture, or a split strip. */
   transcriptSplit?: 'overlay' | 'side' | 'bottom';

@@ -5,7 +5,6 @@ import {
   defaultDictSettings,
   loadDictSettings,
   patchDictSettings,
-  type DictLevel,
   type DictSettings,
 } from '@/shared/dictSettings';
 import { packTitleForDisplay, ruleNameForDisplay, t } from '@/shared/i18n';
@@ -26,7 +25,7 @@ import { toast } from '@/design-system';
 
 export type PopupTab = 'subs' | 'sites';
 
-type PopupStatus = { hasVideo: boolean; subtitle: string; theater: boolean };
+type PopupStatus = { hasVideo: boolean; subtitle: string; theater: boolean; language: string };
 
 type OnlineState =
   | { mode: 'idle' }
@@ -111,11 +110,6 @@ export const usePopup = () => {
       const resolved = tab?.url ? await resolveSite(nextRules, tab.url) : null;
       if (cancelled) return;
       setSite(resolved);
-
-      const boundId = resolved ? boundPackOf(nextRules, resolved.rule.id, resolved.seriesId) : '';
-      const preferred = boundId ? nextPacks.find((pack) => pack.id === boundId) : undefined;
-      const first = preferred ?? nextPacks[0];
-      if (first) setOpenPacks(new Set([first.id]));
 
       void refreshStatus(id);
     };
@@ -349,4 +343,4 @@ export const usePopup = () => {
 };
 
 export type PopupController = ReturnType<typeof usePopup>;
-export type { DictLevel, SeriesDir, SubFile };
+export type { SeriesDir, SubFile };

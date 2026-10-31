@@ -6,6 +6,7 @@ export class TrackAnalysis {
   private generation = 0;
   private document: AnalysisDocument | null = null;
   private cues: Cue[] = [];
+  private language = 'ja';
   private settings: NlpSettings = defaults;
   status = '';
   private async request(payload: Record<string, unknown>) {
@@ -13,13 +14,13 @@ export class TrackAnalysis {
     if (result?.error) throw Error(result.error);
     return result;
   }
-  async select(cues: Cue[]) {
+  async select(cues: Cue[], language: string) {
     const generation = ++this.generation;
-    this.document = null; this.cues = cues;
+    this.document = null; this.cues = cues; this.language = language;
     if (!cues.length) return;
     try {
       this.settings = await this.request({ action: 'settings' });
-      let result = await this.request({ action: 'start', cues: toTrack(cues) });
+      let result = await this.request({ action: 'start', cues: toTrack(cues), language });
       const { jobId, baseUrl, trackHash } = result;
       const deadline = Date.now() + 600000;
       let delay = 1000;
@@ -43,7 +44,7 @@ export class TrackAnalysis {
   async refreshSettings() {
     const previous = this.settings;
     this.settings = await this.request({ action: 'settings' });
-    if (this.settings.enabled && this.settings.sourcePreference !== 'local-only' && (!previous.enabled || previous.baseUrl !== this.settings.baseUrl || previous.sourcePreference === 'local-only')) void this.select(this.cues);
+    if (this.settings.enabled && this.settings.sourcePreference !== 'local-only' && (!previous.enabled || previous.baseUrl !== this.settings.baseUrl || previous.sourcePreference === 'local-only')) void this.select(this.cues, this.language);
   }
   ready(): boolean {
     return this.document !== null;

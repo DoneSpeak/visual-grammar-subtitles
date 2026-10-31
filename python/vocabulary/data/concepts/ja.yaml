@@ -20,6 +20,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: dog
+    th: "สุนัข"
     zh-Hans: 狗
 - id: animals.cat
   category: animals
@@ -30,6 +31,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: cat
+    th: "แมว"
     zh-Hans: 猫
 - id: animals.fish
   category: animals
@@ -40,6 +42,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: fish
+    th: "ปลา"
     zh-Hans: 鱼
 - id: animals.bird
   category: animals
@@ -50,6 +53,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: bird
+    th: "นก"
     zh-Hans: 鸟
 - id: animals.insect
   category: animals
@@ -60,6 +64,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: insect
+    th: "แมลง"
     zh-Hans: 昆虫
 - id: nature.flower
   category: nature
@@ -70,6 +75,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: flower
+    th: "ดอกไม้"
     zh-Hans: 花
 - id: nature.tree
   category: nature
@@ -80,6 +86,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: tree
+    th: "ต้นไม้"
     zh-Hans: 树
 - id: nature.mountain
   category: nature
@@ -90,6 +97,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: mountain
+    th: "ภูเขา"
     zh-Hans: 山
 - id: nature.sea
   category: nature
@@ -100,6 +108,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: sea
+    th: "ทะเล"
     zh-Hans: 海
 - id: nature.fire
   category: nature
@@ -110,6 +119,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: fire
+    th: "ไฟ"
     zh-Hans: 火
 - id: nature.water
   category: nature
@@ -120,6 +130,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: water
+    th: "น้ำ"
     zh-Hans: 水
 - id: weather.rain
   category: weather
@@ -130,6 +141,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: rain
+    th: "ฝน"
     zh-Hans: 雨
 - id: weather.snow
   category: weather
@@ -140,6 +152,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: snow
+    th: "หิมะ"
     zh-Hans: 雪
 - id: weather.sunny
   category: weather
@@ -150,6 +163,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: clear weather
+    th: "อากาศแจ่มใส"
     zh-Hans: 晴天
 - id: time.moon
   category: time
@@ -160,6 +174,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: moon
+    th: "ดวงจันทร์"
     zh-Hans: 月亮
 - id: time.star
   category: time
@@ -170,6 +185,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: star
+    th: "ดาว"
     zh-Hans: 星星
 - id: time.morning
   category: time
@@ -180,6 +196,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: morning
+    th: "เช้า"
     zh-Hans: 早晨
 - id: time.night
   category: time
@@ -190,6 +207,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: night
+    th: "กลางคืน"
     zh-Hans: 夜晚
 - id: food.fruit
   category: food
@@ -200,6 +218,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: fruit
+    th: "ผลไม้"
     zh-Hans: 水果
 - id: food.grapes
   category: food
@@ -210,6 +229,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: grapes
+    th: "องุ่น"
     zh-Hans: 葡萄
 - id: food.vegetables
   category: food
@@ -220,6 +240,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: vegetable
+    th: "ผัก"
     zh-Hans: 蔬菜
 - id: food.rice
   category: food
@@ -230,6 +251,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: rice
+    th: "ข้าว"
     zh-Hans: 米
 - id: food.bread
   category: food
@@ -240,6 +262,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: bread
+    th: "ขนมปัง"
     zh-Hans: 面包
 - id: food.egg
   category: food
@@ -250,6 +273,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: egg
+    th: "ไข่"
     zh-Hans: 鸡蛋
 - id: food.meat
   category: food
@@ -260,6 +284,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: meat
+    th: "เนื้อ"
     zh-Hans: 肉
 - id: food.chicken
   category: food
@@ -270,6 +295,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: chicken meat
+    th: "เนื้อไก่"
     zh-Hans: 鸡肉
 - id: food.beef
   category: food
@@ -280,6 +306,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: beef
+    th: "เนื้อวัว"
     zh-Hans: 牛肉
 - id: food.milk
   category: food
@@ -290,6 +317,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: milk
+    th: "นม"
     zh-Hans: 牛奶
 - id: food.tea
   category: food
@@ -300,6 +328,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: green tea
+    th: "ชาเขียว"
     zh-Hans: 茶
 - id: food.coffee
   category: food
@@ -310,6 +339,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: coffee
+    th: "กาแฟ"
     zh-Hans: 咖啡
 - id: food.cake
   category: food
@@ -320,6 +350,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: cake
+    th: "เค้ก"
     zh-Hans: 蛋糕
 - id: transport.bicycle
   category: transport
@@ -330,6 +361,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: bicycle
+    th: "จักรยาน"
     zh-Hans: 自行车
 - id: transport.car
   category: transport
@@ -340,6 +372,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: car
+    th: "รถยนต์"
     zh-Hans: 汽车
 - id: transport.train
   category: transport
@@ -350,6 +383,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: train
+    th: "รถไฟ"
     zh-Hans: 电车
 - id: transport.bus
   category: transport
@@ -360,6 +394,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: bus
+    th: "รถบัส"
     zh-Hans: 公交车
 - id: transport.airplane
   category: transport
@@ -370,6 +405,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: aeroplane
+    th: "เครื่องบิน"
     zh-Hans: 飞机
 - id: transport.ship
   category: transport
@@ -380,6 +416,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: ship
+    th: "เรือ"
     zh-Hans: 船
 - id: transport.taxi
   category: transport
@@ -390,6 +427,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: taxi
+    th: "แท็กซี่"
     zh-Hans: 出租车
 - id: place.station
   category: places
@@ -400,6 +438,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: station
+    th: "สถานี"
     zh-Hans: 车站
 - id: place.hospital
   category: places
@@ -410,6 +449,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: hospital
+    th: "โรงพยาบาล"
     zh-Hans: 医院
 - id: place.school
   category: places
@@ -420,6 +460,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: school
+    th: "โรงเรียน"
     zh-Hans: 学校
 - id: place.bank
   category: places
@@ -430,6 +471,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: bank
+    th: "ธนาคาร"
     zh-Hans: 银行
 - id: place.post_office
   category: places
@@ -440,6 +482,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: post office
+    th: "ไปรษณีย์"
     zh-Hans: 邮局
 - id: place.house
   category: places
@@ -450,6 +493,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: house
+    th: "บ้าน"
     zh-Hans: 家
 - id: place.shop
   category: places
@@ -460,6 +504,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: shop
+    th: "ร้านค้า"
     zh-Hans: 商店
 - id: body.eye
   category: body
@@ -470,6 +515,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: eye
+    th: "ตา"
     zh-Hans: 眼睛
 - id: body.ear
   category: body
@@ -480,6 +526,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: ear
+    th: "หู"
     zh-Hans: 耳朵
 - id: body.mouth
   category: body
@@ -490,6 +537,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: mouth
+    th: "ปาก"
     zh-Hans: 嘴
 - id: body.nose
   category: body
@@ -500,6 +548,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: nose
+    th: "จมูก"
     zh-Hans: 鼻子
 - id: body.hand
   category: body
@@ -510,6 +559,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: hand
+    th: "มือ"
     zh-Hans: 手
 - id: body.foot
   category: body
@@ -520,6 +570,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: foot
+    th: "เท้า"
     zh-Hans: 脚
 - id: body.tooth
   category: body
@@ -530,6 +581,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: tooth
+    th: "ฟัน"
     zh-Hans: 牙齿
 - id: people.man
   category: people
@@ -540,6 +592,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: man
+    th: "ผู้ชาย"
     zh-Hans: 男人
 - id: people.woman
   category: people
@@ -550,6 +603,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: woman
+    th: "ผู้หญิง"
     zh-Hans: 女人
 - id: people.boy
   category: people
@@ -560,6 +614,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: boy
+    th: "เด็กชาย"
     zh-Hans: 男孩
 - id: people.girl
   category: people
@@ -570,6 +625,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: girl
+    th: "เด็กหญิง"
     zh-Hans: 女孩
 - id: people.baby
   category: people
@@ -580,6 +636,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: baby
+    th: "ทารก"
     zh-Hans: 婴儿
 - id: people.teacher
   category: people
@@ -590,6 +647,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: teacher
+    th: "ครู"
     zh-Hans: 老师
 - id: people.doctor
   category: people
@@ -600,6 +658,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: medical doctor
+    th: "แพทย์"
     zh-Hans: 医生
 - id: action.eat
   category: actions
@@ -610,6 +669,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to eat
+    th: "กิน"
     zh-Hans: 吃
 - id: action.drink
   category: actions
@@ -620,6 +680,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to drink
+    th: "ดื่ม"
     zh-Hans: 喝
 - id: action.run
   category: actions
@@ -630,6 +691,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to run
+    th: "วิ่ง"
     zh-Hans: 跑
 - id: action.walk
   category: actions
@@ -640,6 +702,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to walk
+    th: "เดิน"
     zh-Hans: 走
 - id: action.sleep
   category: actions
@@ -650,6 +713,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to sleep
+    th: "นอน"
     zh-Hans: 睡觉
 - id: action.laugh
   category: actions
@@ -660,6 +724,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to laugh
+    th: "หัวเราะ"
     zh-Hans: 笑
 - id: action.cry
   category: actions
@@ -670,6 +735,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to weep
+    th: "ร้องไห้"
     zh-Hans: 哭
 - id: action.sing
   category: actions
@@ -680,6 +746,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to sing
+    th: "ร้องเพลง"
     zh-Hans: 唱歌
 - id: action.read
   category: actions
@@ -690,6 +757,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to read
+    th: "อ่าน"
     zh-Hans: 读
 - id: action.write
   category: actions
@@ -700,6 +768,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to write
+    th: "เขียน"
     zh-Hans: 写
 - id: action.work
   category: actions
@@ -710,6 +779,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: to work
+    th: "ทำงาน"
     zh-Hans: 工作
 - id: object.book
   category: objects
@@ -720,6 +790,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: book
+    th: "หนังสือ"
     zh-Hans: 书
 - id: object.pencil
   category: objects
@@ -730,6 +801,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: pencil
+    th: "ดินสอ"
     zh-Hans: 铅笔
 - id: object.pen
   category: objects
@@ -740,6 +812,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: pen
+    th: "ปากกา"
     zh-Hans: 钢笔
 - id: object.bag
   category: objects
@@ -750,6 +823,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: bag
+    th: "กระเป๋า"
     zh-Hans: 包
 - id: object.umbrella
   category: objects
@@ -760,6 +834,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: umbrella
+    th: "ร่ม"
     zh-Hans: 伞
 - id: object.watch
   category: objects
@@ -770,6 +845,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: watch
+    th: "นาฬิกา"
     zh-Hans: 钟表
 - id: object.telephone
   category: objects
@@ -780,6 +856,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: telephone
+    th: "โทรศัพท์"
     zh-Hans: 电话
 - id: object.television
   category: objects
@@ -790,6 +867,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: television
+    th: "โทรทัศน์"
     zh-Hans: 电视
 - id: object.camera
   category: objects
@@ -800,6 +878,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: camera
+    th: "กล้องถ่ายรูป"
     zh-Hans: 相机
 - id: object.laptop
   category: objects
@@ -810,6 +889,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: personal computer
+    th: "โน้ตบุ๊ก"
     zh-Hans: 电脑
 - id: object.chair
   category: objects
@@ -820,6 +900,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: chair
+    th: "เก้าอี้"
     zh-Hans: 椅子
 - id: object.bed
   category: objects
@@ -830,6 +911,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: bed
+    th: "เตียง"
     zh-Hans: 床
 - id: object.door
   category: objects
@@ -840,6 +922,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: door
+    th: "ประตู"
     zh-Hans: 门
 - id: object.window
   category: objects
@@ -850,6 +933,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: window
+    th: "หน้าต่าง"
     zh-Hans: 窗户
 - id: object.key
   category: objects
@@ -860,6 +944,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: key
+    th: "กุญแจ"
     zh-Hans: 钥匙
 - id: object.glasses
   category: objects
@@ -870,6 +955,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: glasses
+    th: "แว่นตา"
     zh-Hans: 眼镜
 - id: object.hat
   category: objects
@@ -880,6 +966,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: hat
+    th: "หมวก"
     zh-Hans: 帽子
 - id: object.shoes
   category: objects
@@ -890,6 +977,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: shoes
+    th: "รองเท้า"
     zh-Hans: 鞋
 - id: object.wallet
   category: objects
@@ -900,6 +988,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: wallet
+    th: "กระเป๋าสตางค์"
     zh-Hans: 钱包
 - id: object.letter
   category: objects
@@ -910,6 +999,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: letter
+    th: "จดหมาย"
     zh-Hans: 信
 - id: object.ticket
   category: objects
@@ -920,6 +1010,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: ticket
+    th: "ตั๋ว"
     zh-Hans: 车票
 - id: object.movie
   category: objects
@@ -930,6 +1021,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: movie
+    th: "ภาพยนตร์"
     zh-Hans: 电影
 - id: color.red
   category: color
@@ -940,6 +1032,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: red
+    th: "สีแดง"
     zh-Hans: 红色
 - id: color.blue
   category: color
@@ -950,6 +1043,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: blue
+    th: "สีฟ้า"
     zh-Hans: 蓝色
 - id: color.white
   category: color
@@ -960,6 +1054,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: white
+    th: "สีขาว"
     zh-Hans: 白色
 - id: color.black
   category: color
@@ -970,6 +1065,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: black
+    th: "สีดำ"
     zh-Hans: 黑色
 - id: color.yellow
   category: color
@@ -980,6 +1076,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: yellow
+    th: "สีเหลือง"
     zh-Hans: 黄色
 - id: color.green
   category: color
@@ -990,6 +1087,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: green
+    th: "สีเขียว"
     zh-Hans: 绿色
 - id: color.brown
   category: color
@@ -1000,6 +1098,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: brown
+    th: "สีน้ำตาล"
     zh-Hans: 棕色
 - id: color.palette
   category: color
@@ -1010,6 +1109,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: colour
+    th: "สี"
     zh-Hans: 颜色
 - id: people.person
   category: people
@@ -1020,6 +1120,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "person"
+    th: "คน"
     zh-Hans: "人"
 - id: people.child
   category: people
@@ -1030,6 +1131,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "child"
+    th: "เด็ก"
     zh-Hans: "小孩"
 - id: people.family
   category: people
@@ -1040,6 +1142,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "family"
+    th: "ครอบครัว"
     zh-Hans: "家人"
 - id: people.friend
   category: people
@@ -1050,6 +1153,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "friend"
+    th: "เพื่อน"
     zh-Hans: "朋友"
 - id: people.student
   category: people
@@ -1060,6 +1164,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "student"
+    th: "นักเรียน"
     zh-Hans: "学生"
 - id: people.police
   category: people
@@ -1070,6 +1175,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "police officer"
+    th: "ตำรวจ"
     zh-Hans: "警察"
 - id: people.nurse
   category: people
@@ -1080,6 +1186,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "nurse"
+    th: "พยาบาล"
     zh-Hans: "护士"
 - id: people.old_man
   category: people
@@ -1090,6 +1197,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "old man"
+    th: "ชายชรา"
     zh-Hans: "老爷爷"
 - id: people.old_woman
   category: people
@@ -1100,6 +1208,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "old woman"
+    th: "หญิงชรา"
     zh-Hans: "老奶奶"
 - id: people.father
   category: people
@@ -1110,6 +1219,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "father"
+    th: "พ่อ"
     zh-Hans: "父亲"
 - id: people.mother
   category: people
@@ -1120,6 +1230,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "mother"
+    th: "แม่"
     zh-Hans: "母亲"
 - id: people.brother
   category: people
@@ -1130,6 +1241,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "brother"
+    th: "พี่ชาย"
     zh-Hans: "兄弟"
 - id: people.sister
   category: people
@@ -1140,6 +1252,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sister"
+    th: "พี่สาว"
     zh-Hans: "姐妹"
 - id: people.husband
   category: people
@@ -1150,6 +1263,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "husband"
+    th: "สามี"
     zh-Hans: "丈夫"
 - id: people.wife
   category: people
@@ -1160,6 +1274,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "wife"
+    th: "ภรรยา"
     zh-Hans: "妻子"
 - id: people.aunt
   category: people
@@ -1170,6 +1285,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "aunt"
+    th: "ป้า"
     zh-Hans: "阿姨"
 - id: people.office_worker
   category: people
@@ -1180,6 +1296,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "office worker"
+    th: "พนักงานออฟฟิศ"
     zh-Hans: "上班族"
 - id: people.driver
   category: people
@@ -1190,6 +1307,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "driver"
+    th: "คนขับรถ"
     zh-Hans: "司机"
 - id: people.shop_clerk
   category: people
@@ -1200,6 +1318,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "shop assistant"
+    th: "พนักงานขาย"
     zh-Hans: "店员"
 - id: people.boss
   category: people
@@ -1210,6 +1329,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "boss"
+    th: "หัวหน้า"
     zh-Hans: "老板"
 - id: people.citizen
   category: people
@@ -1220,6 +1340,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "citizen"
+    th: "พลเมือง"
     zh-Hans: "市民"
 - id: people.guest
   category: people
@@ -1230,6 +1351,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "guest"
+    th: "แขก"
     zh-Hans: "客人"
 - id: body.arm
   category: body
@@ -1240,6 +1362,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "arm"
+    th: "แขน"
     zh-Hans: "手臂"
 - id: body.finger
   category: body
@@ -1250,6 +1373,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "finger"
+    th: "นิ้วมือ"
     zh-Hans: "手指"
 - id: body.blood
   category: body
@@ -1260,6 +1384,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "blood"
+    th: "เลือด"
     zh-Hans: "血"
 - id: body.heart
   category: body
@@ -1270,6 +1395,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "heart"
+    th: "หัวใจ"
     zh-Hans: "心"
 - id: body.voice
   category: body
@@ -1280,6 +1406,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "voice"
+    th: "เสียง"
     zh-Hans: "声音"
 - id: body.beard
   category: body
@@ -1290,6 +1417,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "beard"
+    th: "หนวดเครา"
     zh-Hans: "胡子"
 - id: body.hair
   category: body
@@ -1300,6 +1428,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "hair"
+    th: "ผม"
     zh-Hans: "头发"
 - id: food.breakfast
   category: food
@@ -1310,6 +1439,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "breakfast"
+    th: "อาหารเช้า"
     zh-Hans: "早餐"
 - id: food.lunch
   category: food
@@ -1320,6 +1450,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "lunch"
+    th: "อาหารกลางวัน"
     zh-Hans: "午餐"
 - id: food.dinner
   category: food
@@ -1330,6 +1461,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "dinner"
+    th: "อาหารเย็น"
     zh-Hans: "晚餐"
 - id: food.bento
   category: food
@@ -1340,6 +1472,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "bento"
+    th: "ข้าวกล่อง"
     zh-Hans: "便当"
 - id: food.sweets
   category: food
@@ -1350,6 +1483,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sweets"
+    th: "ขนมหวาน"
     zh-Hans: "点心"
 - id: food.feast
   category: food
@@ -1360,6 +1494,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "feast"
+    th: "งานเลี้ยง"
     zh-Hans: "大餐"
 - id: food.alcohol
   category: food
@@ -1370,6 +1505,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "alcohol"
+    th: "แอลกอฮอล์"
     zh-Hans: "酒"
 - id: food.plate
   category: food
@@ -1380,6 +1516,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "plate"
+    th: "จาน"
     zh-Hans: "盘子"
 - id: food.cup
   category: food
@@ -1390,6 +1527,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "cup"
+    th: "ถ้วย"
     zh-Hans: "杯子"
 - id: food.glass
   category: food
@@ -1400,6 +1538,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "glass"
+    th: "แก้ว"
     zh-Hans: "玻璃杯"
 - id: food.curry
   category: food
@@ -1410,6 +1549,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "curry"
+    th: "แกงกะหรี่"
     zh-Hans: "咖喱"
 - id: food.sugar
   category: food
@@ -1420,6 +1560,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sugar"
+    th: "น้ำตาล"
     zh-Hans: "糖"
 - id: food.salt
   category: food
@@ -1430,6 +1571,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "salt"
+    th: "เกลือ"
     zh-Hans: "盐"
 - id: food.butter
   category: food
@@ -1440,6 +1582,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "butter"
+    th: "เนย"
     zh-Hans: "黄油"
 - id: food.spoon
   category: food
@@ -1450,6 +1593,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "spoon"
+    th: "ช้อน"
     zh-Hans: "勺子"
 - id: food.fork
   category: food
@@ -1460,6 +1604,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "fork"
+    th: "ส้อม"
     zh-Hans: "叉子"
 - id: food.knife
   category: food
@@ -1470,6 +1615,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "knife"
+    th: "มีด"
     zh-Hans: "刀"
 - id: food.chopsticks
   category: food
@@ -1480,6 +1626,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "chopsticks"
+    th: "ตะเกียบ"
     zh-Hans: "筷子"
 - id: food.salad
   category: food
@@ -1490,6 +1637,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "salad"
+    th: "สลัด"
     zh-Hans: "沙拉"
 - id: food.sandwich
   category: food
@@ -1500,6 +1648,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sandwich"
+    th: "แซนด์วิช"
     zh-Hans: "三明治"
 - id: food.steak
   category: food
@@ -1510,6 +1659,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "steak"
+    th: "สเต็ก"
     zh-Hans: "牛排"
 - id: food.jam
   category: food
@@ -1520,6 +1670,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "jam"
+    th: "แยม"
     zh-Hans: "果酱"
 - id: food.black_tea
   category: food
@@ -1530,6 +1681,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "black tea"
+    th: "ชาดำ"
     zh-Hans: "红茶"
 - id: food.pork
   category: food
@@ -1540,6 +1692,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "pork"
+    th: "เนื้อหมู"
     zh-Hans: "猪肉"
 - id: food.cooked_rice
   category: food
@@ -1550,6 +1703,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "cooked rice"
+    th: "ข้าวสุก"
     zh-Hans: "米饭"
 - id: food.miso
   category: food
@@ -1560,6 +1714,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "miso soup"
+    th: "ซุปมิโซะ"
     zh-Hans: "味噌汤"
 - id: food.candy
   category: food
@@ -1570,6 +1725,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "candy"
+    th: "ลูกอม"
     zh-Hans: "糖果"
 - id: food.hot_water
   category: food
@@ -1580,6 +1736,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "hot water"
+    th: "น้ำร้อน"
     zh-Hans: "热水"
 - id: animals.animal
   category: animals
@@ -1590,6 +1747,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "animal"
+    th: "สัตว์"
     zh-Hans: "动物"
 - id: animals.pet
   category: animals
@@ -1600,6 +1758,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "pet"
+    th: "สัตว์เลี้ยง"
     zh-Hans: "宠物"
 - id: animals.small_bird
   category: animals
@@ -1610,6 +1769,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "small bird"
+    th: "นกเล็ก"
     zh-Hans: "小鸟"
 - id: nature.sky
   category: nature
@@ -1620,6 +1780,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sky"
+    th: "ท้องฟ้า"
     zh-Hans: "天空"
 - id: nature.cloud
   category: nature
@@ -1630,6 +1791,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "cloud"
+    th: "เมฆ"
     zh-Hans: "云"
 - id: nature.wind
   category: nature
@@ -1640,6 +1802,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "wind"
+    th: "ลม"
     zh-Hans: "风"
 - id: nature.typhoon
   category: nature
@@ -1650,6 +1813,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "typhoon"
+    th: "ไต้ฝุ่น"
     zh-Hans: "台风"
 - id: nature.earthquake
   category: nature
@@ -1660,6 +1824,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "earthquake"
+    th: "แผ่นดินไหว"
     zh-Hans: "地震"
 - id: nature.river
   category: nature
@@ -1670,6 +1835,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "river"
+    th: "แม่น้ำ"
     zh-Hans: "河"
 - id: nature.lake
   category: nature
@@ -1680,6 +1846,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "lake"
+    th: "ทะเลสาบ"
     zh-Hans: "湖"
 - id: nature.pond
   category: nature
@@ -1690,6 +1857,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "pond"
+    th: "สระน้ำ"
     zh-Hans: "池塘"
 - id: nature.forest
   category: nature
@@ -1700,6 +1868,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "forest"
+    th: "ป่า"
     zh-Hans: "森林"
 - id: nature.grass
   category: nature
@@ -1710,6 +1879,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "grass"
+    th: "หญ้า"
     zh-Hans: "草"
 - id: nature.leaf
   category: nature
@@ -1720,6 +1890,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "leaf"
+    th: "ใบไม้"
     zh-Hans: "叶子"
 - id: nature.stone
   category: nature
@@ -1730,6 +1901,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "stone"
+    th: "หิน"
     zh-Hans: "石头"
 - id: nature.sand
   category: nature
@@ -1740,6 +1912,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sand"
+    th: "ทราย"
     zh-Hans: "沙子"
 - id: nature.island
   category: nature
@@ -1750,6 +1923,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "island"
+    th: "เกาะ"
     zh-Hans: "岛"
 - id: nature.coast
   category: nature
@@ -1760,6 +1934,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "coast"
+    th: "ชายฝั่ง"
     zh-Hans: "海岸"
 - id: nature.harbor
   category: nature
@@ -1770,6 +1945,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "harbor"
+    th: "ท่าเรือ"
     zh-Hans: "港口"
 - id: nature.spring
   category: nature
@@ -1780,6 +1956,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "spring"
+    th: "ฤดูใบไม้ผลิ"
     zh-Hans: "春天"
 - id: nature.summer
   category: nature
@@ -1790,6 +1967,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "summer"
+    th: "ฤดูร้อน"
     zh-Hans: "夏天"
 - id: nature.autumn
   category: nature
@@ -1800,6 +1978,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "autumn"
+    th: "ฤดูใบไม้ร่วง"
     zh-Hans: "秋天"
 - id: nature.winter
   category: nature
@@ -1810,6 +1989,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "winter"
+    th: "ฤดูหนาว"
     zh-Hans: "冬天"
 - id: nature.air
   category: nature
@@ -1820,6 +2000,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "air"
+    th: "อากาศ"
     zh-Hans: "空气"
 - id: nature.light
   category: nature
@@ -1830,6 +2011,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "light"
+    th: "แสง"
     zh-Hans: "光"
 - id: nature.scenery
   category: nature
@@ -1840,6 +2022,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "scenery"
+    th: "ทิวทัศน์"
     zh-Hans: "景色"
 - id: weather.weather
   category: weather
@@ -1850,6 +2033,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "weather"
+    th: "สภาพอากาศ"
     zh-Hans: "天气"
 - id: weather.cloudy
   category: weather
@@ -1860,6 +2044,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "cloudy"
+    th: "อากาศมืดครึ้ม"
     zh-Hans: "阴天"
 - id: time.noon
   category: time
@@ -1870,6 +2055,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "noon"
+    th: "เที่ยงวัน"
     zh-Hans: "中午"
 - id: time.evening
   category: time
@@ -1880,6 +2066,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "evening"
+    th: "ตอนเย็น"
     zh-Hans: "傍晚"
 - id: time.today
   category: time
@@ -1890,6 +2077,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "today"
+    th: "วันนี้"
     zh-Hans: "今天"
 - id: time.tomorrow
   category: time
@@ -1900,6 +2088,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "tomorrow"
+    th: "พรุ่งนี้"
     zh-Hans: "明天"
 - id: time.yesterday
   category: time
@@ -1910,6 +2099,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "yesterday"
+    th: "เมื่อวาน"
     zh-Hans: "昨天"
 - id: time.day_after_tomorrow
   category: time
@@ -1920,6 +2110,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "day after tomorrow"
+    th: "มะรืนนี้"
     zh-Hans: "后天"
 - id: time.day_before_yesterday
   category: time
@@ -1930,6 +2121,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "day before yesterday"
+    th: "เมื่อวานซืน"
     zh-Hans: "前天"
 - id: time.year
   category: time
@@ -1940,6 +2132,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "year"
+    th: "ปี"
     zh-Hans: "年"
 - id: time.month
   category: time
@@ -1950,6 +2143,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "month"
+    th: "เดือน"
     zh-Hans: "月"
 - id: time.week
   category: time
@@ -1960,6 +2154,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "week"
+    th: "สัปดาห์"
     zh-Hans: "周"
 - id: time.time
   category: time
@@ -1970,6 +2165,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "time"
+    th: "เวลา"
     zh-Hans: "时间"
 - id: time.birthday
   category: time
@@ -1980,6 +2176,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "birthday"
+    th: "วันเกิด"
     zh-Hans: "生日"
 - id: time.season
   category: time
@@ -1990,6 +2187,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "season"
+    th: "ฤดูกาล"
     zh-Hans: "季节"
 - id: time.past
   category: time
@@ -2000,6 +2198,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "olden days"
+    th: "สมัยก่อน"
     zh-Hans: "过去"
 - id: time.future
   category: time
@@ -2010,6 +2209,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "future"
+    th: "อนาคต"
     zh-Hans: "将来"
 - id: time.recent
   category: time
@@ -2020,6 +2220,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "recently"
+    th: "เมื่อเร็ว ๆ นี้"
     zh-Hans: "最近"
 - id: time.now
   category: time
@@ -2030,6 +2231,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "now"
+    th: "ตอนนี้"
     zh-Hans: "现在"
 - id: place.cinema
   category: places
@@ -2040,6 +2242,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "cinema"
+    th: "โรงภาพยนตร์"
     zh-Hans: "电影院"
 - id: place.park
   category: places
@@ -2050,6 +2253,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "park"
+    th: "สวนสาธารณะ"
     zh-Hans: "公园"
 - id: place.intersection
   category: places
@@ -2060,6 +2264,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "intersection"
+    th: "สี่แยก"
     zh-Hans: "十字路口"
 - id: place.police_box
   category: places
@@ -2070,6 +2275,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "police box"
+    th: "ป้อมตำรวจ"
     zh-Hans: "派出所"
 - id: place.restaurant
   category: places
@@ -2080,6 +2286,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "restaurant"
+    th: "ร้านอาหาร"
     zh-Hans: "餐厅"
 - id: place.cafe
   category: places
@@ -2090,6 +2297,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "coffee lounge"
+    th: "ร้านกาแฟ"
     zh-Hans: "咖啡馆"
 - id: place.cafeteria
   category: places
@@ -2100,6 +2308,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "dining hall"
+    th: "ห้องอาหาร"
     zh-Hans: "食堂"
 - id: place.library
   category: places
@@ -2110,6 +2319,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "library"
+    th: "ห้องสมุด"
     zh-Hans: "图书馆"
 - id: place.university
   category: places
@@ -2120,6 +2330,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "university"
+    th: "มหาวิทยาลัย"
     zh-Hans: "大学"
 - id: place.high_school
   category: places
@@ -2130,6 +2341,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "high school"
+    th: "โรงเรียนมัธยมปลาย"
     zh-Hans: "高中"
 - id: place.junior_high
   category: places
@@ -2140,6 +2352,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "junior high school"
+    th: "โรงเรียนมัธยมต้น"
     zh-Hans: "初中"
 - id: place.elementary_school
   category: places
@@ -2150,6 +2363,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "elementary school"
+    th: "โรงเรียนประถม"
     zh-Hans: "小学"
 - id: place.embassy
   category: places
@@ -2160,6 +2374,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "embassy"
+    th: "สถานทูต"
     zh-Hans: "大使馆"
 - id: place.kitchen
   category: places
@@ -2170,6 +2385,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "kitchen"
+    th: "ห้องครัว"
     zh-Hans: "厨房"
 - id: place.room
   category: places
@@ -2180,6 +2396,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "room"
+    th: "ห้อง"
     zh-Hans: "房间"
 - id: place.classroom
   category: places
@@ -2190,6 +2407,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "classroom"
+    th: "ห้องเรียน"
     zh-Hans: "教室"
 - id: place.meeting_room
   category: places
@@ -2200,6 +2418,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "meeting room"
+    th: "ห้องประชุม"
     zh-Hans: "会议室"
 - id: place.art_gallery
   category: places
@@ -2210,6 +2429,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "art gallery"
+    th: "หอศิลป์"
     zh-Hans: "美术馆"
 - id: place.zoo
   category: places
@@ -2220,6 +2440,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "zoo"
+    th: "สวนสัตว์"
     zh-Hans: "动物园"
 - id: place.airport
   category: places
@@ -2230,6 +2451,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "airport"
+    th: "สนามบิน"
     zh-Hans: "机场"
 - id: place.parking
   category: places
@@ -2240,6 +2462,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "parking lot"
+    th: "ลานจอดรถ"
     zh-Hans: "停车场"
 - id: place.factory
   category: places
@@ -2250,6 +2473,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "factory"
+    th: "โรงงาน"
     zh-Hans: "工厂"
 - id: place.church
   category: places
@@ -2260,6 +2484,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "church"
+    th: "โบสถ์"
     zh-Hans: "教堂"
 - id: place.shrine
   category: places
@@ -2270,6 +2495,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "shrine"
+    th: "ศาลเจ้า"
     zh-Hans: "神社"
 - id: place.temple
   category: places
@@ -2280,6 +2506,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "temple"
+    th: "วัด"
     zh-Hans: "寺庙"
 - id: place.building
   category: places
@@ -2290,6 +2517,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "building"
+    th: "อาคาร"
     zh-Hans: "大楼"
 - id: place.home
   category: places
@@ -2300,6 +2528,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "household"
+    th: "ครัวเรือน"
     zh-Hans: "家庭"
 - id: place.garden
   category: places
@@ -2310,6 +2539,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "garden"
+    th: "สวน"
     zh-Hans: "庭院"
 - id: place.entrance
   category: places
@@ -2320,6 +2550,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "entrance"
+    th: "ทางเข้า"
     zh-Hans: "入口"
 - id: place.stairs
   category: places
@@ -2330,6 +2561,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "stairs"
+    th: "บันได"
     zh-Hans: "楼梯"
 - id: place.corridor
   category: places
@@ -2340,6 +2572,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "corridor"
+    th: "ทางเดิน"
     zh-Hans: "走廊"
 - id: place.location
   category: places
@@ -2350,6 +2583,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "location"
+    th: "ทำเลที่ตั้ง"
     zh-Hans: "地点"
 - id: place.map
   category: places
@@ -2360,6 +2594,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "map"
+    th: "แผนที่"
     zh-Hans: "地图"
 - id: place.world
   category: places
@@ -2370,6 +2605,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "world"
+    th: "โลก"
     zh-Hans: "世界"
 - id: place.foreign_country
   category: places
@@ -2380,6 +2616,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "foreign country"
+    th: "ต่างประเทศ"
     zh-Hans: "外国"
 - id: place.country
   category: places
@@ -2390,6 +2627,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "country"
+    th: "ประเทศ"
     zh-Hans: "国家"
 - id: place.asia
   category: places
@@ -2400,6 +2638,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "Asia"
+    th: "เอเชีย"
     zh-Hans: "亚洲"
 - id: place.america
   category: places
@@ -2410,6 +2649,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "America"
+    th: "อเมริกา"
     zh-Hans: "美国"
 - id: place.africa
   category: places
@@ -2420,6 +2660,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "Africa"
+    th: "แอฟริกา"
     zh-Hans: "非洲"
 - id: place.countryside
   category: places
@@ -2430,6 +2671,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "countryside"
+    th: "ชนบท"
     zh-Hans: "乡下"
 - id: place.outskirts
   category: places
@@ -2440,6 +2682,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "outskirts"
+    th: "ชานเมือง"
     zh-Hans: "郊外"
 - id: place.town
   category: places
@@ -2450,6 +2693,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "town"
+    th: "เมือง"
     zh-Hans: "城镇"
 - id: place.village
   category: places
@@ -2460,6 +2704,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "village"
+    th: "หมู่บ้าน"
     zh-Hans: "村庄"
 - id: place.department_store
   category: places
@@ -2470,6 +2715,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "department store"
+    th: "ห้างสรรพสินค้า"
     zh-Hans: "百货商店"
 - id: place.greengrocer
   category: places
@@ -2480,6 +2726,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "greengrocer"
+    th: "ร้านขายผัก"
     zh-Hans: "蔬菜店"
 - id: place.sales_floor
   category: places
@@ -2490,6 +2737,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sales floor"
+    th: "ชั้นวางสินค้า"
     zh-Hans: "卖场"
 - id: place.hotel
   category: places
@@ -2500,6 +2748,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "hotel"
+    th: "โรงแรม"
     zh-Hans: "酒店"
 - id: place.inn
   category: places
@@ -2510,6 +2759,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "Japanese hotel"
+    th: "เรียวกัง"
     zh-Hans: "旅馆"
 - id: place.office
   category: places
@@ -2520,6 +2770,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "office"
+    th: "สำนักงาน"
     zh-Hans: "办公室"
 - id: place.company
   category: places
@@ -2530,6 +2781,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "company"
+    th: "บริษัท"
     zh-Hans: "公司"
 - id: transport.automobile
   category: transport
@@ -2540,6 +2792,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "automobile"
+    th: "รถยนต์"
     zh-Hans: "汽车"
 - id: transport.subway
   category: transport
@@ -2550,6 +2803,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "subway"
+    th: "รถไฟใต้ดิน"
     zh-Hans: "地铁"
 - id: transport.express
   category: transport
@@ -2560,6 +2814,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "express train"
+    th: "รถไฟด่วน"
     zh-Hans: "快车"
 - id: transport.limited_express
   category: transport
@@ -2570,6 +2825,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "limited express"
+    th: "รถไฟด่วนพิเศษ"
     zh-Hans: "特快"
 - id: transport.steam_train
   category: transport
@@ -2580,6 +2836,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "steam train"
+    th: "รถไฟไอน้ำ"
     zh-Hans: "蒸汽火车"
 - id: transport.motorcycle
   category: transport
@@ -2590,6 +2847,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "motorcycle"
+    th: "รถจักรยานยนต์"
     zh-Hans: "摩托车"
 - id: transport.vehicle
   category: transport
@@ -2600,6 +2858,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "vehicle"
+    th: "ยานพาหนะ"
     zh-Hans: "交通工具"
 - id: transport.driving
   category: transport
@@ -2610,6 +2869,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "driving"
+    th: "การขับรถ"
     zh-Hans: "驾驶"
 - id: transport.petrol
   category: transport
@@ -2620,6 +2880,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "petrol"
+    th: "น้ำมันเบนซิน"
     zh-Hans: "汽油"
 - id: transport.petrol_station
   category: transport
@@ -2630,6 +2891,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "petrol station"
+    th: "ปั๊มน้ำมัน"
     zh-Hans: "加油站"
 - id: transport.traffic
   category: transport
@@ -2640,6 +2902,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "traffic"
+    th: "การจราจร"
     zh-Hans: "交通"
 - id: transport.accident
   category: transport
@@ -2650,6 +2913,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "accident"
+    th: "อุบัติเหตุ"
     zh-Hans: "事故"
 - id: transport.breakdown
   category: transport
@@ -2660,6 +2924,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "breakdown"
+    th: "อาการเสีย"
     zh-Hans: "故障"
 - id: clothing.clothes
   category: clothing
@@ -2670,6 +2935,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "clothes"
+    th: "เสื้อผ้า"
     zh-Hans: "衣服"
 - id: clothing.kimono
   category: clothing
@@ -2680,6 +2946,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "kimono"
+    th: "กิโมโน"
     zh-Hans: "和服"
 - id: clothing.coat
   category: clothing
@@ -2690,6 +2957,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "coat"
+    th: "เสื้อโค้ท"
     zh-Hans: "外套"
 - id: clothing.suit
   category: clothing
@@ -2700,6 +2968,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "suit"
+    th: "ชุดสูท"
     zh-Hans: "西装"
 - id: clothing.shirt
   category: clothing
@@ -2710,6 +2979,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "shirt"
+    th: "เสื้อเชิ้ต"
     zh-Hans: "衬衫"
 - id: clothing.skirt
   category: clothing
@@ -2720,6 +2990,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "skirt"
+    th: "กระโปรง"
     zh-Hans: "裙子"
 - id: clothing.trousers
   category: clothing
@@ -2730,6 +3001,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "trousers"
+    th: "กางเกง"
     zh-Hans: "裤子"
 - id: clothing.socks
   category: clothing
@@ -2740,6 +3012,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "socks"
+    th: "ถุงเท้า"
     zh-Hans: "袜子"
 - id: clothing.sandals
   category: clothing
@@ -2750,6 +3023,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sandals"
+    th: "รองเท้าแตะ"
     zh-Hans: "凉鞋"
 - id: clothing.slippers
   category: clothing
@@ -2760,6 +3034,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "slippers"
+    th: "รองเท้าแตะในบ้าน"
     zh-Hans: "拖鞋"
 - id: clothing.gloves
   category: clothing
@@ -2770,6 +3045,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "gloves"
+    th: "ถุงมือ"
     zh-Hans: "手套"
 - id: clothing.necktie
   category: clothing
@@ -2780,6 +3056,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "necktie"
+    th: "เนคไท"
     zh-Hans: "领带"
 - id: clothing.ring
   category: clothing
@@ -2790,6 +3067,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "ring"
+    th: "แหวน"
     zh-Hans: "戒指"
 - id: clothing.accessory
   category: clothing
@@ -2800,6 +3078,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "accessory"
+    th: "เครื่องประดับ"
     zh-Hans: "首饰"
 - id: object.bookshelf
   category: objects
@@ -2810,6 +3089,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "bookshelf"
+    th: "ชั้นวางหนังสือ"
     zh-Hans: "书架"
 - id: object.box
   category: objects
@@ -2820,6 +3100,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "box"
+    th: "กล่อง"
     zh-Hans: "盒子"
 - id: object.paper
   category: objects
@@ -2830,6 +3111,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "paper"
+    th: "กระดาษ"
     zh-Hans: "纸"
 - id: object.notebook
   category: objects
@@ -2840,6 +3122,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "notebook"
+    th: "สมุด"
     zh-Hans: "笔记本"
 - id: object.dictionary
   category: objects
@@ -2850,6 +3133,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "dictionary"
+    th: "พจนานุกรม"
     zh-Hans: "词典"
 - id: object.newspaper
   category: objects
@@ -2860,6 +3144,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "newspaper"
+    th: "หนังสือพิมพ์"
     zh-Hans: "报纸"
 - id: object.magazine
   category: objects
@@ -2870,6 +3155,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "magazine"
+    th: "นิตยสาร"
     zh-Hans: "杂志"
 - id: object.postcard
   category: objects
@@ -2880,6 +3166,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "postcard"
+    th: "โปสการ์ด"
     zh-Hans: "明信片"
 - id: object.envelope
   category: objects
@@ -2890,6 +3177,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "envelope"
+    th: "ซองจดหมาย"
     zh-Hans: "信封"
 - id: object.photograph
   category: objects
@@ -2900,6 +3188,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "photograph"
+    th: "รูปถ่าย"
     zh-Hans: "照片"
 - id: object.picture
   category: objects
@@ -2910,6 +3199,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "picture"
+    th: "ภาพวาด"
     zh-Hans: "画"
 - id: object.calendar
   category: objects
@@ -2920,6 +3210,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "calendar"
+    th: "ปฏิทิน"
     zh-Hans: "日历"
 - id: object.mirror
   category: objects
@@ -2930,6 +3221,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "mirror"
+    th: "กระจก"
     zh-Hans: "镜子"
 - id: object.heater
   category: objects
@@ -2940,6 +3232,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "heater"
+    th: "เครื่องทำความร้อน"
     zh-Hans: "取暖器"
 - id: object.refrigerator
   category: objects
@@ -2950,6 +3243,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "refrigerator"
+    th: "ตู้เย็น"
     zh-Hans: "冰箱"
 - id: object.laundry
   category: objects
@@ -2960,6 +3254,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "laundry"
+    th: "การซักผ้า"
     zh-Hans: "洗衣"
 - id: object.cleaning
   category: objects
@@ -2970,6 +3265,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "cleaning"
+    th: "การทำความสะอาด"
     zh-Hans: "打扫"
 - id: object.shower
   category: objects
@@ -2980,6 +3276,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "shower"
+    th: "ฝักบัว"
     zh-Hans: "淋浴"
 - id: object.bathtub
   category: objects
@@ -2990,6 +3287,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "bath"
+    th: "อ่างอาบน้ำ"
     zh-Hans: "浴缸"
 - id: object.toilet
   category: objects
@@ -3000,6 +3298,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "toilet"
+    th: "ห้องน้ำ"
     zh-Hans: "厕所"
 - id: object.radio
   category: objects
@@ -3010,6 +3309,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "radio"
+    th: "วิทยุ"
     zh-Hans: "收音机"
 - id: object.tape
   category: objects
@@ -3020,6 +3320,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "tape"
+    th: "เทป"
     zh-Hans: "磁带"
 - id: object.film
   category: objects
@@ -3030,6 +3331,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "film"
+    th: "ฟิล์ม"
     zh-Hans: "胶卷"
 - id: object.computer
   category: objects
@@ -3040,6 +3342,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "computer"
+    th: "คอมพิวเตอร์"
     zh-Hans: "电脑"
 - id: object.luggage
   category: objects
@@ -3050,6 +3353,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "luggage"
+    th: "สัมภาระ"
     zh-Hans: "行李"
 - id: object.handbag
   category: objects
@@ -3060,6 +3364,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "handbag"
+    th: "กระเป๋าถือ"
     zh-Hans: "手提包"
 - id: object.vase
   category: objects
@@ -3070,6 +3375,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "vase"
+    th: "แจกัน"
     zh-Hans: "花瓶"
 - id: object.ashtray
   category: objects
@@ -3080,6 +3386,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "ashtray"
+    th: "ที่เขี่ยบุหรี่"
     zh-Hans: "烟灰缸"
 - id: object.eraser
   category: objects
@@ -3090,6 +3397,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "eraser"
+    th: "ยางลบ"
     zh-Hans: "橡皮"
 - id: object.report
   category: objects
@@ -3100,6 +3408,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "report"
+    th: "รายงาน"
     zh-Hans: "报告"
 - id: object.lightbulb
   category: objects
@@ -3110,6 +3419,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "electric light"
+    th: "หลอดไฟ"
     zh-Hans: "电灯"
 - id: object.thread
   category: objects
@@ -3120,6 +3430,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "thread"
+    th: "ด้าย"
     zh-Hans: "线"
 - id: object.shelf
   category: objects
@@ -3130,6 +3441,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "shelf"
+    th: "ชั้นวางของ"
     zh-Hans: "架子"
 - id: object.drawer
   category: objects
@@ -3140,6 +3452,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "drawer"
+    th: "ลิ้นชัก"
     zh-Hans: "抽屉"
 - id: object.futon
   category: objects
@@ -3150,6 +3463,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "futon"
+    th: "ฟูก"
     zh-Hans: "被褥"
 - id: education.study
   category: education
@@ -3160,6 +3474,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "study"
+    th: "การเรียน"
     zh-Hans: "学习"
 - id: education.homework
   category: education
@@ -3170,6 +3485,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "homework"
+    th: "การบ้าน"
     zh-Hans: "作业"
 - id: education.lesson
   category: education
@@ -3180,6 +3496,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "lesson"
+    th: "บทเรียน"
     zh-Hans: "课"
 - id: education.exam
   category: education
@@ -3190,6 +3507,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "exam"
+    th: "การสอบ"
     zh-Hans: "考试"
 - id: education.question
   category: education
@@ -3200,6 +3518,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "question"
+    th: "คำถาม"
     zh-Hans: "问题"
 - id: education.answer
   category: education
@@ -3210,6 +3529,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "answer"
+    th: "คำตอบ"
     zh-Hans: "答案"
 - id: education.composition
   category: education
@@ -3220,6 +3540,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "composition"
+    th: "การแต่งประโยค"
     zh-Hans: "作文"
 - id: education.word
   category: education
@@ -3230,6 +3551,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "word"
+    th: "คำ"
     zh-Hans: "词语"
 - id: education.conversation
   category: education
@@ -3240,6 +3562,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "conversation"
+    th: "บทสนทนา"
     zh-Hans: "会话"
 - id: education.pronunciation
   category: education
@@ -3250,6 +3573,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "pronunciation"
+    th: "การออกเสียง"
     zh-Hans: "发音"
 - id: education.english
   category: education
@@ -3260,6 +3584,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "English"
+    th: "ภาษาอังกฤษ"
     zh-Hans: "英语"
 - id: education.kanji
   category: education
@@ -3270,6 +3595,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "Chinese character"
+    th: "อักษรจีน"
     zh-Hans: "汉字"
 - id: education.name
   category: education
@@ -3280,6 +3606,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "name"
+    th: "ชื่อ"
     zh-Hans: "名字"
 - id: education.number
   category: education
@@ -3290,6 +3617,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "number"
+    th: "ตัวเลข"
     zh-Hans: "号码"
 - id: education.science
   category: education
@@ -3300,6 +3628,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "science"
+    th: "วิทยาศาสตร์"
     zh-Hans: "科学"
 - id: education.math
   category: education
@@ -3310,6 +3639,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "mathematics"
+    th: "คณิตศาสตร์"
     zh-Hans: "数学"
 - id: education.geography
   category: education
@@ -3320,6 +3650,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "geography"
+    th: "ภูมิศาสตร์"
     zh-Hans: "地理"
 - id: education.history
   category: education
@@ -3330,6 +3661,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "history"
+    th: "ประวัติศาสตร์"
     zh-Hans: "历史"
 - id: education.literature
   category: education
@@ -3340,6 +3672,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "literature"
+    th: "วรรณคดี"
     zh-Hans: "文学"
 - id: education.culture
   category: education
@@ -3350,6 +3683,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "culture"
+    th: "วัฒนธรรม"
     zh-Hans: "文化"
 - id: education.education
   category: education
@@ -3360,6 +3694,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "education"
+    th: "การศึกษา"
     zh-Hans: "教育"
 - id: education.research
   category: education
@@ -3370,6 +3705,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "research"
+    th: "การวิจัย"
     zh-Hans: "研究"
 - id: work.meeting
   category: work
@@ -3380,6 +3716,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "meeting"
+    th: "การประชุม"
     zh-Hans: "会议"
 - id: work.reservation
   category: work
@@ -3390,6 +3727,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "reservation"
+    th: "การจอง"
     zh-Hans: "预约"
 - id: work.promise
   category: work
@@ -3400,6 +3738,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "promise"
+    th: "คำสัญญา"
     zh-Hans: "约定"
 - id: work.plan
   category: work
@@ -3410,6 +3749,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "plan"
+    th: "แผน"
     zh-Hans: "计划"
 - id: work.preparation
   category: work
@@ -3420,6 +3760,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "preparation"
+    th: "การเตรียมตัว"
     zh-Hans: "准备"
 - id: work.explanation
   category: work
@@ -3430,6 +3771,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "explanation"
+    th: "คำอธิบาย"
     zh-Hans: "说明"
 - id: work.consultation
   category: work
@@ -3440,6 +3782,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "consultation"
+    th: "การปรึกษา"
     zh-Hans: "商量"
 - id: work.opinion
   category: work
@@ -3450,6 +3793,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "opinion"
+    th: "ความคิดเห็น"
     zh-Hans: "意见"
 - id: work.reason
   category: work
@@ -3460,6 +3804,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "reason"
+    th: "เหตุผล"
     zh-Hans: "理由"
 - id: work.technology
   category: work
@@ -3470,6 +3815,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "technology"
+    th: "เทคโนโลยี"
     zh-Hans: "技术"
 - id: work.rules
   category: work
@@ -3480,6 +3826,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "regulations"
+    th: "ระเบียบ"
     zh-Hans: "规则"
 - id: work.politics
   category: work
@@ -3490,6 +3837,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "politics"
+    th: "การเมือง"
     zh-Hans: "政治"
 - id: work.economy
   category: work
@@ -3500,6 +3848,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "economy"
+    th: "เศรษฐกิจ"
     zh-Hans: "经济"
 - id: work.society
   category: work
@@ -3510,6 +3859,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "society"
+    th: "สังคม"
     zh-Hans: "社会"
 - id: work.international
   category: work
@@ -3520,6 +3870,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "international"
+    th: "ระหว่างประเทศ"
     zh-Hans: "国际"
 - id: work.trade
   category: work
@@ -3530,6 +3881,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "trade"
+    th: "การค้า"
     zh-Hans: "贸易"
 - id: work.export
   category: work
@@ -3540,6 +3892,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "export"
+    th: "การส่งออก"
     zh-Hans: "出口"
 - id: work.import
   category: work
@@ -3550,6 +3903,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "import"
+    th: "การนำเข้า"
     zh-Hans: "进口"
 - id: work.industry
   category: work
@@ -3560,6 +3914,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "industry"
+    th: "อุตสาหกรรม"
     zh-Hans: "产业"
 - id: work.production
   category: work
@@ -3570,6 +3925,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "production"
+    th: "การผลิต"
     zh-Hans: "生产"
 - id: work.law
   category: work
@@ -3580,6 +3936,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "law"
+    th: "กฎหมาย"
     zh-Hans: "法律"
 - id: work.war
   category: work
@@ -3590,6 +3947,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "war"
+    th: "สงคราม"
     zh-Hans: "战争"
 - id: health.medicine
   category: health
@@ -3600,6 +3958,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "medicine"
+    th: "ยา"
     zh-Hans: "药"
 - id: health.illness
   category: health
@@ -3610,6 +3969,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "illness"
+    th: "โรค"
     zh-Hans: "生病"
 - id: health.fever
   category: health
@@ -3620,6 +3980,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "fever"
+    th: "ไข้"
     zh-Hans: "发烧"
 - id: health.injection
   category: health
@@ -3630,6 +3991,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "injection"
+    th: "การฉีดยา"
     zh-Hans: "打针"
 - id: health.dentist
   category: health
@@ -3640,6 +4002,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "dentist"
+    th: "ทันตแพทย์"
     zh-Hans: "牙医"
 - id: health.vitality
   category: health
@@ -3650,6 +4013,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "vitality"
+    th: "พลังชีวิต"
     zh-Hans: "精力"
 - id: action.see
   category: actions
@@ -3660,6 +4024,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to see"
+    th: "เห็น"
     zh-Hans: "看"
 - id: action.hear
   category: actions
@@ -3670,6 +4035,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to hear"
+    th: "ได้ยิน"
     zh-Hans: "听"
 - id: action.speak
   category: actions
@@ -3680,6 +4046,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to speak"
+    th: "พูด"
     zh-Hans: "说"
 - id: action.talk
   category: actions
@@ -3690,6 +4057,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to talk"
+    th: "พูดคุย"
     zh-Hans: "谈话"
 - id: action.think
   category: actions
@@ -3700,6 +4068,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to think"
+    th: "คิด"
     zh-Hans: "思考"
 - id: action.remember
   category: actions
@@ -3710,6 +4079,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to remember"
+    th: "จำ"
     zh-Hans: "记住"
 - id: action.know
   category: actions
@@ -3720,6 +4090,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to know"
+    th: "รู้"
     zh-Hans: "知道"
 - id: action.wait
   category: actions
@@ -3730,6 +4101,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to wait"
+    th: "รอ"
     zh-Hans: "等待"
 - id: action.buy
   category: actions
@@ -3740,6 +4112,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to buy"
+    th: "ซื้อ"
     zh-Hans: "买"
 - id: action.sell
   category: actions
@@ -3750,6 +4123,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to sell"
+    th: "ขาย"
     zh-Hans: "卖"
 - id: action.meet
   category: actions
@@ -3760,6 +4134,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to meet"
+    th: "พบ"
     zh-Hans: "见面"
 - id: action.send
   category: actions
@@ -3770,6 +4145,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to send"
+    th: "ส่ง"
     zh-Hans: "寄送"
 - id: action.deliver
   category: actions
@@ -3780,6 +4156,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to deliver"
+    th: "ส่งถึง"
     zh-Hans: "送达"
 - id: action.wake
   category: actions
@@ -3790,6 +4167,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to wake up"
+    th: "ตื่น"
     zh-Hans: "起床"
 - id: action.sit
   category: actions
@@ -3800,6 +4178,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to sit"
+    th: "นั่ง"
     zh-Hans: "坐"
 - id: action.stand
   category: actions
@@ -3810,6 +4189,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to stand"
+    th: "ยืน"
     zh-Hans: "站立"
 - id: action.climb
   category: actions
@@ -3820,6 +4200,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to climb"
+    th: "ปีน"
     zh-Hans: "攀登"
 - id: action.fly
   category: actions
@@ -3830,6 +4211,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to fly"
+    th: "บิน"
     zh-Hans: "飞"
 - id: action.swim
   category: actions
@@ -3840,6 +4222,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to swim"
+    th: "ว่ายน้ำ"
     zh-Hans: "游泳"
 - id: action.dance
   category: actions
@@ -3850,6 +4233,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to dance"
+    th: "เต้นรำ"
     zh-Hans: "跳舞"
 - id: action.stop
   category: actions
@@ -3860,6 +4244,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to stop"
+    th: "หยุด"
     zh-Hans: "停止"
 - id: action.open
   category: actions
@@ -3870,6 +4255,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to open"
+    th: "เปิด"
     zh-Hans: "打开"
 - id: action.close
   category: actions
@@ -3880,6 +4266,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to close"
+    th: "ปิด"
     zh-Hans: "关闭"
 - id: action.cut
   category: actions
@@ -3890,6 +4277,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to cut"
+    th: "ตัด"
     zh-Hans: "切"
 - id: action.bake
   category: actions
@@ -3900,6 +4288,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to bake"
+    th: "อบ"
     zh-Hans: "烤"
 - id: action.wash
   category: actions
@@ -3910,6 +4299,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to wash"
+    th: "ล้าง"
     zh-Hans: "洗"
 - id: action.cook
   category: actions
@@ -3920,6 +4310,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to cook"
+    th: "ทำอาหาร"
     zh-Hans: "做饭"
 - id: action.use
   category: actions
@@ -3930,6 +4321,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to use"
+    th: "ใช้"
     zh-Hans: "使用"
 - id: action.carry
   category: actions
@@ -3940,6 +4332,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to carry"
+    th: "ถือ"
     zh-Hans: "搬运"
 - id: action.throw
   category: actions
@@ -3950,6 +4343,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to throw"
+    th: "ขว้าง"
     zh-Hans: "扔"
 - id: action.break
   category: actions
@@ -3960,6 +4354,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to break"
+    th: "ทำให้แตก"
     zh-Hans: "打破"
 - id: action.repair
   category: actions
@@ -3970,6 +4365,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to repair"
+    th: "ซ่อม"
     zh-Hans: "修理"
 - id: action.die
   category: actions
@@ -3980,6 +4376,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to die"
+    th: "ตาย"
     zh-Hans: "死"
 - id: action.be_born
   category: actions
@@ -3990,6 +4387,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to be born"
+    th: "เกิด"
     zh-Hans: "出生"
 - id: action.live
   category: actions
@@ -4000,6 +4398,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to live"
+    th: "อาศัยอยู่"
     zh-Hans: "活"
 - id: action.marry
   category: actions
@@ -4010,6 +4409,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to marry"
+    th: "แต่งงาน"
     zh-Hans: "结婚"
 - id: action.travel
   category: actions
@@ -4020,6 +4420,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to travel"
+    th: "เดินทาง"
     zh-Hans: "旅行"
 - id: action.stroll
   category: actions
@@ -4030,6 +4431,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to stroll"
+    th: "เดินเล่น"
     zh-Hans: "散步"
 - id: action.play
   category: actions
@@ -4040,6 +4442,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to play"
+    th: "เล่น"
     zh-Hans: "玩"
 - id: action.exercise
   category: actions
@@ -4050,6 +4453,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to exercise"
+    th: "ออกกำลังกาย"
     zh-Hans: "运动"
 - id: action.win
   category: actions
@@ -4060,6 +4464,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to win"
+    th: "ชนะ"
     zh-Hans: "赢"
 - id: action.lose
   category: actions
@@ -4070,6 +4475,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to lose"
+    th: "แพ้"
     zh-Hans: "输"
 - id: action.get_angry
   category: actions
@@ -4080,6 +4486,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to get angry"
+    th: "โกรธ"
     zh-Hans: "生气"
 - id: action.be_surprised
   category: actions
@@ -4090,6 +4497,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to be surprised"
+    th: "ประหลาดใจ"
     zh-Hans: "吃惊"
 - id: action.be_delighted
   category: actions
@@ -4100,6 +4508,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to be delighted"
+    th: "ดีใจ"
     zh-Hans: "高兴"
 - id: action.worry
   category: actions
@@ -4110,6 +4519,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to worry"
+    th: "เป็นห่วง"
     zh-Hans: "担心"
 - id: action.be_relieved
   category: actions
@@ -4120,6 +4530,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "relief"
+    th: "โล่งใจ"
     zh-Hans: "安心"
 - id: action.pray
   category: actions
@@ -4130,6 +4541,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to pray"
+    th: "สวดมนต์"
     zh-Hans: "祈祷"
 - id: action.apologize
   category: actions
@@ -4140,6 +4552,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to apologize"
+    th: "ขอโทษ"
     zh-Hans: "道歉"
 - id: action.call
   category: actions
@@ -4150,6 +4563,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to call"
+    th: "โทร"
     zh-Hans: "呼叫"
 - id: action.ride
   category: actions
@@ -4160,6 +4574,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to ride"
+    th: "ขี่"
     zh-Hans: "乘坐"
 - id: action.arrive
   category: actions
@@ -4170,6 +4585,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to arrive"
+    th: "ถึง"
     zh-Hans: "到达"
 - id: action.cross
   category: actions
@@ -4180,6 +4596,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to go across"
+    th: "ข้าม"
     zh-Hans: "过桥"
 - id: action.reside
   category: actions
@@ -4190,6 +4607,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to live in"
+    th: "พักอาศัยอยู่"
     zh-Hans: "居住"
 - id: action.return_home
   category: actions
@@ -4200,6 +4618,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to go back"
+    th: "กลับ"
     zh-Hans: "回去"
 - id: action.go_out
   category: actions
@@ -4210,6 +4629,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to go out"
+    th: "ออกไป"
     zh-Hans: "出门"
 - id: action.pay
   category: actions
@@ -4220,6 +4640,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to pay"
+    th: "จ่าย"
     zh-Hans: "付款"
 - id: action.steal
   category: actions
@@ -4230,6 +4651,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to steal"
+    th: "ขโมย"
     zh-Hans: "偷"
 - id: action.escape
   category: actions
@@ -4240,6 +4662,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to escape"
+    th: "หนี"
     zh-Hans: "逃跑"
 - id: action.hurry
   category: actions
@@ -4250,6 +4673,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to hurry"
+    th: "รีบ"
     zh-Hans: "赶快"
 - id: action.rest
   category: actions
@@ -4260,6 +4684,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to rest"
+    th: "พักผ่อน"
     zh-Hans: "休息"
 - id: action.turn_on
   category: actions
@@ -4270,6 +4695,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "to turn on"
+    th: "เปิดเครื่อง"
     zh-Hans: "打开电源"
 - id: state.hot
   category: states
@@ -4280,6 +4706,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "hot"
+    th: "ร้อน"
     zh-Hans: "热"
 - id: state.cold
   category: states
@@ -4290,6 +4717,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "cold"
+    th: "หนาว"
     zh-Hans: "冷"
 - id: state.warm
   category: states
@@ -4300,6 +4728,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "warm"
+    th: "อุ่น"
     zh-Hans: "温暖"
 - id: state.cool
   category: states
@@ -4310,6 +4739,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "refreshing"
+    th: "สดชื่น"
     zh-Hans: "凉爽"
 - id: state.sweet
   category: states
@@ -4320,6 +4750,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sweet"
+    th: "หวาน"
     zh-Hans: "甜"
 - id: state.spicy
   category: states
@@ -4330,6 +4761,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "spicy"
+    th: "เผ็ด"
     zh-Hans: "辣"
 - id: state.delicious
   category: states
@@ -4340,6 +4772,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "delicious"
+    th: "อร่อย"
     zh-Hans: "好吃"
 - id: state.bad_taste
   category: states
@@ -4350,6 +4783,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "unpleasant taste"
+    th: "รสชาติไม่ดี"
     zh-Hans: "难吃"
 - id: state.beautiful
   category: states
@@ -4360,6 +4794,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "beautiful"
+    th: "สวย"
     zh-Hans: "美丽"
 - id: state.cute
   category: states
@@ -4370,6 +4805,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "cute"
+    th: "น่ารัก"
     zh-Hans: "可爱"
 - id: state.fun
   category: states
@@ -4380,6 +4816,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "enjoyable"
+    th: "สนุก"
     zh-Hans: "快乐"
 - id: state.sad
   category: states
@@ -4390,6 +4827,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sad"
+    th: "เศร้า"
     zh-Hans: "悲伤"
 - id: state.lonely
   category: states
@@ -4400,6 +4838,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "lonely"
+    th: "เหงา"
     zh-Hans: "寂寞"
 - id: state.frightening
   category: states
@@ -4410,6 +4849,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "frightening"
+    th: "น่ากลัว"
     zh-Hans: "可怕"
 - id: state.embarrassed
   category: states
@@ -4420,6 +4860,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "embarrassed"
+    th: "เขินอาย"
     zh-Hans: "害羞"
 - id: state.glad
   category: states
@@ -4430,6 +4871,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "glad"
+    th: "ดีใจ"
     zh-Hans: "高兴"
 - id: state.busy
   category: states
@@ -4440,6 +4882,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "busy"
+    th: "ยุ่ง"
     zh-Hans: "忙"
 - id: state.free_time
   category: states
@@ -4450,6 +4893,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "free time"
+    th: "เวลาว่าง"
     zh-Hans: "空闲"
 - id: state.sleepy
   category: states
@@ -4460,6 +4904,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "sleepy"
+    th: "ง่วง"
     zh-Hans: "困"
 - id: state.painful
   category: states
@@ -4470,6 +4915,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "painful"
+    th: "เจ็บปวด"
     zh-Hans: "疼"
 - id: state.strong
   category: states
@@ -4480,6 +4926,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "strong"
+    th: "แข็งแรง"
     zh-Hans: "强"
 - id: state.new
   category: states
@@ -4490,6 +4937,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "new"
+    th: "ใหม่"
     zh-Hans: "新"
 - id: state.old
   category: states
@@ -4500,6 +4948,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "old"
+    th: "เก่า"
     zh-Hans: "旧"
 - id: state.young
   category: states
@@ -4510,6 +4959,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "young"
+    th: "หนุ่มสาว"
     zh-Hans: "年轻"
 - id: state.fast
   category: states
@@ -4520,6 +4970,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "fast"
+    th: "เร็ว"
     zh-Hans: "快"
 - id: state.slow
   category: states
@@ -4530,6 +4981,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "slow"
+    th: "ช้า"
     zh-Hans: "慢"
 - id: state.heavy
   category: states
@@ -4540,6 +4992,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "heavy"
+    th: "หนัก"
     zh-Hans: "重"
 - id: state.light
   category: states
@@ -4550,6 +5003,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "light"
+    th: "เบา"
     zh-Hans: "轻"
 - id: state.long
   category: states
@@ -4560,6 +5014,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "long"
+    th: "ยาว"
     zh-Hans: "长"
 - id: state.deep
   category: states
@@ -4570,6 +5025,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "deep"
+    th: "ลึก"
     zh-Hans: "深"
 - id: state.shallow
   category: states
@@ -4580,6 +5036,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "shallow"
+    th: "ตื้น"
     zh-Hans: "浅"
 - id: state.round
   category: states
@@ -4590,6 +5047,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "round"
+    th: "กลม"
     zh-Hans: "圆"
 - id: state.quiet
   category: states
@@ -4600,6 +5058,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "quiet"
+    th: "เงียบ"
     zh-Hans: "安静"
 - id: state.lively
   category: states
@@ -4610,6 +5069,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "bustling"
+    th: "คึกคัก"
     zh-Hans: "热闹"
 - id: state.famous
   category: states
@@ -4620,6 +5080,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "famous"
+    th: "มีชื่อเสียง"
     zh-Hans: "有名"
 - id: state.important
   category: states
@@ -4630,6 +5091,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "important"
+    th: "สำคัญ"
     zh-Hans: "重要"
 - id: state.dangerous
   category: states
@@ -4640,6 +5102,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "dangerous"
+    th: "อันตราย"
     zh-Hans: "危险"
 - id: state.safe
   category: states
@@ -4650,6 +5113,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "safe"
+    th: "ปลอดภัย"
     zh-Hans: "安全"
 - id: state.simple
   category: states
@@ -4660,6 +5124,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "simple"
+    th: "ง่าย"
     zh-Hans: "简单"
 - id: state.like
   category: states
@@ -4670,6 +5135,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "like"
+    th: "ชอบ"
     zh-Hans: "喜欢"
 - id: state.dislike
   category: states
@@ -4680,6 +5146,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "dislike"
+    th: "ไม่ชอบ"
     zh-Hans: "讨厌"
 - id: state.want
   category: states
@@ -4690,6 +5157,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "want"
+    th: "อยากได้"
     zh-Hans: "想要"
 - id: state.kind
   category: states
@@ -4700,6 +5168,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "kind"
+    th: "ใจดี"
     zh-Hans: "亲切"
 - id: state.polite
   category: states
@@ -4710,6 +5179,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "polite"
+    th: "สุภาพ"
     zh-Hans: "礼貌"
 - id: state.free
   category: states
@@ -4720,6 +5190,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "freedom"
+    th: "อิสรภาพ"
     zh-Hans: "自由"
 - id: state.impossible
   category: states
@@ -4730,6 +5201,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "impossible"
+    th: "เป็นไปไม่ได้"
     zh-Hans: "不可能"
 - id: state.sufficient
   category: states
@@ -4740,6 +5212,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "enough"
+    th: "เพียงพอ"
     zh-Hans: "足够"
 - id: state.special
   category: states
@@ -4750,6 +5223,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "special"
+    th: "พิเศษ"
     zh-Hans: "特别"
 - id: state.complex
   category: states
@@ -4760,6 +5234,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "complex"
+    th: "ซับซ้อน"
     zh-Hans: "复杂"
 - id: people.adult
   category: people
@@ -4770,6 +5245,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "adult"
+    th: "ผู้ใหญ่"
     zh-Hans: "成年人"
 - id: number.zero
   category: objects
@@ -4780,6 +5256,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "zero"
+    th: "ศูนย์"
     zh-Hans: "零"
 - id: number.one
   category: objects
@@ -4790,6 +5267,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "one"
+    th: "หนึ่ง"
     zh-Hans: "一"
 - id: number.two
   category: objects
@@ -4800,6 +5278,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "two"
+    th: "สอง"
     zh-Hans: "二"
 - id: number.three
   category: objects
@@ -4810,6 +5289,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "three"
+    th: "สาม"
     zh-Hans: "三"
 - id: number.four
   category: objects
@@ -4820,6 +5300,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "four"
+    th: "สี่"
     zh-Hans: "四"
 - id: number.five
   category: objects
@@ -4830,6 +5311,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "five"
+    th: "ห้า"
     zh-Hans: "五"
 - id: number.six
   category: objects
@@ -4840,6 +5322,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "six"
+    th: "หก"
     zh-Hans: "六"
 - id: number.seven
   category: objects
@@ -4850,6 +5333,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "seven"
+    th: "เจ็ด"
     zh-Hans: "七"
 - id: number.eight
   category: objects
@@ -4860,6 +5344,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "eight"
+    th: "แปด"
     zh-Hans: "八"
 - id: number.nine
   category: objects
@@ -4870,6 +5355,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "nine"
+    th: "เก้า"
     zh-Hans: "九"
 - id: number.ten
   category: objects
@@ -4880,6 +5366,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "ten"
+    th: "สิบ"
     zh-Hans: "十"
 - id: number.hundred
   category: objects
@@ -4890,6 +5377,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "hundred"
+    th: "ร้อย"
     zh-Hans: "百"
 - id: number.thousand
   category: objects
@@ -4900,6 +5388,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "thousand"
+    th: "พัน"
     zh-Hans: "千"
 - id: number.ten_thousand
   category: objects
@@ -4910,6 +5399,7 @@ concepts:
   reviewedAt: '2026-10-31'
   gloss:
     en: "ten thousand"
+    th: "หมื่น"
     zh-Hans: "万"
 
 mappings:
