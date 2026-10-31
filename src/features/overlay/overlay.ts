@@ -19,6 +19,7 @@ import { DEFAULT_AD_DURATION } from '@/shared/siteRules';
 import type { AdSlot, LayerCfg, PageCfg, Token } from '@/shared/types';
 import { defaultLayer } from '@/shared/types';
 import { segment } from '@/languages/ja/text';
+import { DEFAULT_LANGUAGE, featuresFor } from '@/languages/registry';
 import { renderPlain, renderTokens, type DictRender, type RenderOpts } from './tokenize/render';
 import { TRANSCRIPT_CSS } from './transcript';
 import type { PictureRect } from './video';
@@ -669,7 +670,7 @@ export class Overlay {
     tokens: (DictLine | null)[],
     cfg: LayerCfg,
     dict: DictRender,
-    preset: StudyPreset = activePreset(this.subtitleStyle),
+    preset: StudyPreset = activePreset(this.subtitleStyle, DEFAULT_LANGUAGE),
   ): void {
     if (this.cardLayer === layer && this.dictSettings.duration.mode === 'cue') this.hideCard();
     // A preset is itself a reason to paint tokens: its features carry the styling even when the
@@ -690,7 +691,8 @@ export class Overlay {
             furigana,
             style: {
               preset,
-              elements: presetElements(preset),
+              elements: presetElements(featuresFor(DEFAULT_LANGUAGE), preset),
+              registry: featuresFor(DEFAULT_LANGUAGE),
             },
             dict: { ...dict, entries: parsed.entries },
           },
@@ -800,14 +802,16 @@ export class Overlay {
     const select = this.presetSelect;
     if (!select) return;
     select.textContent = '';
-    for (const id of presetOrder(this.subtitleStyle)) {
-      const preset = this.subtitleStyle.presets[id];
+    const registry = featuresFor(DEFAULT_LANGUAGE);
+    const presets = this.subtitleStyle.presets[DEFAULT_LANGUAGE] ?? {};
+    for (const id of presetOrder(registry, this.subtitleStyle, DEFAULT_LANGUAGE)) {
+      const preset = presets[id];
       if (!preset) continue;
-      const option = el('option', '', presetDisplayName(preset, t));
+      const option = el('option', '', presetDisplayName(registry, preset, t));
       option.value = id;
       select.appendChild(option);
     }
-    select.value = this.subtitleStyle.activePresetId;
+    select.value = this.subtitleStyle.activePresetId[DEFAULT_LANGUAGE] ?? '';
   }
 
   private showCard(entry: DictEntry, anchor: HTMLElement, layer: LayerId | 'doc'): void {
@@ -1708,7 +1712,10 @@ export class Overlay {
     const presetSelect = el('select', 'preset-select');
     this.presetSelect = presetSelect;
     presetSelect.addEventListener('change', () => {
-      this.subtitleStyle = { ...this.subtitleStyle, activePresetId: presetSelect.value };
+      this.subtitleStyle = {
+        ...this.subtitleStyle,
+        activePresetId: { ...this.subtitleStyle.activePresetId, [DEFAULT_LANGUAGE]: presetSelect.value },
+      };
       void saveSubtitleStyle(this.subtitleStyle);
     });
     presetRow.appendChild(presetSelect);

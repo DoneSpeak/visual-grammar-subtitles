@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { annotateLocal } from '@/features/overlay/tokenize/local';
+import { jaFeatures } from '@/languages/ja/features';
 import { tokenElements, tokenStyle, type MatchedElement } from '@/features/overlay/tokenize/style';
 import type { DictEntry } from '@/shared/dictionary';
 import type { ElementStyle } from '@/shared/elementStyle';
@@ -40,7 +41,7 @@ const fixture = JSON.parse(
 const ANNOTATION_FEATURES: FeatureId[] = ['pos', 'chunk-rule', 'expression', 'level'];
 
 const customPreset = (): StudyPreset => ({
-  ...defaultPreset('expression-focus'),
+  ...defaultPreset(jaFeatures, 'expression-focus'),
   features: [...ANNOTATION_FEATURES],
   base: { dimOpacity: 0.35, focusElement: 'token.pos:NOUN' },
   elements: {
@@ -52,10 +53,10 @@ const customPreset = (): StudyPreset => ({
 });
 
 const PRESETS: Record<string, () => StudyPreset> = {
-  'pos-basic': () => defaultPreset('pos-basic'),
-  'chunk-focus': () => defaultPreset('chunk-focus'),
-  'expression-focus': () => defaultPreset('expression-focus'),
-  'reading-assist': () => defaultPreset('reading-assist'),
+  'pos-basic': () => defaultPreset(jaFeatures, 'pos-basic'),
+  'chunk-focus': () => defaultPreset(jaFeatures, 'chunk-focus'),
+  'expression-focus': () => defaultPreset(jaFeatures, 'expression-focus'),
+  'reading-assist': () => defaultPreset(jaFeatures, 'reading-assist'),
   custom: customPreset,
 };
 
@@ -73,11 +74,11 @@ describe('ja learning output', () => {
   for (const presetName of Object.keys(PRESETS)) {
     it.each(fixture.cases)(`$id $line resolves the same elements and styles (${presetName})`, (testCase) => {
       const preset = PRESETS[presetName]();
-      const elements = presetElements(preset);
+      const elements = presetElements(jaFeatures, preset);
       const annotated = annotateLocal(testCase.tokens, testCase.entries, fixture.levels, preset.features);
       const actual = annotated.map((_, index) => ({
-        matched: tokenElements(annotated, index, preset.features),
-        style: tokenStyle(annotated, index, preset, elements) ?? null,
+        matched: tokenElements(jaFeatures, annotated, index, preset.features),
+        style: tokenStyle(jaFeatures, annotated, index, preset, elements) ?? null,
       }));
       expect(actual).toEqual(fixture.expected[testCase.id][presetName]);
     });

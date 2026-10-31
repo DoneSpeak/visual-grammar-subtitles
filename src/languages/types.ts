@@ -1,5 +1,5 @@
 import type { DictEntry } from '@/shared/dictionary';
-import type { FeatureId } from '@/shared/studyFeatures';
+import type { FeatureId, FeatureRegistry } from '@/shared/studyFeatures';
 import type { Pos, PosGroup, Token } from '@/shared/types';
 
 /**
@@ -66,4 +66,6 @@ export type LanguagePack = {
   annotators: Annotators;
   text: TextRules;
   presentation: Presentation;
+  /** Study layers this language can produce, plus its built-in modes. Absent for `plain`. */
+  features?: FeatureRegistry;
 };

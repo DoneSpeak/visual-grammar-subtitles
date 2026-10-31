@@ -1,6 +1,7 @@
 import type { LanguagePack } from '@/languages/types';
 
 import { chunks, expressions, levels, local } from './annotators';
+import { jaFeatures } from './features';
 import { FUNCTION_WORDS, lookupKeys } from './lexicon';
 import { isInflected, posGroup, toPos } from './pos';
 import { alignRuby } from './presentation';
@@ -35,4 +36,5 @@ export const ja: LanguagePack = {
   presentation: {
     reading: { layout: 'ruby', align: alignRuby },
   },
+  features: jaFeatures,
 };

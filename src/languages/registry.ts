@@ -1,3 +1,5 @@
+import type { FeatureRegistry } from '@/shared/studyFeatures';
+
 import { ja } from './ja';
 import { plain } from './plain';
 import type { LanguageId, LanguagePack } from './types';
@@ -9,6 +11,13 @@ export { plain } from './plain';
 /** Packs that can annotate text. `plain` is a fallback, not a choice the UI offers. */
 export const LANGUAGE_PACKS: Record<LanguageId, LanguagePack> = { ja };
 
+/** Study-layer registries, one per annotatable language; used to seed and validate presets. */
+export const FEATURE_REGISTRIES: Record<LanguageId, FeatureRegistry> = Object.fromEntries(
+  Object.entries(LANGUAGE_PACKS)
+    .filter(([, pack]) => pack.features)
+    .map(([id, pack]) => [id, pack.features as FeatureRegistry]),
+);
+
 /** Below this the text is treated as unannotatable rather than guessed. */
 export const DETECTION_THRESHOLD = 0.5;
 
@@ -17,6 +26,10 @@ export const DEFAULT_LANGUAGE: LanguageId = 'ja';
 /** A stored or requested id; unknown ids degrade to the plain pack, not to Japanese. */
 export const resolveLanguage = (id: LanguageId | undefined): LanguagePack =>
   (id && LANGUAGE_PACKS[id]) || plain;
+
+/** A language's study registry; unknown ids get the empty one so the UI still renders. */
+export const featuresFor = (id: LanguageId | undefined): FeatureRegistry =>
+  (id && FEATURE_REGISTRIES[id]) || (plain.features as FeatureRegistry);
 
 /** Highest-scoring pack, or `plain` when nothing is confident enough to annotate. */
 export const detectLanguage = (text: string): LanguagePack => {

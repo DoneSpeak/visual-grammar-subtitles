@@ -1,6 +1,21 @@
 import { posGroupForPos } from '@/shared/posGroup';
+import type { FeatureRegistry } from '@/shared/studyFeatures';
 import { normalizePos } from '@/shared/types';
 import type { LanguagePack } from './types';
+
+/** No study layers at all, so every preset resolves to a single "plain" mode. */
+export const plainFeatures: FeatureRegistry = {
+  features: [],
+  order: [],
+  elementDefaults: {},
+  expressionElement: null,
+  levelElement: null,
+  chunkGroupKey: null,
+  builtIns: [
+    { id: 'plain', features: [], labelKey: 'modes.mode.plain', detailKey: 'modes.modeDetail.plain' },
+  ],
+  defaultPresetId: 'plain',
+};
 
 /**
  * The degradation path: an unrecognised script is rendered as plain text, never tokenized.
@@ -33,4 +48,5 @@ export const plain: LanguagePack = {
   presentation: {
     reading: { layout: 'hidden', align: () => null },
   },
+  features: plainFeatures,
 };

@@ -25,6 +25,7 @@ import {
 } from '@/shared/subtitleStyle';
 import { annotateLocal } from '@/features/overlay/tokenize/local';
 import { localFeatures } from '@/shared/studyFeatures';
+import { DEFAULT_LANGUAGE, featuresFor } from '@/languages/registry';
 import { UNFILED_TITLE } from '@/shared/persistedText';
 import {
   isPlaybackSettingsKey,
@@ -399,13 +400,16 @@ class Session {
    * local features, so the rest of the user's configuration stays on screen.
    */
   private effectivePreset(id: LayerId): StudyPreset {
-    const preset = activePreset(this.subtitleStyle);
-    return presetRequiresRemote(preset) && !this.analysis[id].ready() ? localOnlyPreset(preset) : preset;
+    const registry = featuresFor(DEFAULT_LANGUAGE);
+    const preset = activePreset(this.subtitleStyle, DEFAULT_LANGUAGE);
+    return presetRequiresRemote(registry, preset) && !this.analysis[id].ready()
+      ? localOnlyPreset(registry, preset)
+      : preset;
   }
 
   /** Local annotations for the preset's local features; grammar labels look identical either way. */
   private annotate(lines: DictLine[], preset: StudyPreset): DictLine[] {
-    const features = localFeatures(preset.features);
+    const features = localFeatures(featuresFor(DEFAULT_LANGUAGE), preset.features);
     if (!features.length) return lines;
     return lines.map((line) => ({
       ...line,

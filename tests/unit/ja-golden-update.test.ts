@@ -18,6 +18,7 @@ import { it } from 'vitest';
 import { annotateLocal } from '@/features/overlay/tokenize/local';
 import { tokenElements, tokenStyle } from '@/features/overlay/tokenize/style';
 import { ja } from '@/languages/ja';
+import { jaFeatures } from '@/languages/ja/features';
 import { DictIndex } from '@/languages/ja/lexicon';
 import type { DictEntry, DictFile } from '@/shared/dictionary';
 import { defaultPreset, presetElements, type StudyPreset } from '@/shared/subtitleStyle';
@@ -55,7 +56,7 @@ const build = () =>
   });
 
 const customPreset = (): StudyPreset => ({
-  ...defaultPreset('expression-focus'),
+  ...defaultPreset(jaFeatures, 'expression-focus'),
   features: [...ANNOTATION_FEATURES],
   base: { dimOpacity: 0.35, focusElement: 'token.pos:NOUN' },
   elements: {
@@ -67,10 +68,10 @@ const customPreset = (): StudyPreset => ({
 });
 
 const buildPresets = (): Record<string, StudyPreset> => ({
-  'pos-basic': defaultPreset('pos-basic'),
-  'chunk-focus': defaultPreset('chunk-focus'),
-  'expression-focus': defaultPreset('expression-focus'),
-  'reading-assist': defaultPreset('reading-assist'),
+  'pos-basic': defaultPreset(jaFeatures, 'pos-basic'),
+  'chunk-focus': defaultPreset(jaFeatures, 'chunk-focus'),
+  'expression-focus': defaultPreset(jaFeatures, 'expression-focus'),
+  'reading-assist': defaultPreset(jaFeatures, 'reading-assist'),
   custom: customPreset(),
 });
 
@@ -108,10 +109,10 @@ it.runIf(process.env.UPDATE_GOLDEN === '1')('generates the ja learning golden fi
     }));
     expected[testCase.id] = {};
     for (const [presetName, preset] of Object.entries(presets)) {
-      const elements = presetElements(preset);
+      const elements = presetElements(jaFeatures, preset);
       expected[testCase.id][presetName] = annotated.map((_, index) => ({
-        matched: tokenElements(annotated, index, preset.features),
-        style: tokenStyle(annotated, index, preset, elements) ?? null,
+        matched: tokenElements(jaFeatures, annotated, index, preset.features),
+        style: tokenStyle(jaFeatures, annotated, index, preset, elements) ?? null,
       }));
     }
   }

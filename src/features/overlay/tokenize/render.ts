@@ -1,7 +1,7 @@
 import { alignRuby } from '@/languages/ja/presentation';
 import type { DictEntry } from '@/shared/dictionary';
 import { underlineOffset, type ElementStyle } from '@/shared/elementStyle';
-import { READING_ELEMENT } from '@/shared/studyFeatures';
+import { READING_ELEMENT, type FeatureRegistry } from '@/shared/studyFeatures';
 import type { StudyPreset } from '@/shared/subtitleStyle';
 import type { Token } from '@/shared/types';
 import { tokenStyle } from './style';
@@ -12,7 +12,11 @@ export type DictRender = {
   levels: Record<number, boolean>;
 };
 
-export type RenderStyle = { preset: StudyPreset; elements: Record<string, ElementStyle> };
+export type RenderStyle = {
+  preset: StudyPreset;
+  elements: Record<string, ElementStyle>;
+  registry: FeatureRegistry;
+};
 
 export type RenderOpts = { colorize: boolean; furigana: boolean; style: RenderStyle; dict?: DictRender };
 
@@ -54,7 +58,7 @@ const applyRubyStyle = (rt: HTMLElement, style: ElementStyle | undefined): void 
 
 export const renderTokens = (container: HTMLElement, tokens: Token[], opts: RenderOpts): void => {
   container.textContent = '';
-  const { preset, elements } = opts.style;
+  const { preset, elements, registry } = opts.style;
   const reading = preset.features.includes('reading') ? elements[READING_ELEMENT] : undefined;
   // Switching the furigana element off hides the ruby entirely; its style carries nothing else.
   const readingOff = elements[READING_ELEMENT]?.enabled === false;
@@ -65,7 +69,7 @@ export const renderTokens = (container: HTMLElement, tokens: Token[], opts: Rend
       return;
     }
     const span = document.createElement('span');
-    if (opts.colorize) applyStyle(span, tokenStyle(tokens, index, preset, elements));
+    if (opts.colorize) applyStyle(span, tokenStyle(registry, tokens, index, preset, elements));
     if (token.grammar?.length) span.title = token.grammar.join(' · ');
     const ruby =
       !readingOff && opts.furigana && token.reading ? alignRuby(token.surface, token.reading) : null;
