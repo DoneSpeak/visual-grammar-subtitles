@@ -3,7 +3,7 @@ import { defineBackground } from 'wxt/utils/define-background';
 import kuromoji from '@sglkc/kuromoji';
 import type { IpadicFeatures } from '@sglkc/kuromoji';
 import type { DictEntry, DictFile } from '@/shared/dictionary';
-import { DictIndex } from '@/shared/dictionary';
+import { DictIndex } from '@/languages/ja/lexicon';
 import type { Token } from '@/shared/types';
 import { hydrateVocabulary, type VocabularyFile } from '@/shared/vocabulary';
 import { pageKeyFromUrl } from '@/shared/storage';

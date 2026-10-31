@@ -13,5 +13,3 @@ export const EXPRESSION_SOURCES: string[] = [
   'ことができる',
   'かもしれない',
 ];
-
-export const expressionPatterns = (): RegExp[] => EXPRESSION_SOURCES.map((source) => new RegExp(source, 'g'));

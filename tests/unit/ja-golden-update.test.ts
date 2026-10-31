@@ -17,7 +17,8 @@ import { it } from 'vitest';
 
 import { annotateLocal } from '@/features/overlay/tokenize/local';
 import { tokenElements, tokenStyle } from '@/features/overlay/tokenize/style';
-import { DictIndex, type DictEntry, type DictFile } from '@/shared/dictionary';
+import { DictIndex } from '@/languages/ja/lexicon';
+import type { DictEntry, DictFile } from '@/shared/dictionary';
 import { defaultPreset, presetElements, type StudyPreset } from '@/shared/subtitleStyle';
 import type { Token } from '@/shared/types';
 

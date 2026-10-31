@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
+import { classifyBreak, segment } from '@/languages/ja/text';
 import {
-  classifyBreak,
   optimizeLayout,
-  segmentPlain,
   type LayoutUnit,
   type OptimizeInput,
   type OptimizeResult,
@@ -152,15 +151,15 @@ describe('optimizeLayout', () => {
   });
 });
 
-describe('segmentPlain', () => {
+describe('ja text rules', () => {
   it('splits Japanese into word-sized units', () => {
-    const segments = segmentPlain('我想陪你走过春夏秋冬');
+    const segments = segment('我想陪你走过春夏秋冬');
     expect(segments.join('')).toBe('我想陪你走过春夏秋冬');
     expect(segments.length).toBeGreaterThan(1);
   });
 
   it('keeps spaces as their own units so they can be retained at a break', () => {
-    const segments = segmentPlain('hello world');
+    const segments = segment('hello world');
     expect(segments.join('')).toBe('hello world');
   });
 });

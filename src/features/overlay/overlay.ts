@@ -18,7 +18,7 @@ import { toRomaji } from '@/shared/romaji';
 import { DEFAULT_AD_DURATION } from '@/shared/siteRules';
 import type { AdSlot, LayerCfg, PageCfg, Token } from '@/shared/types';
 import { defaultLayer } from '@/shared/types';
-import { segmentPlain } from './layout';
+import { segment } from '@/languages/ja/text';
 import { renderPlain, renderTokens, type DictRender, type RenderOpts } from './tokenize/render';
 import { TRANSCRIPT_CSS } from './transcript';
 import type { PictureRect } from './video';
@@ -696,7 +696,7 @@ export class Overlay {
           },
         };
       }
-      return { kind: 'plain', segments: segmentPlain(line) };
+      return { kind: 'plain', segments: segment(line) };
     });
     const ruby = paragraphs.some(
       (para) => para.kind === 'tokens' && furigana && para.tokens.some((token) => !!token.reading),

@@ -7,10 +7,10 @@ import {
   type FeatureId,
 } from '@/shared/studyFeatures';
 import type { Token } from '@/shared/types';
+import { CHUNK_GROUP_KEY } from '@/languages/ja/annotators';
 import { isInflected, posGroupOf } from './colors';
 
-/** Layer a token's bunsetsu annotation lands in; also the key of `Token.groups`. */
-export const CHUNK_GROUP_KEY = 'chunk.bunsetsu';
+export { CHUNK_GROUP_KEY };
 
 export type MatchedElement = { feature: FeatureId; element: string };
 
