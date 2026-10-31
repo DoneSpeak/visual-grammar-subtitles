@@ -77,6 +77,6 @@ export function cueTokens(d: AnalysisDocument, cueId: string, profile: string): 
   if (end !== cue.text.length) return null;
   return parts.map(p => {
     const surface = cue.text.slice(p.start, p.end), t = p.token;
-    return { surface, pos: normalizePos(t?.pos), posRaw: t?.pos, baseForm: t?.lemma ?? '', reading: surface === t?.surface ? t.reading ?? '' : '', grammar: p.labels, groups: p.groups, studyProfile: profile };
+    return { surface, pos: normalizePos(t?.pos), posRaw: t?.rawPos, baseForm: t?.lemma ?? '', reading: surface === t?.surface ? t.reading ?? '' : '', grammar: p.labels, groups: p.groups, studyProfile: profile };
   });
 }
