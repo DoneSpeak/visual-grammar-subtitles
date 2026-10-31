@@ -5,7 +5,7 @@
 ## 1. 单一用途说明（Single purpose）
 
 ```text
-Display subtitle files supplied by the user over videos on web pages, and annotate Japanese subtitle text with part-of-speech colouring, readings and dictionary cards for language learning.
+Display subtitle files supplied by the user over videos on web pages, and annotate Japanese subtitle text with part-of-speech colouring, readings, dictionary cards and saved vocabulary entries for language learning.
 ```
 
 ## 2. 权限理由（Permission justification）
@@ -25,7 +25,7 @@ The offline Japanese tokeniser dictionary and JLPT data bundled with the extensi
 ### 主机权限 `host_permissions: ["<all_urls>"]`
 
 ```text
-A video can appear on any website, so the content script must be able to attach the subtitle layer wherever the user is watching. On a page it only locates <video> elements, reads their geometry and playback time, reads the page URL/title to restore per-page subtitle settings, and on Bilibili pages reads the season/episode identifier from the URL. It does not read or transmit unrelated page content, form fields or browsing history.
+A video can appear on any website, so the content script must be able to attach the subtitle layer wherever the user is watching; the extension cannot predict which sites a user will play video on. On a page it only locates <video> elements, reads their geometry and playback time, reads the page URL/title to restore per-page subtitle settings, and on Bilibili pages reads the season/episode identifier from the URL. It does not read or transmit unrelated page content, form fields or browsing history. The permission also enables the cross-origin requests the extension makes when the user explicitly starts them: downloading subtitle archives from kitsunekko.net, reading season metadata from api.bilibili.com, and translating a CJK search term the user typed via Google's public translate endpoint (no cookies, no credentials).
 ```
 
 ### 远程代码（Remote code）
@@ -68,7 +68,7 @@ grep -rnE "eval\(|new Function\(|import\(" .output/chrome-mv3 --include='*.js' |
 
 | 问题 | 答案 |
 |---|---|
-| 数据是否加密传输？ | Yes — 所有第三方端点均使用 HTTPS；用户自配端点由其自行决定协议 |
+| 数据是否加密传输？ | Yes — 默认不含任何远端传输；发往 kitsunekko.net、api.bilibili.com、Google 翻译的请求均为 HTTPS。可选分析服务默认是回环地址 `http://127.0.0.1:8765`（本机，不出设备）；用户若改成远端地址只能填 `https://` 源，协议仍由用户自选。 |
 | 数据是否出售给第三方？ | No |
 | 数据是否用于与单一用途无关的目的？ | No |
 | 数据是否用于判断信用度/贷款？ | No |
