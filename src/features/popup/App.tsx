@@ -18,18 +18,20 @@ import {
   cn,
 } from '@/design-system';
 import { DurationInput } from '@/features/dict/duration-input';
+import { useLanguage } from '@/features/i18n/use-language';
 import { useTheme } from '@/features/theme/use-theme';
+import { packTitleForDisplay, ruleNameForDisplay, t, type MessageKey } from '@/shared/i18n';
 import type { LibraryEntry } from '@/shared/library';
 import type { DictTrigger } from '@/shared/dictSettings';
 import type { SubFile } from '@/features/scraper/kitsunekko';
 import { orderEntries } from './entries';
 import { usePopup, type PopupController } from './use-popup';
 
-const themeOptions = [
-  { value: 'light', label: '浅' },
-  { value: 'dark', label: '深' },
-  { value: 'system', label: '系统' },
-] as const;
+const themeOptions: { value: 'light' | 'dark' | 'system'; labelKey: MessageKey }[] = [
+  { value: 'light', labelKey: 'popup.theme.light' },
+  { value: 'dark', labelKey: 'popup.theme.dark' },
+  { value: 'system', labelKey: 'popup.theme.system' },
+];
 
 const levelOptions = [
   { value: '1', label: 'N1' },
@@ -39,17 +41,19 @@ const levelOptions = [
   { value: '5', label: 'N5' },
 ] as const;
 
-const triggerOptions: { value: DictTrigger; label: string }[] = [
-  { value: 'click', label: '点击' },
-  { value: 'hover', label: '悬停' },
+const triggerOptions: { value: DictTrigger; labelKey: MessageKey }[] = [
+  { value: 'click', labelKey: 'popup.trigger.click' },
+  { value: 'hover', labelKey: 'popup.trigger.hover' },
 ];
 
-const durationOptions = [
-  { value: 'cue', label: '跟随字幕' },
-  { value: 'fixed', label: '固定' },
-] as const;
+const durationOptions: { value: 'cue' | 'fixed'; labelKey: MessageKey }[] = [
+  { value: 'cue', labelKey: 'popup.duration.cue' },
+  { value: 'fixed', labelKey: 'popup.duration.fixed' },
+];
 
-const pronounceOptions = [{ value: 'romaji', label: '罗马音' }] as const;
+const pronounceOptions: { value: 'romaji'; labelKey: MessageKey }[] = [
+  { value: 'romaji', labelKey: 'popup.pronounce.romaji' },
+];
 
 const hostOf = (template: string): string | null => {
   const matched = template.match(/^https?:\/\/([^/?#]+)/i);
@@ -69,14 +73,19 @@ function Header({ popup }: { popup: PopupController }) {
           JP
         </span>
         <div className="min-w-0">
-          <div className="truncate text-xs font-semibold">字幕扩展</div>
+          <div className="truncate text-xs font-semibold">{t('meta.brand')}</div>
           <div className="text-2xs text-text-faint">v{version}</div>
         </div>
       </div>
       <div className="flex flex-none items-center gap-1.5">
-        <SegmentedControl value={mode} options={themeOptions} onChange={setMode} aria-label="主题" />
+        <SegmentedControl
+          value={mode}
+          options={themeOptions.map((option) => ({ value: option.value, label: t(option.labelKey) }))}
+          onChange={setMode}
+          aria-label={t('popup.theme.aria')}
+        />
         <Button variant="ghost" size="sm" onClick={() => void popup.openPanel()}>
-          面板
+          {t('popup.openPanel')}
         </Button>
       </div>
     </header>
@@ -91,25 +100,31 @@ function PageCard({ popup }: { popup: PopupController }) {
       const url = new URL(tabUrl);
       return { text: `${url.host}${url.pathname}`, title: tabUrl };
     } catch {
-      return { text: hasTab ? '当前页不可用（受限页面）' : '没有活动标签页', title: '' };
+      return { text: hasTab ? t('popup.page.restricted') : t('popup.page.noTab'), title: '' };
     }
   }, [tabUrl, hasTab]);
 
   const meta = React.useMemo(() => {
-    if (!site) return '未匹配站点规则 · 可在「站点」中配置';
+    if (!site) return t('popup.page.noRule');
     const ep =
-      site.episode === null ? '' : site.season ? `第 ${site.season} 季 第 ${site.episode} 集` : `第 ${site.episode} 集`;
-    const series = site.seriesTitle || (site.seriesId ? `系列 ${site.seriesId}` : '');
-    return [site.rule.name, series, ep].filter(Boolean).join(' · ');
+      site.episode === null
+        ? ''
+        : site.season
+          ? t('popup.page.seasonEpisode', { season: site.season, episode: site.episode })
+          : t('popup.page.episode', { episode: site.episode });
+    const series =
+      site.seriesTitle ||
+      (site.seriesId ? t('popup.page.series', { id: site.seriesId }) : '');
+    return [ruleNameForDisplay(site.rule.name, t), series, ep].filter(Boolean).join(' · ');
   }, [site]);
 
   const statusText = !statusChecked
-    ? '正在检测播放器…'
+    ? t('popup.status.detecting')
     : status
       ? status.subtitle
-        ? `当前字幕：${status.subtitle}`
-        : '播放器已就绪，尚未载入字幕'
-      : '未检测到播放器：打开视频页，或刷新页面后重试';
+        ? t('popup.status.subtitle', { name: status.subtitle })
+        : t('popup.status.ready')
+      : t('popup.status.noPlayer');
 
   return (
     <Card variant="box" className="mx-3.5 mb-2.5 px-3 py-2.5">
@@ -118,8 +133,11 @@ function PageCard({ popup }: { popup: PopupController }) {
       </div>
       <div className="mt-0.5 truncate text-2xs text-muted-foreground">{meta}</div>
       {boundPack ? (
-        <div className="mt-0.5 truncate text-2xs text-muted-foreground" title={boundPack.title}>
-          已绑定字幕包：{boundPack.title}
+        <div
+          className="mt-0.5 truncate text-2xs text-muted-foreground"
+          title={packTitleForDisplay(boundPack.title, t)}
+        >
+          {t('popup.boundPack', { title: packTitleForDisplay(boundPack.title, t) })}
         </div>
       ) : null}
       <div className={cn('mt-0.5 truncate text-2xs', status ? 'text-muted-foreground' : 'text-warning')}>
@@ -133,7 +151,7 @@ function PageCard({ popup }: { popup: PopupController }) {
             aria-pressed={status.theater}
             onClick={() => void popup.toggleTheater()}
           >
-            {status.theater ? '退出全页平铺' : '视频平铺全网页'}
+            {status.theater ? t('popup.theater.exit') : t('popup.theater.enter')}
           </Button>
         </div>
       ) : null}
@@ -150,16 +168,17 @@ function EntryRow({ popup, entry, label }: { popup: PopupController; entry: Libr
     if (!ok) setApplying(false);
   };
 
-
   return (
     <div
       className="flex items-center gap-2 rounded-md px-2 py-1 text-xs hover:bg-secondary"
-      title={`${entry.name}\n${entry.cueCount} 条`}
+      title={`${entry.name}\n${t('popup.entry.cueCount', { count: entry.cueCount })}`}
     >
       <span className="min-w-0 flex-1 truncate">{label}</span>
-      <span className="flex-none text-2xs text-text-faint tabular-nums">{entry.cueCount} 条</span>
+      <span className="flex-none text-2xs text-text-faint tabular-nums">
+        {t('popup.entry.cueCount', { count: entry.cueCount })}
+      </span>
       <Button size="sm" disabled={applying} onClick={() => void apply()}>
-        {applying ? '套用中…' : '套用'}
+        {applying ? t('popup.entry.applying') : t('popup.entry.apply')}
       </Button>
     </div>
   );
@@ -196,8 +215,8 @@ function PackGroup({ popup, packId }: { popup: PopupController; packId: string }
         }}
       >
         <Package className="size-3.5 flex-none text-text-faint" />
-        <span className="min-w-0 flex-1 truncate font-medium">{pack.title}</span>
-        <Badge className="flex-none">{packEntries.length} 份</Badge>
+        <span className="min-w-0 flex-1 truncate font-medium">{packTitleForDisplay(pack.title, t)}</span>
+        <Badge className="flex-none">{t('popup.pack.fileCount', { count: packEntries.length })}</Badge>
         {popup.query.trim() ? null : open ? (
           <ChevronDown className="size-3.5 flex-none text-text-faint" />
         ) : (
@@ -211,7 +230,7 @@ function PackGroup({ popup, packId }: { popup: PopupController; packId: string }
               <EntryRow key={entry.id} popup={popup} entry={entry} label={label} />
             ))
           ) : (
-            <EmptyState>包内没有字幕文件</EmptyState>
+            <EmptyState>{t('popup.pack.empty')}</EmptyState>
           )}
         </div>
       ) : null}
@@ -234,7 +253,7 @@ function DirView({ popup }: { popup: PopupController }) {
     <div className="flex flex-col gap-0.5">
       <Button variant="ghost" size="sm" className="self-start" onClick={() => void popup.goBack()}>
         <ChevronLeft className="size-3.5" />
-        返回搜索结果
+        {t('popup.dir.back')}
       </Button>
       <div className="px-2 pt-1 pb-0.5 text-2xs font-medium text-text-faint">{state.dir.name}</div>
       {state.dirs.map((dir) => (
@@ -260,11 +279,11 @@ function DirView({ popup }: { popup: PopupController }) {
             disabled={importing !== null}
             onClick={() => void importOne(file)}
           >
-            {importing === file.path ? '下载中…' : '导入'}
+            {importing === file.path ? t('popup.dir.downloading') : t('popup.dir.import')}
           </Button>
         </div>
       ))}
-      {state.dirs.length || state.files.length ? null : <EmptyState>该目录为空。</EmptyState>}
+      {state.dirs.length || state.files.length ? null : <EmptyState>{t('popup.dir.empty')}</EmptyState>}
     </div>
   );
 }
@@ -278,25 +297,29 @@ function SubsResults({ popup }: { popup: PopupController }) {
 
   return (
     <div className="flex flex-col gap-0.5">
-      {query ? <div className="px-2 pt-1 pb-0.5 text-2xs font-medium text-text-faint">本地</div> : null}
+      {query ? (
+        <div className="px-2 pt-1 pb-0.5 text-2xs font-medium text-text-faint">
+          {t('popup.local.heading')}
+        </div>
+      ) : null}
       {popup.packs.length ? (
         popup.visiblePacks.length ? (
           popup.visiblePacks.map((pack) => <PackGroup key={pack.id} popup={popup} packId={pack.id} />)
         ) : (
-          query && <EmptyState className="px-2">本地 · 无匹配</EmptyState>
+          query && <EmptyState className="px-2">{t('popup.local.noMatch')}</EmptyState>
         )
       ) : (
-        <EmptyState className="px-2">还没有本地字幕包。搜 kitsunekko 下载，或到完整设置里导入文件。</EmptyState>
+        <EmptyState className="px-2">{t('popup.local.empty')}</EmptyState>
       )}
 
       {query ? (
         <>
           <div className="flex items-baseline gap-2 px-2 pt-2 pb-0.5 text-2xs font-medium text-text-faint">
-            <span>在线 · kitsunekko</span>
+            <span>{t('popup.online.heading')}</span>
             {translated ? <span className="truncate font-normal">{translated}</span> : null}
           </div>
           {searching ? (
-            <EmptyState className="px-2">正在搜索 kitsunekko…</EmptyState>
+            <EmptyState className="px-2">{t('popup.online.searching')}</EmptyState>
           ) : popup.online.mode === 'results' ? (
             popup.onlineHits.length ? (
               popup.onlineHits.slice(0, 20).map((hit) => (
@@ -312,7 +335,7 @@ function SubsResults({ popup }: { popup: PopupController }) {
                 </button>
               ))
             ) : (
-              <EmptyState className="px-2">kitsunekko 无匹配番剧（用英文 / 罗马音命名）。</EmptyState>
+              <EmptyState className="px-2">{t('popup.online.noMatch')}</EmptyState>
             )
           ) : null}
         </>
@@ -323,22 +346,23 @@ function SubsResults({ popup }: { popup: PopupController }) {
 
 function SitesResults({ popup }: { popup: PopupController }) {
   if (!popup.rules.rules.length) {
-    return <EmptyState className="px-2">还没有站点规则。到完整设置里新增一条。</EmptyState>;
+    return <EmptyState className="px-2">{t('popup.sites.empty')}</EmptyState>;
   }
 
   return (
     <div className="flex flex-col">
       {popup.rules.rules.map((rule) => {
         const host = hostOf(rule.urlTemplate);
+        const name = ruleNameForDisplay(rule.name, t) || rule.id;
         return (
           <div key={rule.id} className="border-t border-border px-2 py-1.5 first:border-t-0">
             <div className="flex items-center gap-2">
-              <span className="min-w-0 flex-1 truncate text-xs" title={rule.name}>
-                {rule.name}
+              <span className="min-w-0 flex-1 truncate text-xs" title={name}>
+                {name}
               </span>
               <Switch
                 checked={rule.enabled}
-                aria-label={`${rule.name} 启用`}
+                aria-label={t('popup.sites.enable', { name })}
                 onCheckedChange={(enabled) => void popup.toggleRule(rule.id, enabled)}
               />
               <Button
@@ -348,12 +372,12 @@ function SitesResults({ popup }: { popup: PopupController }) {
                   host ? void chrome.tabs.create({ url: host }) : popup.openOptions('#rules')
                 }
               >
-                {host ? '打开' : '编辑'}
+                {host ? t('common.open') : t('common.edit')}
               </Button>
             </div>
             <div className="truncate font-mono text-[10.5px] text-text-faint" title={rule.urlTemplate}>
               {rule.urlTemplate}
-              {rule.adapter ? ' · 自动解析番剧 / 集数' : ''}
+              {rule.adapter ? t('popup.sites.autoParse') : ''}
             </div>
           </div>
         );
@@ -372,7 +396,7 @@ function DictCard({ popup }: { popup: PopupController }) {
 
   const rows: { title: string; control: React.ReactNode }[] = [
     {
-      title: '取词等级',
+      title: t('popup.dict.levels'),
       control: (
         <PillGroup
           name="dictLevels"
@@ -380,7 +404,7 @@ function DictCard({ popup }: { popup: PopupController }) {
           options={levelOptions}
           value={levels}
           disabled={off}
-          aria-label="取词等级"
+          aria-label={t('popup.dict.levels')}
           onChange={(next) => {
             const selected = new Set(next as string[]);
             void popup.saveDict({
@@ -397,37 +421,37 @@ function DictCard({ popup }: { popup: PopupController }) {
       ),
     },
     {
-      title: '触发',
+      title: t('popup.dict.trigger'),
       control: (
         <PillGroup
           name="dictTrigger"
-          options={triggerOptions}
+          options={triggerOptions.map((option) => ({ value: option.value, label: t(option.labelKey) }))}
           value={dict.trigger}
-          aria-label="触发方式"
+          aria-label={t('popup.dict.triggerLabel')}
           onChange={(next) => void popup.saveDict({ trigger: next as DictTrigger })}
         />
       ),
     },
     {
-      title: '查词暂停',
+      title: t('popup.dict.pause'),
       control: (
         <Switch
           checked={dict.pauseOnLookup}
           disabled={off || dict.trigger !== 'click'}
-          aria-label="查词时暂停播放"
+          aria-label={t('popup.dict.pauseLabel')}
           onCheckedChange={(pauseOnLookup) => void popup.saveDict({ pauseOnLookup })}
         />
       ),
     },
     {
-      title: '卡片持续',
+      title: t('popup.dict.duration'),
       control: (
         <>
           <PillGroup
             name="dictDuration"
-            options={durationOptions}
+            options={durationOptions.map((option) => ({ value: option.value, label: t(option.labelKey) }))}
             value={dict.duration.mode}
-            aria-label="卡片持续时间"
+            aria-label={t('popup.dict.durationLabel')}
             onChange={(next) =>
               void popup.saveDict({ duration: { ...dict.duration, mode: next as 'cue' | 'fixed' } })
             }
@@ -435,7 +459,7 @@ function DictCard({ popup }: { popup: PopupController }) {
           {dict.duration.mode === 'fixed' && !off ? (
             <DurationInput
               valueMs={dict.duration.ms}
-              aria-label="固定显示秒数"
+              aria-label={t('popup.dict.fixedSeconds')}
               onChange={(seconds) => void popup.setDictDurationSeconds(seconds)}
             />
           ) : null}
@@ -443,14 +467,14 @@ function DictCard({ popup }: { popup: PopupController }) {
       ),
     },
     {
-      title: '发音',
+      title: t('popup.dict.pronounce'),
       control: (
         <PillGroup
           name="dictPronounce"
           multiple
-          options={pronounceOptions}
+          options={pronounceOptions.map((option) => ({ value: option.value, label: t(option.labelKey) }))}
           value={dict.pronunciation.romaji ? ['romaji'] : []}
-          aria-label="发音"
+          aria-label={t('popup.dict.pronounce')}
           onChange={(next) =>
             void popup.saveDict({ pronunciation: { romaji: (next as string[]).includes('romaji') } })
           }
@@ -462,10 +486,10 @@ function DictCard({ popup }: { popup: PopupController }) {
   return (
     <Card variant="plain" className="mx-0">
       <div className="flex items-center justify-between">
-        <h2 className="m-0 text-xs font-semibold">学习</h2>
+        <h2 className="m-0 text-xs font-semibold">{t('popup.dict.heading')}</h2>
         <Switch
           checked={dict.enabled}
-          aria-label="启用词典"
+          aria-label={t('popup.dict.enable')}
           onCheckedChange={(enabled) => void popup.saveDict({ enabled })}
         />
       </div>
@@ -482,6 +506,7 @@ function DictCard({ popup }: { popup: PopupController }) {
 }
 
 export function App() {
+  useLanguage('meta.popupTitle');
   const popup = usePopup();
   const { resolved } = useTheme();
 
@@ -493,18 +518,18 @@ export function App() {
 
         <div className="mx-3.5 mb-2.5 rounded-lg border border-border bg-card p-2.5">
           <Tabs value={popup.activeTab} onValueChange={(value) => popup.setActiveTab(value as 'subs' | 'sites')}>
-            <TabsList aria-label="面板">
-              <TabsTrigger value="subs">字幕</TabsTrigger>
-              <TabsTrigger value="sites">站点</TabsTrigger>
+            <TabsList aria-label={t('popup.tabs.aria')}>
+              <TabsTrigger value="subs">{t('popup.tab.subs')}</TabsTrigger>
+              <TabsTrigger value="sites">{t('popup.tab.sites')}</TabsTrigger>
             </TabsList>
             <TabsContent value="subs" className="mt-2">
               <SearchField
                 autoFocus
                 value={popup.query}
-                placeholder="搜索本地字幕包 / kitsunekko（中文自动英译）"
+                placeholder={t('popup.search.placeholder')}
                 autoComplete="off"
                 spellCheck={false}
-                aria-label="搜索字幕"
+                aria-label={t('popup.search.aria')}
                 onChange={(event) => popup.setQuery(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') popup.submitSearch();
@@ -530,14 +555,14 @@ export function App() {
             className="cursor-pointer border-0 bg-transparent p-0 text-muted-foreground hover:text-foreground hover:underline"
             onClick={() => popup.openOptions('#rules')}
           >
-            站点规则
+            {t('popup.footer.rules')}
           </button>
           <button
             type="button"
             className="cursor-pointer border-0 bg-transparent p-0 text-muted-foreground hover:text-foreground hover:underline"
             onClick={() => popup.openOptions('#binds')}
           >
-            番剧绑定
+            {t('popup.footer.binds')}
           </button>
           <span className="flex-1" />
           <button
@@ -545,7 +570,7 @@ export function App() {
             className="cursor-pointer border-0 bg-transparent p-0 text-muted-foreground hover:text-foreground hover:underline"
             onClick={() => popup.openOptions()}
           >
-            完整设置
+            {t('popup.footer.settings')}
           </button>
         </footer>
       </div>

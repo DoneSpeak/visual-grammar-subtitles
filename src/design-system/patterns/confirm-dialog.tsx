@@ -42,9 +42,9 @@ const useConfirm = () => {
           onEscapeKeyDown={() => settle(false)}
         >
           <DialogFooter>
-            <Button onClick={() => settle(false)}>{pending.cancelLabel ?? '取消'}</Button>
+            <Button onClick={() => settle(false)}>{pending.cancelLabel ?? 'Cancel'}</Button>
             <Button variant={pending.destructive ? 'destructive' : 'primary'} onClick={() => settle(true)}>
-              {pending.confirmLabel ?? '确定'}
+              {pending.confirmLabel ?? 'Confirm'}
             </Button>
           </DialogFooter>
         </DialogContent>

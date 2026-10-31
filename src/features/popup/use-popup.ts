@@ -8,6 +8,7 @@ import {
   type DictLevel,
   type DictSettings,
 } from '@/shared/dictSettings';
+import { packTitleForDisplay, ruleNameForDisplay, t } from '@/shared/i18n';
 import { importKitsunekkoArchive, loadKitsunekkoIndex } from '@/shared/kitsunekkoLibrary';
 import { listLibrary, listPacks, type LibraryEntry, type LibraryPack } from '@/shared/library';
 import {
@@ -137,11 +138,13 @@ export const usePopup = () => {
         id: entry.id,
       });
       if (response?.ok) {
-        toast.success(`已套用 ${entry.name}`);
+        toast.success(t('popup.toast.applied', { name: entry.name }));
         void refreshStatus();
         return true;
       }
-      toast.error(response?.error ? `套用失败：${response.error}` : '当前页没有可用的播放器');
+      toast.error(
+        response?.error ? t('errors.applyFailed', { error: response.error }) : t('errors.noPlayer'),
+      );
       return false;
     },
     [refreshStatus],
@@ -154,14 +157,18 @@ export const usePopup = () => {
         const [nextPacks, nextEntries] = await Promise.all([listPacks(), listLibrary()]);
         setPacks(nextPacks);
         setEntries(nextEntries);
+        const summary = t('popup.toast.imported', {
+          count: imported.length,
+          pack: packTitleForDisplay(pack.title, t),
+        });
         if (errors) {
-          toast.warning(`已导入 ${imported.length} 份到「${pack.title}」，${errors} 份无法解析`);
+          toast.warning(summary + t('popup.toast.parseFailed', { count: errors }));
         } else {
-          toast.success(`已导入 ${imported.length} 份到「${pack.title}」`);
+          toast.success(summary);
         }
         return true;
       } catch (error) {
-        toast.error(`下载失败：${errorText(error)}`);
+        toast.error(t('errors.downloadFailed', { error: errorText(error) }));
         return false;
       }
     },
@@ -176,7 +183,7 @@ export const usePopup = () => {
       setOnline({ mode: 'dir', dir, dirs, files });
     } catch (error) {
       setOnline({ mode: 'dir', dir, dirs: [], files: [] });
-      toast.error(`读取目录失败：${errorText(error)}`);
+      toast.error(t('errors.readDirFailed', { error: errorText(error) }));
     }
   }, []);
 
@@ -212,7 +219,7 @@ export const usePopup = () => {
     } catch (error) {
       if (seq !== searchSeq.current) return;
       setOnline({ mode: 'idle' });
-      toast.error(`kitsunekko 搜索失败：${errorText(error)}`);
+      toast.error(t('errors.searchFailed', { error: errorText(error) }));
     }
   }, []);
 
@@ -257,14 +264,20 @@ export const usePopup = () => {
       setRules(next);
       await saveSiteRules(next);
       const rule = next.rules.find((item) => item.id === ruleId);
-      if (rule) toast.success(`${rule.name}：${enabled ? '已启用' : '已停用'}`);
+      if (rule) {
+        toast.success(
+          t(enabled ? 'popup.toast.ruleEnabled' : 'popup.toast.ruleDisabled', {
+            name: ruleNameForDisplay(rule.name, t) || rule.id,
+          }),
+        );
+      }
     },
     [rules],
   );
 
   const openPanel = React.useCallback(async () => {
     const response = await callTab<{ ok: boolean }>(tabIdRef.current, { type: 'popupPanel' });
-    if (!response?.ok) toast.error('当前页没有可用的播放器');
+    if (!response?.ok) toast.error(t('errors.noPlayer'));
   }, []);
 
   const toggleTheater = React.useCallback(async () => {
@@ -272,7 +285,7 @@ export const usePopup = () => {
       type: 'popupTheater',
     });
     if (!response?.ok) {
-      toast.error('当前页没有可用的播放器');
+      toast.error(t('errors.noPlayer'));
       return false;
     }
     setStatus((previous) =>
@@ -293,6 +306,7 @@ export const usePopup = () => {
     return packs.filter(
       (pack) =>
         pack.title.toLowerCase().includes(q) ||
+        packTitleForDisplay(pack.title, t).toLowerCase().includes(q) ||
         (byPack.get(pack.id) ?? []).some((entry) => entry.name.toLowerCase().includes(q)),
     );
   }, [packs, byPack, query]);

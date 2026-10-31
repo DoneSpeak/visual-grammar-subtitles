@@ -8,6 +8,7 @@ import {
   type SeriesDir,
 } from '@/features/scraper/kitsunekko';
 import { loadKitsunekkoIndex } from '@/shared/kitsunekkoLibrary';
+import { t } from '@/shared/i18n';
 import { needsEnglish, requestEnglishQuery } from '@/shared/translate';
 
 export type KitsunekkoController = {
@@ -60,7 +61,7 @@ export const useKitsunekko = (onError: (message: string) => void): KitsunekkoCon
       if (current !== seq.current) return;
       setHits([]);
       setTranslated(null);
-      onError(`索引加载失败：${errorText(error)}`);
+      onError(t('errors.indexLoadFailed', { error: errorText(error) }));
     } finally {
       if (current === seq.current) setSearching(false);
     }
@@ -80,7 +81,7 @@ export const useKitsunekko = (onError: (message: string) => void): KitsunekkoCon
         setListing(await listDir(dir.path));
       } catch (error) {
         setListing({ dirs: [], files: [] });
-        onError(`读取目录失败：${errorText(error)}`);
+        onError(t('errors.readDirFailed', { error: errorText(error) }));
       } finally {
         setDirLoading(false);
       }

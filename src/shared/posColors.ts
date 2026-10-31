@@ -1,3 +1,4 @@
+import type { MessageKey } from './i18n/catalog';
 import type { PosGroup } from './types';
 
 export type PosColors = Record<PosGroup, string>;
@@ -17,15 +18,15 @@ export const POS_GROUPS: PosGroup[] = [
   'other',
 ];
 
-export const POS_GROUP_LABELS: Record<PosGroup, { name: string; detail: string }> = {
-  noun: { name: '名词', detail: '名词 · 代名词' },
-  verb: { name: '动词', detail: '动词' },
-  adj: { name: '形容', detail: '形容词 · 形状词 · 连体词' },
-  adverb: { name: '副词', detail: '副词' },
-  particle: { name: '助词', detail: '助词 · 助动词' },
-  conjunction: { name: '接续', detail: '接续词' },
-  symbol: { name: '符号', detail: '标点 · 空白' },
-  other: { name: '其他', detail: '感叹词等' },
+export const POS_GROUP_LABELS: Record<PosGroup, { nameKey: MessageKey; detailKey: MessageKey }> = {
+  noun: { nameKey: 'pos.noun.name', detailKey: 'pos.noun.detail' },
+  verb: { nameKey: 'pos.verb.name', detailKey: 'pos.verb.detail' },
+  adj: { nameKey: 'pos.adj.name', detailKey: 'pos.adj.detail' },
+  adverb: { nameKey: 'pos.adverb.name', detailKey: 'pos.adverb.detail' },
+  particle: { nameKey: 'pos.particle.name', detailKey: 'pos.particle.detail' },
+  conjunction: { nameKey: 'pos.conjunction.name', detailKey: 'pos.conjunction.detail' },
+  symbol: { nameKey: 'pos.symbol.name', detailKey: 'pos.symbol.detail' },
+  other: { nameKey: 'pos.other.name', detailKey: 'pos.other.detail' },
 };
 
 /**

@@ -11,7 +11,15 @@ import {
   toast,
   useConfirm,
 } from '@/design-system';
-import { adEpisodeKey, matchRuleUrl, resolveSite, type AdSlot, type SiteRule } from '@/shared/siteRules';
+import { ruleNameForDisplay, t } from '@/shared/i18n';
+import {
+  adEpisodeKey,
+  DEFAULT_AD_DURATION,
+  matchRuleUrl,
+  resolveSite,
+  type AdSlot,
+  type SiteRule,
+} from '@/shared/siteRules';
 import { formatSlotList, groupEpisodeMarks, refreshSeriesDefault, type EpisodeMark } from '../lib/ad-slots';
 import { fmtClock, parseClock } from '../lib/format';
 import type { SiteRulesController } from '../hooks/use-site-rules';
@@ -47,6 +55,38 @@ function ClockInput({ value, placeholder, title, onCommit }: {
       placeholder={placeholder}
       title={title}
       spellCheck={false}
+      value={draft}
+      onChange={(event) => setDraft(event.target.value)}
+      onBlur={commit}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') commit();
+      }}
+    />
+  );
+}
+
+/** Per-series seconds the playback shortcut adds; blank/0 falls back to the default. */
+function SeriesDurationInput({ value, onCommit }: { value: number; onCommit: (seconds: number) => void }) {
+  const [draft, setDraft] = React.useState(String(value));
+
+  React.useEffect(() => setDraft(String(value)), [value]);
+
+  const commit = () => {
+    const seconds = Math.round(Number(draft));
+    if (!Number.isFinite(seconds) || seconds < 1) {
+      setDraft(String(value));
+      return;
+    }
+    onCommit(seconds);
+  };
+
+  return (
+    <Input
+      type="number"
+      min={1}
+      step={1}
+      className="h-6 w-16 px-2 text-2xs tabular-nums"
+      title={t('rules.seriesDurationTitle')}
       value={draft}
       onChange={(event) => setDraft(event.target.value)}
       onBlur={commit}
@@ -101,17 +141,19 @@ function EpisodeRow({ rule, sites, mark }: {
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       <span className="w-[72px] flex-none text-2xs text-muted-foreground">
-        {mark.season === '*' ? `第 ${mark.episode} 集` : `S${mark.season} · ${mark.episode}`}
+        {mark.season === '*'
+          ? t('rules.episodeLabel', { episode: mark.episode })
+          : t('rules.seasonEpisode', { season: mark.season, episode: mark.episode })}
       </span>
       {mark.slots.map((slot, index) => {
         const end = slot.at + slot.duration;
         return (
           <span key={index} className="inline-flex items-center gap-1">
-            <span className="text-2xs text-text-faint">起</span>
+            <span className="text-2xs text-text-faint">{t('rules.slotStart')}</span>
             <ClockInput
               value={fmtClock(slot.at)}
               placeholder="08:17"
-              title="广告开始时刻，格式 08:17 或 1:08:17"
+              title={t('rules.slotStartTitle')}
               onCommit={(text) => {
                 const start = parseClock(text);
                 if (start === null || start >= end) return false;
@@ -119,11 +161,11 @@ function EpisodeRow({ rule, sites, mark }: {
                 return true;
               }}
             />
-            <span className="text-2xs text-text-faint">止</span>
+            <span className="text-2xs text-text-faint">{t('rules.slotEnd')}</span>
             <ClockInput
               value={fmtClock(end)}
               placeholder="08:47"
-              title="广告结束时刻"
+              title={t('rules.slotEndTitle')}
               onCommit={(text) => {
                 const finish = parseClock(text);
                 if (finish === null || finish <= slot.at) return false;
@@ -131,17 +173,22 @@ function EpisodeRow({ rule, sites, mark }: {
                 return true;
               }}
             />
-            <Button variant="destructive" size="icon-sm" aria-label="删除这段广告" onClick={() => removeSlot(index)}>
+            <Button
+              variant="destructive"
+              size="icon-sm"
+              aria-label={t('rules.deleteSlot')}
+              onClick={() => removeSlot(index)}
+            >
               ×
             </Button>
           </span>
         );
       })}
       <Button size="sm" onClick={addSlot}>
-        + 段
+        {t('rules.addSegment')}
       </Button>
       <Button variant="destructive" size="sm" onClick={removeEpisode}>
-        删除集
+        {t('rules.deleteEpisode')}
       </Button>
     </div>
   );
@@ -167,12 +214,12 @@ function AddSlotForm({ rule, sites }: { rule: SiteRule; sites: SiteRulesControll
       finishAt === null ||
       finishAt <= startAt
     ) {
-      setMessage('填齐系列、集号与起止时刻');
+      setMessage(t('rules.formIncomplete'));
       return;
     }
     const key = adEpisodeKey(series.trim(), season.trim() === '*' ? null : season.trim() || null, episodeNo);
     if (!key) {
-      setMessage('集号无效');
+      setMessage(t('rules.invalidEpisode'));
       return;
     }
     sites.editRule(rule.id, (draft) => {
@@ -187,42 +234,42 @@ function AddSlotForm({ rule, sites }: { rule: SiteRule; sites: SiteRulesControll
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="w-[76px] flex-none text-2xs text-muted-foreground">新增广告</span>
+      <span className="w-[76px] flex-none text-2xs text-muted-foreground">{t('rules.addAd')}</span>
       <Input
         className="h-6 w-[104px] px-2 text-2xs"
-        placeholder="系列 ID"
-        title="与站点规则解析出的 id 一致，例：96527"
+        placeholder={t('rules.seriesIdPlaceholder')}
+        title={t('rules.seriesIdTitle')}
         value={series}
         onChange={(event) => setSeries(event.target.value)}
       />
       <Input
         className="h-6 w-[64px] px-2 text-2xs"
-        placeholder="季 *"
-        title="季节号；未知填 * 或留空"
+        placeholder={t('rules.seasonPlaceholder')}
+        title={t('rules.seasonTitle')}
         value={season}
         onChange={(event) => setSeason(event.target.value)}
       />
       <Input
         className="h-6 w-[56px] px-2 text-2xs"
-        placeholder="集"
-        title="集号"
+        placeholder={t('rules.episodePlaceholder')}
+        title={t('rules.episodeTitle')}
         value={episode}
         onChange={(event) => setEpisode(event.target.value)}
       />
       <Input
         className="h-6 w-[92px] px-2 text-2xs"
-        placeholder="开始 08:17"
+        placeholder={t('rules.startPlaceholder')}
         value={start}
         onChange={(event) => setStart(event.target.value)}
       />
       <Input
         className="h-6 w-[92px] px-2 text-2xs"
-        placeholder="结束 08:47"
+        placeholder={t('rules.endPlaceholder')}
         value={end}
         onChange={(event) => setEnd(event.target.value)}
       />
       <Button size="sm" onClick={add}>
-        添加
+        {t('rules.add')}
       </Button>
       {message ? <span className="text-2xs text-destructive">{message}</span> : null}
     </div>
@@ -247,13 +294,13 @@ function AdSlotsEditor({ rule, sites }: { rule: SiteRule; sites: SiteRulesContro
   return (
     <details className="border-t border-border pt-2.5">
       <summary className="cursor-pointer py-1 text-xs text-muted-foreground">
-        广告位 · 按剧集 · {groups.size} 系列 / {total} 集
+        {t('rules.adSlotsSummary', { series: groups.size, episodes: total })}
       </summary>
       <div className="flex flex-col gap-2.5 py-2">
         <Input
           type="search"
           className="h-6 w-[220px] px-2 text-2xs"
-          placeholder="筛选系列或集号"
+          placeholder={t('rules.filterPlaceholder')}
           value={needle}
           onChange={(event) => setNeedle(event.target.value)}
         />
@@ -263,8 +310,24 @@ function AdSlotsEditor({ rule, sites }: { rule: SiteRule; sites: SiteRulesContro
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs font-medium">{series}</span>
                 <span className="truncate text-2xs text-text-faint">
-                  默认 {formatSlotList(seriesAdSlotsOf(rule, series))}
+                  {t('rules.seriesDefault', {
+                    slots: formatSlotList(seriesAdSlotsOf(rule, series)) || t('common.none'),
+                  })}
                 </span>
+              </div>
+              <div className="flex items-center gap-2 text-2xs text-muted-foreground">
+                <span>{t('rules.seriesDuration')}</span>
+                <SeriesDurationInput
+                  value={rule.seriesAdDuration?.[series] ?? DEFAULT_AD_DURATION}
+                  onCommit={(seconds) =>
+                    sites.editRule(rule.id, (draft) => {
+                      if (!draft.seriesAdDuration) draft.seriesAdDuration = {};
+                      if (seconds === DEFAULT_AD_DURATION) delete draft.seriesAdDuration[series];
+                      else draft.seriesAdDuration[series] = seconds;
+                    })
+                  }
+                />
+                <span>{t('rules.seriesDurationHint')}</span>
               </div>
               {marks.map((mark) => (
                 <EpisodeRow key={mark.key} rule={rule} sites={sites} mark={mark} />
@@ -273,7 +336,7 @@ function AdSlotsEditor({ rule, sites }: { rule: SiteRule; sites: SiteRulesContro
           ))
         ) : (
           <EmptyState>
-            {groups.size ? '没有匹配的剧集。' : '还没有单集广告位。播放页标记一次，或在下方向导添加。'}
+            {groups.size ? t('rules.noMatchingEpisodes') : t('rules.noEpisodeSlots')}
           </EmptyState>
         )}
         <AddSlotForm rule={rule} sites={sites} />
@@ -299,7 +362,12 @@ function ParseTest({ rule }: { rule: SiteRule }) {
     const timer = window.setTimeout(() => {
       void resolveSite({ version: 2, rules: [rule], binds: {} }, text).then((resolved) => {
         if (current !== seq.current || !resolved) return;
-        setAdapterNote(` · 自动解析：${resolved.seriesTitle ?? '-'} 第 ${resolved.episode ?? '-'} 集`);
+        setAdapterNote(
+          t('rules.parseNote', {
+            title: resolved.seriesTitle ?? '-',
+            episode: resolved.episode ?? '-',
+          }),
+        );
       });
     }, 250);
     return () => window.clearTimeout(timer);
@@ -310,15 +378,20 @@ function ParseTest({ rule }: { rule: SiteRule }) {
   const result = !text
     ? ''
     : hit
-      ? `id=${hit.id ?? '-'} · season=${hit.season ?? '-'} · episode=${hit.episode ?? '-'}${adapterNote}`
-      : '不匹配';
+      ? t('rules.parseResult', {
+          id: hit.id ?? '-',
+          season: hit.season ?? '-',
+          episode: hit.episode ?? '-',
+          note: adapterNote,
+        })
+      : t('rules.noMatch');
 
   return (
-    <Field label="解析测试">
+    <Field label={t('rules.parseTest')}>
       <Input
         type="search"
         className="h-6 min-w-[240px] flex-1 px-2 text-2xs"
-        placeholder="粘贴一个页面 URL 测试解析"
+        placeholder={t('rules.parseTestPlaceholder')}
         value={url}
         onChange={(event) => setUrl(event.target.value)}
       />
@@ -335,6 +408,7 @@ function RuleEditor({ rule, sites, confirm }: {
   confirm: ReturnType<typeof useConfirm>['confirm'];
 }) {
   const edit = (patch: Partial<SiteRule>) => sites.editRule(rule.id, (draft) => Object.assign(draft, patch));
+  const displayName = ruleNameForDisplay(rule.name, t);
 
   return (
     <div className="flex flex-col gap-2 border-t border-border py-3.5 first:border-t-0 first:pt-0">
@@ -342,15 +416,15 @@ function RuleEditor({ rule, sites, confirm }: {
         <div className="flex items-center gap-2">
           <Switch
             checked={rule.enabled}
-            aria-label="启用这条规则"
-            title="启用这条规则"
+            aria-label={t('rules.enabledAria')}
+            title={t('rules.enabledAria')}
             onCheckedChange={(enabled) => edit({ enabled })}
           />
           <Input
             type="search"
             className="h-6 w-[160px] px-2 text-2xs"
-            placeholder="名称"
-            value={rule.name}
+            placeholder={t('rules.namePlaceholder')}
+            value={displayName}
             onChange={(event) => edit({ name: event.target.value })}
           />
         </div>
@@ -359,18 +433,19 @@ function RuleEditor({ rule, sites, confirm }: {
           size="sm"
           onClick={async () => {
             const ok = await confirm({
-              title: `删除规则「${rule.name || rule.id}」？`,
-              confirmLabel: '删除规则',
+              title: t('rules.deleteTitle', { name: displayName || rule.id }),
+              confirmLabel: t('rules.deleteRule'),
+              cancelLabel: t('common.cancel'),
               destructive: true,
             });
             if (ok) sites.removeRule(rule.id);
           }}
         >
-          删除规则
+          {t('rules.deleteRule')}
         </Button>
       </div>
 
-      <Field label="URL 模板">
+      <Field label={t('rules.urlTemplate')}>
         <Input
           type="search"
           className="h-6 min-w-[240px] flex-1 px-2 text-2xs"
@@ -381,20 +456,20 @@ function RuleEditor({ rule, sites, confirm }: {
       </Field>
 
       {rule.adapter ? (
-        <Field label="自动解析">
+        <Field label={t('rules.autoParse')}>
           <span className="text-2xs text-text-faint">
-            {rule.adapter === 'bilibili' ? 'bilibili 番剧：按 ep / ss 号读取季 ID、番剧名与集数' : rule.adapter}
+            {rule.adapter === 'bilibili' ? t('rules.bilibiliAdapter') : rule.adapter}
           </span>
         </Field>
       ) : null}
 
       <ParseTest rule={rule} />
 
-      <Field label="文件名模板">
+      <Field label={t('rules.fileTemplate')}>
         <Input
           type="search"
           className="h-6 min-w-[240px] flex-1 px-2 text-2xs"
-          placeholder="留空用内置规则；例：* - <episode> [*]"
+          placeholder={t('rules.fileTemplatePlaceholder')}
           value={rule.fileTemplate}
           onChange={(event) => edit({ fileTemplate: event.target.value })}
         />
@@ -422,34 +497,39 @@ export function RulesPage({ sites }: { sites: SiteRulesController }) {
   const importRules = async (file: File) => {
     try {
       const parsed = JSON.parse(await file.text()) as Partial<{ rules: SiteRule[]; binds: Record<string, string> }>;
-      if (!Array.isArray(parsed.rules)) throw new Error('缺少 rules 数组');
+      if (!Array.isArray(parsed.rules)) throw new Error(t('rules.importMissingRules'));
       const rules = parsed.rules.map((rule) => ({
         ...rule,
         seriesAdSlots: rule.seriesAdSlots ?? {},
         episodeAdSlots: rule.episodeAdSlots ?? {},
+        seriesAdDuration: rule.seriesAdDuration ?? {},
       }));
       sites.replaceRules({ version: 2, rules, binds: parsed.binds ?? {} });
-      toast.success(`已导入 ${rules.length} 条规则`);
+      toast.success(t('rules.imported', { count: rules.length }));
     } catch (error) {
-      toast.error(`导入失败：${error instanceof Error ? error.message : String(error)}`);
+      toast.error(
+        t('errors.importFailed', {
+          error: error instanceof Error ? error.message : String(error),
+        }),
+      );
     }
   };
 
   return (
     <>
-      <PageHeader title="站点规则" description="按 URL 模板识别平台与集数；广告位用于补偿内嵌广告占用的时间。" />
+      <PageHeader title={t('rules.title')} description={t('rules.description')} />
       <Card>
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <CardTitle>规则列表</CardTitle>
+          <CardTitle>{t('rules.listTitle')}</CardTitle>
           <div className="flex flex-wrap items-center gap-2">
             <Button variant="primary" size="sm" onClick={sites.addRule}>
-              新增规则
+              {t('rules.addRule')}
             </Button>
             <Button size="sm" onClick={exportRules}>
-              导出 JSON
+              {t('rules.export')}
             </Button>
             <Button size="sm" onClick={() => fileRef.current?.click()}>
-              导入 JSON
+              {t('rules.import')}
             </Button>
             <input
               ref={fileRef}
@@ -470,23 +550,13 @@ export function RulesPage({ sites }: { sites: SiteRulesController }) {
               <RuleEditor key={rule.id} rule={rule} sites={sites} confirm={confirmState.confirm} />
             ))
           ) : (
-            <EmptyState>还没有站点规则。</EmptyState>
+            <EmptyState>{t('rules.empty')}</EmptyState>
           )}
         </div>
       </Card>
 
-      <p className="text-2xs leading-relaxed text-text-faint">
-        模板示例：<Code>https://*</Code> + <Code>/cid/&lt;id&gt;-&lt;season&gt;-&lt;episode&gt;.html</Code>；
-        <Code>&lt;id&gt;</Code> 系列、<Code>&lt;season&gt;</Code> 季、<Code>&lt;episode&gt;</Code> 集、
-        <Code>*</Code> 任意段。 广告位插入点填 <Code>08:17</Code>（分:秒，超过 1 小时用 <Code>1:08:17</Code>），
-        广告结束时刻填在同一行。 播放页右上角「字幕设置 → 跳过标记」可以在看的过程中直接标记起点和终点；
-        系列默认值由全部已标记剧集自动汇总，不需要手动设定。
-      </p>
+      <p className="text-2xs leading-relaxed text-text-faint">{t('rules.hint')}</p>
       {confirmState.element}
     </>
   );
-}
-
-function Code({ children }: { children: React.ReactNode }) {
-  return <code className="rounded-sm bg-secondary px-1 py-px font-mono text-[11px]">{children}</code>;
 }

@@ -6,12 +6,14 @@ type ColorSwatchProps = {
   label: string;
   detail: string;
   value: string;
+  /** Accessible name for the colour input; defaults to `label`. */
+  ariaLabel?: string;
   onChange: (value: string) => void;
   onCommit: (value: string) => void;
 };
 
 /** Colour input + name + POS detail + hex, matching the options page's grid rows. */
-function ColorSwatch({ label, detail, value, onChange, onCommit }: ColorSwatchProps) {
+function ColorSwatch({ label, detail, value, ariaLabel = label, onChange, onCommit }: ColorSwatchProps) {
   return (
     <label
       data-slot="color-swatch"
@@ -23,7 +25,7 @@ function ColorSwatch({ label, detail, value, onChange, onCommit }: ColorSwatchPr
       <input
         type="color"
         value={value}
-        aria-label={`${label}颜色`}
+        aria-label={ariaLabel}
         onChange={(event) => onChange(event.target.value)}
         onBlur={(event) => onCommit(event.target.value)}
         className="size-5 flex-none cursor-pointer rounded-sm border-0 bg-transparent p-0"

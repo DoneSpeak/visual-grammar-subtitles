@@ -3,7 +3,17 @@ import type { AdSlot, Cue, LayerCfg, LayerId, PageCfg } from '@/shared/types';
 import { buildLabel } from '@/shared/buildInfo';
 import type { DictLine } from '@/shared/dictionary';
 import { isDictSettingsKey, loadDictSettings, type DictSettings } from '@/shared/dictSettings';
+import {
+  LANGUAGE_KEY,
+  applyLanguage,
+  initI18n,
+  loadLanguage,
+  packTitleForDisplay,
+  t,
+  type Language,
+} from '@/shared/i18n';
 import { isPosColorsKey, loadPosColors, type PosColors } from '@/shared/posColors';
+import { UNFILED_TITLE } from '@/shared/persistedText';
 import {
   isPlaybackSettingsKey,
   loadPlaybackSettings,
@@ -26,6 +36,7 @@ import {
   adEpisodeKey,
   boundPackOf,
   buildAdMap,
+  DEFAULT_AD_DURATION,
   isSiteRulesKey,
   loadSiteRules,
   matchPackByTitle,
@@ -360,6 +371,16 @@ class Session {
     this.overlay.setAdState(this.adHooks.state());
   }
 
+  /** Relabels the live overlay and drops the async strings, which were rendered in the old language. */
+  setLanguage(language: Language): void {
+    this.overlay.setLanguage(language);
+    this.onlineRows = { a: [], b: [], pack: [] };
+    this.onlineStatus = { a: '', b: '', pack: '' };
+    this.onlineBack = { a: [], b: [], pack: [] };
+    this.overlay.setAdState(this.adHooks.state());
+    void this.refreshLibrary();
+  }
+
   diag(): Record<string, unknown> {
     return {
       overlay: this.overlay.diag(),
@@ -400,7 +421,7 @@ class Session {
   private renderOnline(target: LibraryTarget): void {
     const rows = this.onlineRows[target];
     const list: LibraryRow[] =
-      this.onlineBack[target].length ? [{ key: 'back', title: '← 返回' }, ...rows] : rows;
+      this.onlineBack[target].length ? [{ key: 'back', title: t('content.back') }, ...rows] : rows;
     this.overlay.showLibraryMenu(target, list, this.onlineStatus[target]);
   }
 
@@ -415,7 +436,7 @@ class Session {
     this.onlineTargets.clear();
     this.onlineBack[target] = [];
     this.onlineRows[target] = [];
-    this.onlineStatus[target] = '正在搜索 kitsunekko…（首次需加载索引）';
+    this.onlineStatus[target] = t('content.searching');
     this.renderOnline(target);
     try {
       const { hits, translated } = await this.remote<{ hits: SeriesDir[]; translated?: string }>({
@@ -427,21 +448,21 @@ class Session {
         this.onlineTargets.set(key, { kind: 'dir', dir });
         return { key, title: dir.name, meta: 'kitsunekko' };
       });
-      const note = translated ? `已自动翻译为「${translated}」` : '';
+      const note = translated ? t('content.translated', { title: translated }) : '';
       this.onlineStatus[target] = this.onlineRows[target].length
         ? note
         : note
-          ? `${note}，仍未找到字幕包`
-          : '没有匹配的番剧 — 试试英文或罗马音名';
+          ? t('content.translatedNoPack', { title: translated })
+          : t('content.noMatch');
       this.renderOnline(target);
     } catch (err) {
-      this.onlineStatus[target] = `在线搜索失败：${errText(err)}`;
+      this.onlineStatus[target] = t('errors.onlineSearchFailed', { error: errText(err) });
       this.renderOnline(target);
     }
   }
 
   private async openRemoteDir(target: LibraryTarget, dir: SeriesDir): Promise<void> {
-    this.beginOnline(target, `正在读取 ${dir.name}…`);
+    this.beginOnline(target, t('content.readingDir', { name: dir.name }));
     try {
       const { dirs, files } = await this.remote<{ dirs: SeriesDir[]; files: SubFile[] }>({
         type: 'kitsuList',
@@ -451,7 +472,7 @@ class Session {
       for (const sub of dirs) {
         const key = `dir:${sub.path}`;
         this.onlineTargets.set(key, { kind: 'dir', dir: sub });
-        rows.push({ key, title: sub.name, meta: '子目录' });
+        rows.push({ key, title: sub.name, meta: t('content.subdir') });
       }
       for (const file of files) {
         const key = `file:${file.url}`;
@@ -459,28 +480,29 @@ class Session {
         rows.push({ key, title: file.name, meta: `${fmtSize(file.size)} · ${file.modified}` });
       }
       this.onlineRows[target] = rows;
-      this.onlineStatus[target] = rows.length ? '' : '该目录为空';
+      this.onlineStatus[target] = rows.length ? '' : t('content.emptyDir');
       this.renderOnline(target);
     } catch (err) {
-      this.onlineStatus[target] = `读取目录失败：${errText(err)}`;
+      this.onlineStatus[target] = t('errors.readDirFailed', { error: errText(err) });
       this.renderOnline(target);
     }
   }
 
   private async importRemote(target: LibraryTarget, dir: SeriesDir, file: SubFile): Promise<void> {
-    this.beginOnline(target, `正在下载并导入 ${file.name}…`);
+    this.beginOnline(target, t('content.downloading', { name: file.name }));
     try {
       const res = await this.remote<{ packTitle: string; entries: { id: string; name: string }[]; errors: number }>({
         type: 'kitsuImport',
         dir,
         file,
       });
-      const failed = res.errors ? `，${res.errors} 份无法解析` : '';
+      const failed = res.errors ? t('popup.toast.parseFailed', { count: res.errors }) : '';
       if (target === 'pack') {
         // The pack box only fills the library; selection happens in the two layer boxes.
         await this.refreshLibrary();
         this.onlineRows.pack = [];
-        this.onlineStatus.pack = `已导入 ${res.entries.length} 份${failed}，可在上面「原文 / 译文」搜索里选用`;
+        this.onlineStatus.pack =
+          t('content.importedCount', { count: res.entries.length }) + failed + t('content.chooseAbove');
         this.renderOnline('pack');
         return;
       }
@@ -490,10 +512,12 @@ class Session {
         title: labels.get(e.name)?.label ?? e.name,
         meta: res.packTitle,
       }));
-      this.onlineStatus[target] = res.errors ? `已导入 ${res.entries.length} 份${failed}` : '';
+      this.onlineStatus[target] = res.errors
+        ? t('content.importedCount', { count: res.entries.length }) + failed
+        : '';
       this.renderOnline(target);
     } catch (err) {
-      this.onlineStatus[target] = `导入失败：${errText(err)}`;
+      this.onlineStatus[target] = t('errors.importFailed', { error: errText(err) });
       this.renderOnline(target);
     }
   }
@@ -609,6 +633,20 @@ class Session {
       case 'KeyP':
         this.peekUntil = performance.now() + 1800;
         break;
+      case 'KeyS': {
+        // One press: record the ad at the playhead, then jump over it. Already-marked stretches
+        // just borrow their stored end so a second press cannot stack duplicate slots.
+        const playerTime = this.video.currentTime;
+        const active = this.adMap.adAt(playerTime);
+        const duration = Math.max(1, Math.round(this.adHooks.state().duration || DEFAULT_AD_DURATION));
+        if (!active) {
+          const at = this.adMap.toContent(playerTime);
+          this.adHooks.onChange([...this.adMap.slots, { at, duration }]);
+        }
+        const target = active ? active.end : playerTime + duration;
+        this.video.currentTime = this.video.duration > 0 ? Math.min(target, this.video.duration) : target;
+        break;
+      }
       case 'Enter': {
         const contentTime = this.adMap.toContent(this.video.currentTime) - this.cfg.offset;
         const cue = this.timelines.a.cueAt(contentTime);
@@ -796,6 +834,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, respond) => {
 });
 
 const start = async (): Promise<void> => {
+  await initI18n();
   log(buildLabel());
   const stopFrameTheater = installFrameTheater();
   const tokenizer = new TokenizerClient();
@@ -835,18 +874,19 @@ const start = async (): Promise<void> => {
         id,
         name,
         label: labels.get(packId)?.get(name)?.label ?? name,
-        packTitle: titles.get(packId) ?? '未归类',
+        packTitle: packTitleForDisplay(titles.get(packId) ?? UNFILED_TITLE, t),
       })),
     );
   };
 
   const adState = (): AdState => {
     if (!site) {
-      return { slots: [], seriesLabel: '', canEdit: false };
+      return { slots: [], seriesLabel: '', duration: DEFAULT_AD_DURATION, canEdit: false };
     }
     return {
       slots: site.slots,
-      seriesLabel: site.seriesTitle ?? (site.seriesId ? `系列 ${site.seriesId}` : ''),
+      seriesLabel: site.seriesTitle ?? (site.seriesId ? t('content.seriesLabel', { id: site.seriesId }) : ''),
+      duration: site.adDuration,
       canEdit: site.episode !== null,
     };
   };
@@ -932,7 +972,7 @@ const start = async (): Promise<void> => {
           }
         : null,
     apply: async (id) => {
-      if (!session) throw new Error('当前页没有可用视频');
+      if (!session) throw new Error(t('errors.noVideo'));
       await session.applyLibraryItemFromPopup(id);
     },
     panel: () => session?.openPanel(),
@@ -943,6 +983,12 @@ const start = async (): Promise<void> => {
     changes: Record<string, chrome.storage.StorageChange>,
     area: string,
   ): void => {
+    if (area === 'local' && changes[LANGUAGE_KEY]) {
+      void loadLanguage().then((next) => {
+        applyLanguage(next);
+        session?.setLanguage(next);
+      });
+    }
     if (area === 'local' && Object.keys(changes).some(isLibraryKey)) void pushLibrary();
     if (area === 'local' && Object.keys(changes).some(isDictSettingsKey)) {
       void loadDictSettings().then((next) => {
@@ -993,7 +1039,7 @@ const start = async (): Promise<void> => {
     rebuild();
     if (v) {
       log('attached to video', v.currentSrc || v.src || '(no src yet)');
-      log('overlay ready — 面板在画面右上角，点「原文 载入」选择 .srt 文件');
+      log(t('content.logReady'));
     }
   });
 

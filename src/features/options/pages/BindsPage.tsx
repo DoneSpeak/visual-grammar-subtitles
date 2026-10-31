@@ -14,11 +14,12 @@ import {
   SelectValue,
   toast,
 } from '@/design-system';
+import { packTitleForDisplay, ruleNameForDisplay, t } from '@/shared/i18n';
 import type { LibraryPack } from '@/shared/library';
 import type { LibraryController } from '../hooks/use-library';
 import type { SiteRulesController } from '../hooks/use-site-rules';
 
-/** Radix Select forbids an empty item value, so "未绑定" needs a sentinel. */
+/** Radix Select forbids an empty item value, so "unbound" needs a sentinel. */
 const NONE = '__none__';
 
 function PackSelect({ packs, value, placeholder, onChange }: {
@@ -36,7 +37,7 @@ function PackSelect({ packs, value, placeholder, onChange }: {
         <SelectItem value={NONE}>{placeholder}</SelectItem>
         {packs.map((pack) => (
           <SelectItem key={pack.id} value={pack.id}>
-            {pack.title}
+            {packTitleForDisplay(pack.title, t)}
           </SelectItem>
         ))}
       </SelectContent>
@@ -57,15 +58,17 @@ function BindRow({ bindKey, packId, packs, sites }: {
       <span className="min-w-0 flex-1 truncate font-mono text-2xs" title={bindKey}>
         {bindKey}
       </span>
-      <span className="flex-none text-2xs text-text-faint">{bound?.title ?? '包已删除'}</span>
+      <span className="flex-none text-2xs text-text-faint">
+        {bound ? packTitleForDisplay(bound.title, t) : t('binds.packDeleted')}
+      </span>
       <PackSelect
         packs={packs}
         value={bound ? packId : ''}
-        placeholder="未绑定"
+        placeholder={t('binds.unbound')}
         onChange={(next) => sites.setBindKey(bindKey, next)}
       />
       <Button variant="destructive" size="sm" onClick={() => sites.removeBind(bindKey)}>
-        删除
+        {t('binds.delete')}
       </Button>
     </div>
   );
@@ -83,11 +86,11 @@ function AddBindForm({ packs, sites }: { packs: LibraryPack[]; sites: SiteRulesC
 
   const add = () => {
     if (!ruleId) {
-      toast.error('先创建一条站点规则');
+      toast.error(t('binds.needRule'));
       return;
     }
     if (!packId) {
-      toast.error('选择一个字幕包');
+      toast.error(t('binds.needPack'));
       return;
     }
     sites.setBind(ruleId, series.trim() || null, packId);
@@ -96,38 +99,43 @@ function AddBindForm({ packs, sites }: { packs: LibraryPack[]; sites: SiteRulesC
 
   return (
     <Card>
-      <CardTitle>新增绑定</CardTitle>
+      <CardTitle>{t('binds.addTitle')}</CardTitle>
       <div className="mt-2.5 flex flex-wrap items-center gap-2">
         <Select value={ruleId || NONE} onValueChange={setRuleId} disabled={!rules.length}>
           <SelectTrigger className="h-6 min-w-[180px] px-2 text-2xs">
-            <SelectValue placeholder={rules.length ? '选择站点规则' : '无规则'} />
+            <SelectValue
+              placeholder={rules.length ? t('binds.rulePlaceholder') : t('binds.noRules')}
+            />
           </SelectTrigger>
           <SelectContent>
             {rules.length ? (
               rules.map((rule) => (
                 <SelectItem key={rule.id} value={rule.id}>
-                  {rule.name || rule.id} ({rule.id})
+                  {t('binds.ruleOption', {
+                    name: ruleNameForDisplay(rule.name, t) || rule.id,
+                    id: rule.id,
+                  })}
                 </SelectItem>
               ))
             ) : (
-              <SelectItem value={NONE}>无规则</SelectItem>
+              <SelectItem value={NONE}>{t('binds.noRules')}</SelectItem>
             )}
           </SelectContent>
         </Select>
         <Input
           className="h-6 min-w-[240px] flex-1 px-2 text-2xs"
-          placeholder="系列 ID，如 96527（留空 = 任意）"
+          placeholder={t('binds.seriesPlaceholder')}
           value={series}
           onChange={(event) => setSeries(event.target.value)}
         />
         <PackSelect
           packs={packs}
           value={packId}
-          placeholder="选择字幕包"
+          placeholder={t('binds.packPlaceholder')}
           onChange={setPackId}
         />
         <Button variant="primary" size="sm" onClick={add}>
-          添加
+          {t('binds.add')}
         </Button>
       </div>
     </Card>
@@ -139,16 +147,16 @@ export function BindsPage({ library, sites }: { library: LibraryController; site
 
   return (
     <>
-      <PageHeader title="番剧绑定" description="系列 ID → 字幕包；在播放页手动选包也会自动写入。" />
+      <PageHeader title={t('binds.title')} description={t('binds.description')} />
       <Card>
-        <CardTitle>当前绑定</CardTitle>
+        <CardTitle>{t('binds.current')}</CardTitle>
         <div className="mt-1">
           {bindings.length ? (
             bindings.map(([key, packId]) => (
               <BindRow key={key} bindKey={key} packId={packId} packs={library.packs} sites={sites} />
             ))
           ) : (
-            <EmptyState>还没有绑定。播放页手动选一次字幕包，或在这里添加。</EmptyState>
+            <EmptyState>{t('binds.empty')}</EmptyState>
           )}
         </div>
       </Card>

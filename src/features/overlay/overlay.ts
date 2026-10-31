@@ -1,8 +1,10 @@
 import type { DictEntry, DictLine } from '@/shared/dictionary';
 import { defaultDictSettings, type DictSettings } from '@/shared/dictSettings';
 import { createIcon, type IconName } from '@/shared/icons';
+import { applyLanguage, getLanguage, t, type Language } from '@/shared/i18n';
 import { defaultPosColors, type PosColors } from '@/shared/posColors';
 import { toRomaji } from '@/shared/romaji';
+import { DEFAULT_AD_DURATION } from '@/shared/siteRules';
 import type { AdSlot, LayerCfg, PageCfg, Token } from '@/shared/types';
 import { defaultLayer } from '@/shared/types';
 import { classifyBreak, optimizeLayout, segmentPlain, type LayoutUnit, type OptimizeResult } from './layout';
@@ -47,11 +49,11 @@ const MIN_WIDTH = 0.2;
 const MAX_WIDTH = 1;
 
 /** Display-duration presets in ms; 0 keeps the cue for its full duration. */
-const CAP_PRESETS: [string, number][] = [
-  ['全', 0],
-  ['0.2s', 200],
-  ['0.5s', 500],
-  ['1s', 1000],
+const CAP_PRESETS: [() => string, number][] = [
+  [() => t('overlay.cap.all'), 0],
+  [() => '0.2s', 200],
+  [() => '0.5s', 500],
+  [() => '1s', 1000],
 ];
 
 export type LibraryOption = { id: string; name: string; label: string; packTitle: string };
@@ -63,6 +65,8 @@ export type LibraryRow = { key: string; title: string; meta?: string };
 export type AdState = {
   slots: AdSlot[];
   seriesLabel: string;
+  /** Seconds the skip shortcut adds and records. */
+  duration: number;
   /** The episode is identifiable, so edits can be persisted. */
   canEdit: boolean;
 };
@@ -128,7 +132,7 @@ const CSS = `
 .panel h4 { margin: 0 0 8px; font-size: 12px; font-weight: 600; opacity: .85; }
 .panel .sec { border-top: 1px solid rgba(255,255,255,.1); margin-top: 10px; padding-top: 8px; }
 .panel .row { display: flex; align-items: center; gap: 6px; margin: 6px 0; }
-.panel .row > label { flex: 0 0 64px; opacity: .8; }
+.panel .row > label { flex: 0 0 72px; opacity: .8; }
 .panel input.offset-num { flex: 0 0 52px; width: 52px; text-align: right; font-variant-numeric: tabular-nums; }
 .panel input.offset-num:focus { outline: none; border-color: #7FD3FF; }
 .panel button { border-radius: 6px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: #e8eaed; font-size: 11px; padding: 3px 8px; cursor: pointer; flex: 0 0 auto; }
@@ -158,8 +162,9 @@ const CSS = `
 .panel .mark-strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,.25); border-radius: 3px; }
 .panel button.icon[hidden] { display: none; }
 .panel .mark-chip { flex: 0 0 auto; box-sizing: border-box; height: 22px; display: inline-flex; align-items: center; gap: 1px; padding: 0 2px 0 4px; border: 1px solid rgba(255,255,255,.16); border-radius: 6px; background: rgba(255,255,255,.05); }
-.panel .mark-chip input { width: 40px; padding: 0; border: 0; background: transparent; color: #e8eaed; font-size: 10px; font-variant-numeric: tabular-nums; text-align: center; }
+.panel .mark-chip input { width: 44px; padding: 0; border: 0; background: transparent; color: #e8eaed; font-size: 10px; font-variant-numeric: tabular-nums; text-align: center; }
 .panel .mark-chip input:focus { outline: none; color: #7FD3FF; }
+.panel .mark-chip .brk { opacity: .55; font-size: 10px; }
 .panel .mark-chip .sep { opacity: .4; font-size: 10px; }
 .panel .mark-chip button.icon { width: 16px; height: 16px; border: 0; background: none; }
 .panel .mark-chip button.icon svg { width: 10px; height: 10px; }
@@ -171,6 +176,7 @@ const CSS = `
 .lib-item .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lib-item .meta { flex: 0 1 auto; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .5; font-size: 10px; }
 .panel .hint { opacity: .5; font-size: 11px; line-height: 1.5; }
+.panel .mark-head .mark-hint { margin-left: 2px; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .panel .row > .hint { flex: 1; min-width: 0; }
 .dict-word { pointer-events: auto; cursor: pointer; border-bottom: 1px dashed rgba(255,255,255,.5); }
 .dict-word:hover { background: rgba(127,211,255,.22); border-bottom-color: #7FD3FF; }
@@ -302,16 +308,19 @@ export class Overlay {
   private adState: AdState = {
     slots: [],
     seriesLabel: '',
+    duration: DEFAULT_AD_DURATION,
     canEdit: false,
   };
   private adStrip: HTMLDivElement | null = null;
-  private adStartBtn: HTMLButtonElement | null = null;
-  private adEndBtn: HTMLButtonElement | null = null;
+  private adRecordBtn: HTMLButtonElement | null = null;
   private adTitle: HTMLElement | null = null;
   private adSkipBtn: HTMLButtonElement | null = null;
+  private adHint: HTMLElement | null = null;
   private autoSkipAds = true;
   /** Content time captured by the first "标记开始" click, until "标记结束" completes the slot. */
   private adPendingStart: number | null = null;
+  private language: Language = getLanguage();
+  private theaterActive = false;
 
   constructor(
     private getCfg: () => PageCfg,
@@ -333,16 +342,16 @@ export class Overlay {
       const body = el('div', 'body');
 
       // Handles mirror the body drag / resize so the gesture stays reachable at the block edges.
-      const label = id === 'a' ? '原文' : '译文';
+      const label = this.layerLabel(id);
       const grip = el('div', 'grip');
-      grip.title = `拖动调整${label}字幕位置（双击复位）`;
+      grip.title = t('overlay.grip.drag', { layer: label });
       grip.addEventListener('pointerdown', (e) => this.startDrag(e, id));
       grip.addEventListener('dblclick', () => {
         this.cb.onAnchorChange(id, 0.5, id === 'a' ? 0.9 : 0.82);
         this.applyLayout();
       });
       const rz = el('div', 'rz');
-      rz.title = `拖动调整${label}字幕框：右边改宽度、下边改高度，双击复位`;
+      rz.title = t('overlay.resize.drag', { layer: label });
       rz.addEventListener('pointerdown', (e) => this.startResize(e, id));
       rz.addEventListener('dblclick', () => {
         this.cb.onMaxWidthChange(id, defaultLayer().maxWidth);
@@ -392,14 +401,14 @@ export class Overlay {
     this.sizeTip = el('div', 'size-tip');
     this.stage.appendChild(this.sizeTip);
 
-    this.dockBtn = el('button', '', '字');
-    this.dockBtn.title = '字幕设置';
+    this.dockBtn = el('button', '', t('overlay.dock.label'));
+    this.dockBtn.title = t('overlay.dock.title');
     this.dockBtn.addEventListener('click', () => this.togglePanel());
     this.theaterBtn = el('button', 'theater');
     this.theaterBtn.type = 'button';
     this.theaterBtn.appendChild(icon('expand'));
-    this.theaterBtn.title = '视频平铺全网页';
-    this.theaterBtn.setAttribute('aria-label', '视频平铺全网页');
+    this.theaterBtn.title = t('overlay.theater.enter');
+    this.theaterBtn.setAttribute('aria-label', t('overlay.theater.enter'));
     this.theaterBtn.addEventListener('click', () => this.cb.onTheaterToggle());
     const dock = el('div', 'dock');
     dock.append(this.dockBtn, this.theaterBtn);
@@ -413,7 +422,7 @@ export class Overlay {
     // activate it again instead of reaching the page. Drop focus once the click is delivered.
     this.shadow.addEventListener('click', this.blurButton, true);
     // Menus float above the panel; a scroll would strand them at stale coordinates.
-    this.panel.addEventListener('scroll', () => this.closeAllMenus());
+    this.panel.addEventListener('scroll', this.onPanelScroll);
     window.addEventListener('resize', this.repositionMenus);
 
     document.addEventListener('fullscreenchange', this.reparent);
@@ -435,6 +444,62 @@ export class Overlay {
 
   reveal(): void {
     this.host.classList.add('hover');
+  }
+
+  /** The layer name used in labels; resolved on every render so a switch relabels it. */
+  private layerLabel(layer: LayerId): string {
+    return t(layer === 'a' ? 'overlay.layer.a' : 'overlay.layer.b');
+  }
+
+  /** Compact layer name for the row labels, where a 320px panel cannot afford the full word. */
+  private layerShort(layer: LayerId): string {
+    return t(layer === 'a' ? 'overlay.panel.layerA' : 'overlay.panel.layerB');
+  }
+
+  private onPanelScroll = (): void => this.closeAllMenus();
+
+  /**
+   * Switches language without dropping overlay state. The panel is rebuilt rather than patched
+   * (its labels live in ~50 elements); settings read back from the page config, so nothing is lost.
+   */
+  setLanguage(language: Language): void {
+    if (language === this.language) return;
+    this.language = language;
+    applyLanguage(language);
+    this.host.lang = language;
+    this.hideCard();
+    this.closeAllMenus();
+    // Menus are appended to the stage by `bindLibrarySearch`, so dropping the panel does not remove them.
+    for (const target of LIB_TARGETS) this.libMenuEls[target]?.remove();
+
+    const wasOpen = !this.panel.hidden;
+    const scrollTop = this.panel.scrollTop;
+    const old = this.panel;
+    const next = this.buildPanel();
+    next.id = 'jp-sub-panel';
+    next.hidden = !wasOpen;
+    next.addEventListener('scroll', this.onPanelScroll);
+    old.replaceWith(next);
+    this.panel = next;
+
+    this.syncPanel();
+    this.relabelChrome();
+    if (wasOpen) {
+      next.scrollTop = scrollTop;
+      this.fitPanelHeight();
+    }
+  }
+
+  /** Nodes the constructor owns, outside the rebuilt panel. */
+  private relabelChrome(): void {
+    this.dockBtn.textContent = t('overlay.dock.label');
+    this.dockBtn.title = t('overlay.dock.title');
+    for (const id of ['a', 'b'] as LayerId[]) {
+      const label = this.layerLabel(id);
+      this.layers[id].grip.title = t('overlay.grip.drag', { layer: label });
+      this.layers[id].rz.title = t('overlay.resize.drag', { layer: label });
+    }
+    this.setTheater(this.theaterActive);
   }
 
   /** The element the overlay must live in to paint above the picture.
@@ -627,7 +692,8 @@ export class Overlay {
 
   /** Reflect the page-level theater state on the dock button. */
   setTheater(active: boolean): void {
-    const label = active ? '退出全页平铺' : '视频平铺全网页';
+    this.theaterActive = active;
+    const label = t(active ? 'overlay.theater.exit' : 'overlay.theater.enter');
     this.theaterBtn.textContent = '';
     this.theaterBtn.appendChild(icon(active ? 'collapse' : 'expand'));
     this.theaterBtn.title = label;
@@ -655,13 +721,16 @@ export class Overlay {
 
     const top = el('div', 'top');
     top.appendChild(el('span', 'lv', `N${entry.lv}`));
-    const close = this.iconBtn('close', '关闭');
+    const close = this.iconBtn('close', t('overlay.card.close'));
     close.addEventListener('click', () => this.hideCard());
     top.appendChild(close);
     card.appendChild(top);
 
     const wordLine = el('div', 'word-line');
-    wordLine.append(el('span', 'word', entry.w), this.speakButton(entry.w, `朗读 ${entry.w}`));
+    wordLine.append(
+      el('span', 'word', entry.w),
+      this.speakButton(entry.w, t('overlay.card.speakWord', { word: entry.w })),
+    );
     card.appendChild(wordLine);
 
     if (reading) card.appendChild(el('div', 'reading', reading));
@@ -673,14 +742,15 @@ export class Overlay {
       card.appendChild(pos);
     }
 
-    // `z` is unused until a Chinese gloss source is wired in; prefer it when present.
-    const glosses = entry.z?.length ? entry.z : entry.g;
+    // The Chinese gloss source is not wired in yet; keep the policy explicit so a partial
+    // gloss list never displaces the English one in the English UI.
+    const glosses = this.language === 'zh-CN' && entry.z?.length ? entry.z : entry.g;
     if (glosses.length) card.appendChild(el('div', 'gloss', glosses.join(', ')));
 
     for (const example of entry.x) {
       const box = el('div', 'ex');
       const jp = el('div', 'ex-jp');
-      jp.append(el('span', 'text', example.j), this.speakButton(example.j, '朗读例句'));
+      jp.append(el('span', 'text', example.j), this.speakButton(example.j, t('overlay.card.speakExample')));
       box.append(jp, el('div', 'ex-en', example.e));
       card.appendChild(box);
     }
@@ -736,7 +806,7 @@ export class Overlay {
     return button;
   }
 
-  private speakButton(text: string, label = '朗读'): HTMLButtonElement {
+  private speakButton(text: string, label = t('overlay.card.speak')): HTMLButtonElement {
     const button = this.iconBtn('speaker', label);
     button.addEventListener('click', (event) => {
       event.stopPropagation();
@@ -1217,9 +1287,9 @@ export class Overlay {
       .map((i) => ({ key: `local:${i.id}`, title: i.label, meta: i.packTitle }));
     let status = '';
     if (query && !matches.length) {
-      rows.push({ key: 'online', title: `在线搜索「${typed}」`, meta: 'kitsunekko' });
+      rows.push({ key: 'online', title: t('overlay.menu.onlineSearch', { query: typed }), meta: 'kitsunekko' });
     } else if (!query && !this.libraryItems.length) {
-      status = '还没有字幕包 — 在上方「字幕包」里在线搜索';
+      status = t('overlay.menu.noPacks');
     }
     this.libOnline[target] = false;
     this.libRows[target] = rows;
@@ -1235,8 +1305,8 @@ export class Overlay {
     this.libOnline.pack = false;
     this.libRows.pack = [];
     this.libStatus.pack = query
-      ? `回车在线搜索「${query}」`
-      : '输入番剧名（中文 / 英文 / 罗马音）后回车，在线搜索 kitsunekko';
+      ? t('overlay.menu.enterToSearch', { query })
+      : t('overlay.menu.packHint');
     this.libActive.pack = -1;
     this.renderMenu('pack');
   }
@@ -1379,19 +1449,26 @@ export class Overlay {
 
   private renderAds(): void {
     const { slots, canEdit, seriesLabel } = this.adState;
-    if (this.adStartBtn) this.adStartBtn.disabled = !canEdit;
-    if (this.adEndBtn) {
-      this.adEndBtn.disabled = !canEdit || this.adPendingStart === null;
-      this.adEndBtn.classList.toggle('on', this.adPendingStart !== null);
+    // One record/stop toggle: recording lights it up and swaps the icon to stop; finishing or
+    // cancelling clears the pending start and restores the idle look.
+    if (this.adRecordBtn) {
+      const recording = this.adPendingStart !== null;
+      this.adRecordBtn.disabled = !canEdit;
+      this.adRecordBtn.classList.toggle('on', recording);
+      this.adRecordBtn.title = t(recording ? 'overlay.panel.markEnd' : 'overlay.panel.markStart');
+      this.adRecordBtn.replaceChildren(icon(recording ? 'stop' : 'record'));
     }
     if (this.adTitle) {
       this.adTitle.title = seriesLabel
-        ? `${seriesLabel}：开始与结束时间按全部已标记剧集取均值`
-        : '按全部已标记剧集取均值';
+        ? t('overlay.panel.seriesAverage', { series: seriesLabel })
+        : t('overlay.panel.average');
     }
     if (this.adSkipBtn) {
       this.adSkipBtn.classList.toggle('on', this.autoSkipAds);
-      this.adSkipBtn.title = this.autoSkipAds ? '自动跳过已标记片段：开' : '自动跳过已标记片段：关';
+      this.adSkipBtn.title = t(this.autoSkipAds ? 'overlay.panel.autoSkipOn' : 'overlay.panel.autoSkipOff');
+    }
+    if (this.adHint) {
+      this.adHint.textContent = t('overlay.panel.skipHint', { seconds: Math.round(this.adState.duration) });
     }
 
     const strip = this.adStrip;
@@ -1409,13 +1486,13 @@ export class Overlay {
     start.spellcheck = false;
     start.disabled = !editable;
     start.value = fmtClock(slot.at);
-    start.title = '跳过起点（08:17 或 1:08:17）';
+    start.title = t('overlay.panel.slotStartTitle');
     const end = el('input');
     end.type = 'text';
     end.spellcheck = false;
     end.disabled = !editable;
     end.value = fmtClock(slot.at + slot.duration);
-    end.title = '跳过终点';
+    end.title = t('overlay.panel.slotEndTitle');
     const commit = (): void => {
       const s = parseClock(start.value);
       const e = parseClock(end.value);
@@ -1428,10 +1505,10 @@ export class Overlay {
     };
     start.addEventListener('change', commit);
     end.addEventListener('change', commit);
-    const del = iconButton('close', '删除该片段');
+    const del = iconButton('close', t('overlay.panel.deleteSlot'));
     del.hidden = !editable;
     del.addEventListener('click', () => this.adCommit(this.adState.slots.filter((_, i) => i !== index)));
-    chip.append(start, el('span', 'sep', '–'), end, del);
+    chip.append(el('span', 'brk', '['), start, el('span', 'sep', '-'), end, el('span', 'brk', ']'), del);
     return chip;
   }
 
@@ -1508,30 +1585,32 @@ export class Overlay {
     const panel = el('div', 'panel');
     panel.hidden = true;
 
-    const title = el('h4', '', '字幕设置');
+    const title = el('h4', '', t('overlay.panel.title'));
     panel.appendChild(title);
 
     const packRow = el('div', 'row');
-    packRow.appendChild(el('label', '', '字幕包'));
+    packRow.appendChild(el('label', '', t('overlay.panel.pack')));
     const pack = el('input', 'lib-search');
     pack.type = 'search';
-    pack.placeholder = '在线搜索字幕包…';
-    pack.title = '输入番剧名后回车，在线搜索 kitsunekko 并导入';
+    pack.placeholder = t('overlay.panel.packPlaceholder');
+    pack.title = t('overlay.panel.packTitle');
     this.bindLibrarySearch('pack', pack);
     packRow.appendChild(pack);
 
     const subRow = (id: LayerId) => {
       const row = el('div', 'row');
-      row.appendChild(el('label', '', id === 'a' ? '原文' : '译文'));
+      row.appendChild(el('label', '', t(id === 'a' ? 'overlay.panel.subA' : 'overlay.panel.subB')));
       // One combobox: idle it shows the loaded subtitle's name, focusing opens the search list.
       const combo = el('input', 'lib-search');
       combo.type = 'search';
-      combo.placeholder = id === 'a' ? '搜索原文字幕…' : '搜索译文字幕…';
-      combo.title = '点击选择已导入的字幕；输入关键字过滤，无结果时可转在线搜索';
+      combo.placeholder = t(
+        id === 'a' ? 'overlay.panel.searchSourcePlaceholder' : 'overlay.panel.searchTranslationPlaceholder',
+      );
+      combo.title = t('overlay.panel.searchTitle');
       this.bindLibrarySearch(id, combo);
-      const pick = iconButton('file', '从本地选择字幕文件');
+      const pick = iconButton('file', t('overlay.panel.pickFile'));
       pick.addEventListener('click', () => this.cb.onPickFile(id));
-      const clear = iconButton('close', '清除该层字幕');
+      const clear = iconButton('close', t('overlay.panel.clear'));
       clear.addEventListener('click', () => this.cb.onClearSubtitle(id));
       row.append(combo, pick, clear);
       return row;
@@ -1540,7 +1619,7 @@ export class Overlay {
 
     const secOffset = el('div', 'sec');
     const offsetRow = el('div', 'row');
-    offsetRow.appendChild(el('label', '', '时间偏移'));
+    offsetRow.appendChild(el('label', '', t('overlay.panel.offset')));
     const offset = el('input');
     offset.type = 'range';
     offset.min = '-10';
@@ -1551,8 +1630,8 @@ export class Overlay {
     offsetVal.min = offset.min;
     offsetVal.max = offset.max;
     offsetVal.step = offset.step;
-    offsetVal.title = '负值提前、正值延后';
-    offsetVal.setAttribute('aria-label', '时间偏移（秒）');
+    offsetVal.title = t('overlay.panel.offsetTitle');
+    offsetVal.setAttribute('aria-label', t('overlay.panel.offsetAria'));
     const clampOffset = (v: number): number => Math.min(10, Math.max(-10, v));
     const setOffset = (value: number): void => {
       this.getCfg().offset = value;
@@ -1588,29 +1667,29 @@ export class Overlay {
 
     const capRow = (id: LayerId) => {
       const row = el('div', 'row');
-      row.appendChild(el('label', '', `${id === 'a' ? '原文' : '译文'}显示`));
+      row.appendChild(el('label', '', t('overlay.panel.cap', { layer: this.layerShort(id) })));
       const chips = el('div', 'chips');
       const input = el('input', 'cap');
       input.type = 'number';
       input.min = '0';
       input.step = '100';
-      input.title = '自定义毫秒数；0 = 跟随字幕结束时间';
+      input.title = t('overlay.panel.capCustomTitle');
       const presets: [HTMLButtonElement, number][] = [];
-      const modes: [HTMLButtonElement, boolean][] = [];
+      // One toggle button rather than a start/end pair: its caption is the mode it will apply.
+      let anchorBtn: HTMLButtonElement;
       // A lit border marks the active choice: exactly one preset, or the custom input.
       const sync = (): void => {
         const lc = this.getCfg().layers[id];
         for (const [button, ms] of presets) button.classList.toggle('on', lc.displayCapMs === ms);
         input.classList.toggle('on', !CAP_PRESETS.some(([, ms]) => ms === lc.displayCapMs));
-        for (const [button, fromEnd] of modes) {
-          button.classList.toggle('on', lc.displayCapFromEnd === fromEnd);
-          // With no cap every cue runs its full duration, so the anchor cannot matter yet.
-          button.disabled = lc.displayCapMs <= 0;
-        }
+        anchorBtn.textContent = t(lc.displayCapFromEnd ? 'overlay.panel.capEnd' : 'overlay.panel.capStart');
+        anchorBtn.title = t(lc.displayCapFromEnd ? 'overlay.panel.capEndTitle' : 'overlay.panel.capStartTitle');
+        // With no cap every cue runs its full duration, so the anchor cannot matter yet.
+        anchorBtn.disabled = lc.displayCapMs <= 0;
         if (this.shadow.activeElement !== input) input.value = String(lc.displayCapMs);
       };
-      for (const [text, ms] of CAP_PRESETS) {
-        const button = el('button', 'chip', text);
+      for (const [label, ms] of CAP_PRESETS) {
+        const button = el('button', 'chip', label());
         button.type = 'button';
         button.addEventListener('click', () => {
           this.getCfg().layers[id].displayCapMs = ms;
@@ -1627,23 +1706,16 @@ export class Overlay {
       });
       chips.appendChild(input);
       chips.appendChild(el('span', 'sep'));
-      for (const [text, fromEnd] of [
-        ['开头', false],
-        ['结束前', true],
-      ] as [string, boolean][]) {
-        const button = el('button', 'chip', text);
-        button.type = 'button';
-        button.title = fromEnd
-          ? '先听后看：整句先隐藏，最后 N 毫秒才出字幕'
-          : '先看后听：整句开头显示 N 毫秒后隐藏';
-        button.addEventListener('click', () => {
-          this.getCfg().layers[id].displayCapFromEnd = fromEnd;
-          sync();
-          this.cb.onCfgChange();
-        });
-        modes.push([button, fromEnd]);
-        chips.appendChild(button);
-      }
+      anchorBtn = el('button', 'chip');
+      anchorBtn.type = 'button';
+      anchorBtn.addEventListener('click', () => {
+        const layer = this.getCfg().layers[id];
+        layer.displayCapFromEnd = !layer.displayCapFromEnd;
+        sync();
+        this.cb.onCfgChange();
+      });
+      chips.appendChild(anchorBtn);
+      sync();
       row.appendChild(chips);
       if (id === 'a') this.controls.capSyncA = sync;
       else this.controls.capSyncB = sync;
@@ -1653,7 +1725,7 @@ export class Overlay {
 
     const fontRow = (id: LayerId) => {
       const row = el('div', 'row');
-      row.appendChild(el('label', '', id === 'a' ? '原文字号' : '译文字号'));
+      row.appendChild(el('label', '', t('overlay.panel.font', { layer: this.layerShort(id) })));
       // The stored value is a fraction of the picture height, so the same setting keeps its
       // proportion when the player is resized. The number beside it is that fraction rendered
       // at the current picture height, which is what a user actually wants to set.
@@ -1662,13 +1734,13 @@ export class Overlay {
       range.min = String(MIN_SCALE);
       range.max = String(MAX_SCALE);
       range.step = '0.002';
-      range.title = '字号占画面高度的比例';
+      range.title = t('overlay.panel.fontRatioTitle');
       const px = el('input', 'offset-num');
       px.type = 'number';
       px.min = '8';
       px.step = '1';
-      px.title = '实际渲染字号。未设框时等于滑杆值；设框后为自适应布局的结果，滑杆作为期望下限';
-      px.setAttribute('aria-label', id === 'a' ? '原文字号（像素）' : '译文字号（像素）');
+      px.title = t('overlay.panel.fontPxTitle');
+      px.setAttribute('aria-label', t('overlay.panel.fontPxAria', { layer: this.layerLabel(id) }));
       const sync = (): void => {
         const value = this.getCfg().layers[id].fontScale;
         if (this.shadow.activeElement !== range) range.value = String(value);
@@ -1731,39 +1803,48 @@ export class Overlay {
       l.append(input, document.createTextNode(text));
       return l;
     };
-    toggleRow.append(lbl(colorize, '词性着色'), lbl(furigana, '假名'), lbl(enableB, '译文层'));
+    toggleRow.append(
+      lbl(colorize, t('overlay.panel.colorize')),
+      lbl(furigana, t('overlay.panel.furigana')),
+      lbl(enableB, t('overlay.panel.translationLayer')),
+    );
     secOffset.appendChild(toggleRow);
     this.controls.colorize = colorize;
     this.controls.furigana = furigana;
     this.controls.enableB = enableB;
 
     const manageRow = el('div', 'row');
-    const manage = iconButton('list', '打开字幕库管理');
+    const manage = iconButton('list', t('overlay.panel.manage'));
     manage.addEventListener('click', () => this.cb.onOpenLibrary());
-    manageRow.append(manage, el('span', 'hint', '字幕库 · 支持拖入 .srt / .vtt / .ass 载入'));
+    manageRow.append(manage, el('span', 'hint', t('overlay.panel.libraryHint')));
     const secLibrary = el('div', 'sec');
     secLibrary.appendChild(manageRow);
 
     const secAd = el('div', 'sec');
     const adHead = el('div', 'mark-head');
-    this.adTitle = el('span', 'mark-title', '跳过标记');
+    this.adTitle = el('span', 'mark-title', t('overlay.panel.adTitle'));
     adHead.appendChild(this.adTitle);
+    // The shortcut sits on the section header rather than its own row, so the panel stays short.
+    this.adHint = el('span', 'hint mark-hint');
+    adHead.appendChild(this.adHint);
     adHead.appendChild(el('span', 'grow'));
-    this.adStartBtn = iconButton('markStart', '标记跳过起点');
-    this.adStartBtn.addEventListener('click', () => this.onAdMarkStart());
-    this.adEndBtn = iconButton('markEnd', '标记跳过终点');
-    this.adEndBtn.addEventListener('click', () => this.onAdMarkEnd());
+    this.adRecordBtn = iconButton('record', t('overlay.panel.markStart'));
+    this.adRecordBtn.addEventListener('click', () => {
+      if (this.adPendingStart === null) this.onAdMarkStart();
+      else this.onAdMarkEnd();
+    });
     this.adSkipBtn = iconButton('skip', '');
     this.adSkipBtn.addEventListener('click', () => {
       this.autoSkipAds = !this.autoSkipAds;
       this.renderAds();
       this.cb.onAdAutoSkipChange(this.autoSkipAds);
     });
-    adHead.append(this.adStartBtn, this.adEndBtn, this.adSkipBtn);
+    adHead.append(this.adRecordBtn, this.adSkipBtn);
     secAd.appendChild(adHead);
 
     this.adStrip = el('div', 'mark-strip');
     secAd.appendChild(this.adStrip);
+    this.renderAds();
 
     panel.append(secOffset, secAd, secLibrary);
     return panel;

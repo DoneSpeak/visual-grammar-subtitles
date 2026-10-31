@@ -1,6 +1,7 @@
 import { KITSUNEKKO_BASE, fetchIndex, type SeriesDir, type SubFile } from '@/features/scraper/kitsunekko';
 import { fetchSubtitleFiles } from '@/features/scraper/subtitles';
 import { importLibraryFiles, type LibraryEntry, type LibraryPack, type SubtitleOrigin } from './library';
+import { t } from './i18n';
 
 const INDEX_KEY = 'kitsu:index';
 const INDEX_TTL_MS = 24 * 60 * 60 * 1000;
@@ -44,7 +45,7 @@ export const importKitsunekkoArchive = async (
   file: SubFile,
 ): Promise<{ pack: LibraryPack; entries: LibraryEntry[]; errors: number }> => {
   const fetched = await fetchSubtitleFiles(file.url);
-  if (!fetched.length) throw new Error(`${file.name} 里没有可识别的字幕文件`);
+  if (!fetched.length) throw new Error(t('errors.noRecognizedSubtitles', { name: file.name }));
   const { pack, added, errors } = await importLibraryFiles(
     fetched.map((f) => new File([f.text], f.name, { type: 'text/plain' })),
     { title: dir.name, origin: kitsunekkoOrigin(dir, file) },

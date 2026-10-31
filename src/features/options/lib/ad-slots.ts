@@ -9,7 +9,7 @@ export const refreshSeriesDefault = (rule: SiteRule, seriesId: string): void => 
 };
 
 export const formatSlotList = (slots: AdSlot[]): string =>
-  slots.map((slot) => `${fmtClock(slot.at)}–${fmtClock(slot.at + slot.duration)}`).join(' · ') || '暂无';
+  slots.map((slot) => `${fmtClock(slot.at)}–${fmtClock(slot.at + slot.duration)}`).join(' · ');
 
 export type EpisodeMark = { key: string; series: string; season: string; episode: number; slots: AdSlot[] };
 
