@@ -1,8 +1,8 @@
 import type { ElementStyle, StudyPreset } from '@/shared/subtitleStyle';
 import {
-  featureOfElement,
   featureRank,
   POS_ELEMENT,
+  READING_ELEMENT,
   type FeatureId,
   type FeatureRegistry,
 } from '@/shared/studyFeatures';
@@ -11,8 +11,20 @@ import { isInflected, posGroupOf } from './colors';
 
 export type MatchedElement = { feature: FeatureId; element: string };
 
-const grammarLabel = (token: Token, prefix: string): string | undefined =>
-  token.grammar?.find((label) => label.startsWith(prefix));
+/**
+ * An element id is `layer:label`. `:all` collects every label under that layer, which is how
+ * expression, aspect and pronunciation layers render through one palette entry. Everything else
+ * matches one exact label. Reading and chunk positions are not grammar labels, so callers skip them.
+ */
+const elementMatchesToken = (token: Token, element: string): boolean => {
+  const colon = element.indexOf(':');
+  if (colon <= 0 || !token.grammar?.length) return false;
+  const layer = element.slice(0, colon);
+  const label = element.slice(colon + 1);
+  return label === 'all'
+    ? token.grammar.some((value) => value.startsWith(`${layer}:`))
+    : token.grammar.includes(element);
+};
 
 /**
  * Position within the chunk holds the style: the outer tokens round only their outer corners,
@@ -60,20 +72,16 @@ export const tokenElements = (
   if (!token) return [];
   const matched: MatchedElement[] = [];
   if (features.includes('pos')) matched.push({ feature: 'pos', element: POS_ELEMENT[posGroupOf(token)] });
-  if (features.includes('syntax')) {
-    const role = grammarLabel(token, 'syntax.role:');
-    const clause = grammarLabel(token, 'syntax.clause:');
-    // Role first, clause second: the clause only sets the underline, so the role keeps the colour.
-    if (role) matched.push({ feature: 'syntax', element: role });
-    if (clause) matched.push({ feature: 'syntax', element: clause });
-  }
-  // Expression and band layers are language-owned: the registry names the element, and the
-  // feature that draws it is whatever declares that element.
-  for (const element of [registry.expressionElement, registry.levelElement]) {
-    if (!element) continue;
-    const feature = featureOfElement(registry, element);
-    if (feature && features.includes(feature) && token.grammar?.includes(element)) {
-      matched.push({ feature, element });
+  // Every other layer is declared by the registry: element id `layer:label` matches the labels
+  // the local annotators or the remote service wrote into `Token.grammar`. Role and clause can
+  // both match one token; the merge order decides which property each one wins.
+  for (const feature of registry.features) {
+    if (feature.id === 'pos' || !features.includes(feature.id)) continue;
+    for (const element of feature.elements) {
+      // Reading is rendered as ruby and chunk positions come from `Token.groups`.
+      if (element === READING_ELEMENT) continue;
+      if (registry.chunkGroupKey && element.startsWith(`${registry.chunkGroupKey}:`)) continue;
+      if (elementMatchesToken(token, element)) matched.push({ feature: feature.id, element });
     }
   }
   if (registry.chunkGroupKey) {

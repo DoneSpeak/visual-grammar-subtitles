@@ -7,7 +7,7 @@ import type { BandDeclaration } from '@/languages/types';
  * appears in the options page nor affects filtering. Add a tag here when the lexicon starts
  * carrying it.
  */
-const DECLARED = ['cet4', 'cet6', 'kaoyan', 'ielts', 'toefl', 'bec'] as const;
+const DECLARED = ['cet4', 'cet6', 'kaoyan', 'ielts', 'toefl'] as const;
 
 const DECLARED_SET = new Set<string>(DECLARED);
 
@@ -18,7 +18,6 @@ const LABELS: Record<(typeof DECLARED)[number], string> = {
   kaoyan: '考研',
   ielts: 'IELTS',
   toefl: 'TOEFL',
-  bec: 'BEC',
 };
 
 export const EN_BANDS: BandDeclaration = {

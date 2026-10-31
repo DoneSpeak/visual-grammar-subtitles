@@ -56,7 +56,9 @@ export function BandsPage({
           )}
         </SettingRow>
       </Card>
-      <p className="mt-2 text-2xs text-text-faint">{t('dict.footnote')}</p>
+      {pack.dictAttribution ? (
+        <p className="mt-2 text-2xs text-text-faint">{t(pack.dictAttribution)}</p>
+      ) : null}
     </>
   );
 }

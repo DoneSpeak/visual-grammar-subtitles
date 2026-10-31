@@ -53,6 +53,8 @@ export type Token = {
   /** Index into the dictionary entries returned alongside the tokenized line. */
   dictIdx?: number;
   grammar?: string[];
+  /** Human-readable explanations from the analysis (`detail`), e.g. `gonna → going to`. */
+  notes?: string[];
   /** Annotation layer → annotation id. Adjacent tokens share an id when they share a chunk. */
   groups?: Record<string, string>;
   studyProfile?: string;
@@ -122,6 +124,8 @@ export type UrlParts = { id: string | null; season: string | null; episode: numb
 export type PageCfg = {
   offset: number; // seconds; subtitles are scheduled at videoTime - offset (positive = subtitles later)
   subs: { a: SubSource; b: SubSource };
+  /** Online pack search scope (`ja`, `en`, `th`); absent means every available source. */
+  packLanguage?: string;
   layers: { a: LayerCfg; b: LayerCfg };
   /** How the transcript was last shown: floating over the picture, or a split strip. */
   transcriptSplit?: 'overlay' | 'side' | 'bottom';

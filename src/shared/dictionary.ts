@@ -19,10 +19,15 @@ export type DictEntry = {
   img?: string;
   /** Source language; absent means ja (pre-multilingual data). */
   lang?: LanguageId | string;
-  /** IPA transcription (English). */
+  /** IPA transcription (English, Thai). */
   ipa?: string;
-  /** Exam / corpus tags, e.g. 'ielts' | 'toefl' | 'bec' | 'kaoyan'. */
+  /** Exam / corpus tags, e.g. 'ielts' | 'toefl' | 'kaoyan'. */
   tags?: string[];
+  /**
+   * Inflected forms indexed by the lexicon but not shown on the card, e.g. ECDICT's
+   * `p:ran/d:run/i:running` for `run`. Absent for languages without inflection.
+   */
+  forms?: string[];
 };
 
 export type DictFile = { v: number; entries: DictEntry[] };

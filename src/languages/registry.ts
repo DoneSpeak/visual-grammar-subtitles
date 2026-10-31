@@ -59,6 +59,18 @@ export const detectLanguage = (text: string): LanguagePack => {
 /** The id to store on a subtitle source: a real pack, or `plain` below the threshold. */
 export const detectLanguageId = (text: string): LanguageId => detectLanguage(text).id;
 
+/**
+ * Detection with a hint from the source that produced the text.
+ *
+ * A pack's declared language is authoritative when the text itself is too short or too neutral to
+ * detect; a confident detection still wins, so a mislabelled pack corrects itself on load.
+ */
+export const resolveLanguageHint = (text: string, hint?: LanguageId): LanguageId => {
+  const detected = detectLanguageId(text);
+  if (detected !== 'plain') return detected;
+  return hint && isSelectableLanguage(hint) ? hint : detected;
+};
+
 /** True for packs the panel may offer; `plain` and unknown ids are not selectable. */
 export const isSelectableLanguage = (id: LanguageId | undefined): boolean =>
   !!id && Object.hasOwn(LANGUAGE_PACKS, id);

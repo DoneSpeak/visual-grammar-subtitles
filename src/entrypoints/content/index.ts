@@ -19,13 +19,18 @@ import {
   isSubtitleStyleKey,
   loadSubtitleStyle,
   localOnlyPreset,
-  presetRequiresRemote,
+  presetUsesRemote,
   type StudyPreset,
   type SubtitleStyle,
 } from '@/shared/subtitleStyle';
 import { annotateLocal } from '@/features/overlay/tokenize/local';
-import { localFeatures } from '@/shared/studyFeatures';
-import { DEFAULT_LANGUAGE, detectLanguageId, featuresFor } from '@/languages/registry';
+import { localExclusiveFeatures, localFeatures } from '@/shared/studyFeatures';
+import {
+  DEFAULT_LANGUAGE,
+  SELECTABLE_LANGUAGES,
+  featuresFor,
+  resolveLanguageHint,
+} from '@/languages/registry';
 import { UNFILED_TITLE } from '@/shared/persistedText';
 import {
   isPlaybackSettingsKey,
@@ -67,12 +72,22 @@ import { TranscriptPanel, type TranscriptLayout } from '@/features/overlay/trans
 import { canSplit, clampSplitSize, defaultSplitSize, type SplitMode } from '@/features/overlay/split';
 import { Theater, installFrameTheater } from '@/features/overlay/theater';
 import type { SeriesDir, SubFile } from '@/features/scraper/kitsunekko';
+import {
+  providerFor,
+  SUBDL_LANGUAGES,
+  type EpisodeFile,
+  type SeriesHit,
+} from '@/features/scraper/providers';
+import { PROVIDER_KEYS_KEY, sanitizeProviderKeys } from '@/shared/providerSettings';
 import { parseSubtitles } from '@/features/overlay/subtitles/parse';
 import { Timeline } from '@/features/overlay/timeline';
 import { TokenizerClient } from '@/features/overlay/tokenize/client';
 import { pictureRect, watchVideos, type PictureRect } from '@/features/overlay/video';
 
 const log = (...args: unknown[]) => console.info('[jp-sub]', ...args);
+
+/** Subtitle languages an online provider serves; kitsunekko covers Japanese separately. */
+const PROVIDER_LANGUAGES = SUBDL_LANGUAGES;
 
 /** Same label the options page shows for a file, derived per pack. */
 const displayLabel = (entry: LibraryEntry, all: LibraryEntry[]): string => {
@@ -103,6 +118,16 @@ const pickFile = (): Promise<File | null> =>
     });
     input.click();
   });
+
+/** Shape both import paths return: a pack plus the entries it stored. */
+type ImportResult = { packTitle: string; entries: { id: string; name: string }[]; errors: number };
+
+/** An online search result the panel can descend into; kitsunekko and providers share the list. */
+type OnlineTarget =
+  | { kind: 'kitsuDir'; dir: SeriesDir }
+  | { kind: 'kitsuFile'; dir: SeriesDir; file: SubFile }
+  | { kind: 'providerSeries'; language: string; hit: SeriesHit }
+  | { kind: 'providerFile'; language: string; hit: SeriesHit; file: EpisodeFile };
 
 /** One cue resolved into rows for either the subtitle layer or the transcript drawer. */
 type CueRender = {
@@ -144,10 +169,9 @@ class Session {
   private autoSkipAds = true;
   /** Throttles auto-skip so a seek back into the same ad cannot trap the playhead. */
   private lastAdSkipAt = 0;
-  private onlineTargets = new Map<
-    string,
-    { kind: 'dir'; dir: SeriesDir } | { kind: 'file'; dir: SeriesDir; file: SubFile }
-  >();
+  private onlineTargets = new Map<string, OnlineTarget>();
+  /** Drops results from a search the user has already superseded. */
+  private searchSeq = 0;
 
   constructor(
     private video: HTMLVideoElement,
@@ -206,10 +230,15 @@ class Session {
           const sub = this.cfg.subs[target];
           this.cfg.subs[target] = {
             ...sub,
-            language: language ?? detectLanguageId(sub.text.slice(0, 4000)),
+            language: language ?? resolveLanguageHint(sub.text.slice(0, 4000)),
             languageAuto: language === null,
           };
           this.applySubtitle(target, sub.name, sub.text);
+          this.overlay.syncPanel();
+          this.save();
+        },
+        onPackLanguage: (language) => {
+          this.cfg.packLanguage = language ?? undefined;
           this.overlay.syncPanel();
           this.save();
         },
@@ -422,14 +451,26 @@ class Session {
     const language = this.languageOf(id);
     const registry = featuresFor(language);
     const preset = activePreset(this.subtitleStyle, language);
-    return presetRequiresRemote(registry, preset) && !this.analysis[id].ready()
+    return presetUsesRemote(registry, preset) && !this.analysis[id].ready()
       ? localOnlyPreset(registry, preset)
       : preset;
   }
 
-  /** Local annotations for the preset's local features; grammar labels look identical either way. */
-  private annotate(lines: DictLine[], preset: StudyPreset, language: string): DictLine[] {
-    const features = localFeatures(featuresFor(language), preset.features);
+  /**
+   * Local annotations for the preset's features. On the remote path only locally exclusive
+   * features run, so client rules never compete with the service's labels; hybrid features keep
+   * working when the service is unavailable because the caller has already fallen back.
+   */
+  private annotate(
+    lines: DictLine[],
+    preset: StudyPreset,
+    language: string,
+    remote: boolean,
+  ): DictLine[] {
+    const registry = featuresFor(language);
+    const features = remote
+      ? localExclusiveFeatures(registry, preset.features)
+      : localFeatures(registry, preset.features);
     if (!features.length) return lines;
     return lines.map((line) => ({
       ...line,
@@ -471,7 +512,7 @@ class Session {
       const cached = this.cueDict.get(cue);
       return {
         lines,
-        rows: this.annotate(cached ?? this.splitRemote(lines, remote), preset, language),
+        rows: this.annotate(cached ?? this.splitRemote(lines, remote), preset, language, true),
         preset,
         remote: true,
         tokensReady: true,
@@ -483,7 +524,7 @@ class Session {
     const ready = cached.every((line): line is DictLine => line !== undefined);
     return {
       lines,
-      rows: ready ? this.annotate(cached, preset, language) : lines.map(() => null),
+      rows: ready ? this.annotate(cached, preset, language, false) : lines.map(() => null),
       preset,
       remote: false,
       tokensReady: ready,
@@ -777,33 +818,128 @@ class Session {
     this.renderOnline(target);
   }
 
+  /** Keys are read here so the panel can skip sources it could never query. */
+  private async providerKeys(): Promise<Record<string, string | undefined>> {
+    const raw = await chrome.storage.local.get(PROVIDER_KEYS_KEY);
+    return sanitizeProviderKeys(raw[PROVIDER_KEYS_KEY]);
+  }
+
+  private hasProviderKey(language: string, keys: Record<string, string | undefined>): boolean {
+    const provider = providerFor(language);
+    return !!provider && !!keys[provider.id];
+  }
+
+  /**
+   * Online search is scoped by `cfg.packLanguage`: `ja` → kitsunekko, other subtitle languages →
+   * that provider, absent → every source the user has a key for, plus kitsunekko. The local
+   * library stays cross-language; only the remote sources are constrained.
+   */
   private async searchOnline(target: LibraryTarget, query: string): Promise<void> {
     this.onlineTargets.clear();
     this.onlineBack[target] = [];
     this.onlineRows[target] = [];
-    this.onlineStatus[target] = t('content.searching');
+    const source = this.cfg.packLanguage;
+    const providerOnly = !!source && source !== 'ja';
+    // An explicit Japanese source means kitsunekko only — never mix in SubDL languages.
+    const kitsuOnly = source === 'ja';
+    const providerLabel = providerOnly ? (providerFor(source as string)?.id ?? source) : '';
+    this.onlineStatus[target] = providerOnly
+      ? t('content.searchingProvider', { provider: providerLabel })
+      : source
+        ? t('content.searching')
+        : t('content.searchingAll');
     this.renderOnline(target);
+    const seq = ++this.searchSeq;
+
     try {
-      const { hits, translated } = await this.remote<{ hits: SeriesDir[]; translated?: string }>({
-        type: 'kitsuSearch',
-        query,
-      });
-      this.onlineRows[target] = hits.map((dir) => {
-        const key = `series:${dir.path}`;
-        this.onlineTargets.set(key, { kind: 'dir', dir });
-        return { key, title: dir.name, meta: 'kitsunekko' };
-      });
-      const note = translated ? t('content.translated', { title: translated }) : '';
-      this.onlineStatus[target] = this.onlineRows[target].length
-        ? note
-        : note
-          ? t('content.translatedNoPack', { title: translated })
-          : t('content.noMatch');
+      const keys = await this.providerKeys();
+      if (seq !== this.searchSeq) return;
+      if (providerOnly && !this.hasProviderKey(source as string, keys)) {
+        this.onlineStatus[target] = t('content.providerKeyMissing', {
+          provider: providerFor(source as string)?.id ?? source,
+        });
+        this.renderOnline(target);
+        return;
+      }
+      const languages = providerOnly
+        ? [source as string]
+        : kitsuOnly
+          ? []
+          : PROVIDER_LANGUAGES.filter((language) => this.hasProviderKey(language, keys));
+      const rows: LibraryRow[] = [];
+      let translated = '';
+      const jobs: Promise<void>[] = [];
+
+      if (!providerOnly) {
+        jobs.push(
+          this.searchKitsu(query).then((found) => {
+            rows.push(...found.rows);
+            translated = found.translated;
+          }),
+        );
+      }
+      for (const language of languages) {
+        jobs.push(
+          this.searchProvider(language, query).then((found) => {
+            rows.push(...found);
+          }),
+        );
+      }
+
+      const results = await Promise.allSettled(jobs);
+      if (seq !== this.searchSeq) return;
+      const failure = results.find((result): result is PromiseRejectedResult => result.status === 'rejected');
+      this.onlineRows[target] = rows;
+
+      if (rows.length) {
+        this.onlineStatus[target] = translated ? t('content.translated', { title: translated }) : '';
+      } else if (failure) {
+        this.onlineStatus[target] = t('errors.onlineSearchFailed', { error: errText(failure.reason) });
+      } else if (providerOnly) {
+        this.onlineStatus[target] = t('content.noMatchProvider', { provider: providerLabel });
+      } else if (translated) {
+        this.onlineStatus[target] = t('content.translatedNoPack', { title: translated });
+      } else {
+        this.onlineStatus[target] = t('content.noMatch');
+      }
       this.renderOnline(target);
     } catch (err) {
       this.onlineStatus[target] = t('errors.onlineSearchFailed', { error: errText(err) });
       this.renderOnline(target);
     }
+  }
+
+  private async searchKitsu(query: string): Promise<{ rows: LibraryRow[]; translated: string }> {
+    const { hits, translated } = await this.remote<{ hits: SeriesDir[]; translated?: string }>({
+      type: 'kitsuSearch',
+      query,
+    });
+    const rows = hits.map((dir): LibraryRow => {
+      const key = `series:${dir.path}`;
+      this.onlineTargets.set(key, { kind: 'kitsuDir', dir });
+      return { key, title: dir.name, meta: 'kitsunekko' };
+    });
+    return { rows, translated: translated ?? '' };
+  }
+
+  private async searchProvider(language: string, query: string): Promise<LibraryRow[]> {
+    const provider = providerFor(language);
+    if (!provider) return [];
+    const { hits } = await this.remote<{ hits: SeriesHit[] }>({
+      type: 'providerSearch',
+      provider: provider.id,
+      language,
+      query,
+    });
+    return hits.map((hit): LibraryRow => {
+      const key = `pseries:${language}:${hit.id}`;
+      this.onlineTargets.set(key, { kind: 'providerSeries', language, hit });
+      return {
+        key,
+        title: hit.title,
+        meta: hit.year ? `${provider.id} · ${hit.year}` : provider.id,
+      };
+    });
   }
 
   private async openRemoteDir(target: LibraryTarget, dir: SeriesDir): Promise<void> {
@@ -816,12 +952,12 @@ class Session {
       const rows: LibraryRow[] = [];
       for (const sub of dirs) {
         const key = `dir:${sub.path}`;
-        this.onlineTargets.set(key, { kind: 'dir', dir: sub });
+        this.onlineTargets.set(key, { kind: 'kitsuDir', dir: sub });
         rows.push({ key, title: sub.name, meta: t('content.subdir') });
       }
       for (const file of files) {
         const key = `file:${file.url}`;
-        this.onlineTargets.set(key, { kind: 'file', dir, file });
+        this.onlineTargets.set(key, { kind: 'kitsuFile', dir, file });
         rows.push({ key, title: file.name, meta: `${fmtSize(file.size)} · ${file.modified}` });
       }
       this.onlineRows[target] = rows;
@@ -836,35 +972,89 @@ class Session {
   private async importRemote(target: LibraryTarget, dir: SeriesDir, file: SubFile): Promise<void> {
     this.beginOnline(target, t('content.downloading', { name: file.name }));
     try {
-      const res = await this.remote<{ packTitle: string; entries: { id: string; name: string }[]; errors: number }>({
-        type: 'kitsuImport',
-        dir,
-        file,
-      });
-      const failed = res.errors ? t('popup.toast.parseFailed', { count: res.errors }) : '';
-      if (target === 'pack') {
-        // The pack box only fills the library; selection happens in the two layer boxes.
-        await this.refreshLibrary();
-        this.onlineRows.pack = [];
-        this.onlineStatus.pack =
-          t('content.importedCount', { count: res.entries.length }) + failed + t('content.chooseAbove');
-        this.renderOnline('pack');
-        return;
-      }
-      const labels = describeSubtitles(res.entries.map((e) => e.name));
-      this.onlineRows[target] = res.entries.map((e) => ({
-        key: `entry:${e.id}`,
-        title: labels.get(e.name)?.label ?? e.name,
-        meta: res.packTitle,
-      }));
-      this.onlineStatus[target] = res.errors
-        ? t('content.importedCount', { count: res.entries.length }) + failed
-        : '';
-      this.renderOnline(target);
+      const res = await this.remote<ImportResult>({ type: 'kitsuImport', dir, file });
+      await this.showImported(target, res);
     } catch (err) {
       this.onlineStatus[target] = t('errors.importFailed', { error: errText(err) });
       this.renderOnline(target);
     }
+  }
+
+  private async openProviderSeries(
+    target: LibraryTarget,
+    language: string,
+    hit: SeriesHit,
+  ): Promise<void> {
+    this.beginOnline(target, t('content.readingDir', { name: hit.title }));
+    try {
+      const provider = providerFor(language);
+      const { files } = await this.remote<{ files: EpisodeFile[] }>({
+        type: 'providerList',
+        provider: provider?.id,
+        language,
+        hit,
+      });
+      const rows: LibraryRow[] = files.map((file) => {
+        const key = `pfile:${language}:${file.id}`;
+        this.onlineTargets.set(key, { kind: 'providerFile', language, hit, file });
+        const meta = [provider?.id, file.size ? fmtSize(file.size) : '', file.release ?? '']
+          .filter(Boolean)
+          .join(' · ');
+        return { key, title: file.name, meta };
+      });
+      this.onlineRows[target] = rows;
+      this.onlineStatus[target] = rows.length ? '' : t('content.emptyDir');
+      this.renderOnline(target);
+    } catch (err) {
+      this.onlineStatus[target] = t('errors.readDirFailed', { error: errText(err) });
+      this.renderOnline(target);
+    }
+  }
+
+  private async importProviderFile(
+    target: LibraryTarget,
+    language: string,
+    hit: SeriesHit,
+    file: EpisodeFile,
+  ): Promise<void> {
+    this.beginOnline(target, t('content.downloading', { name: file.name }));
+    try {
+      const res = await this.remote<ImportResult>({
+        type: 'providerImport',
+        provider: providerFor(language)?.id,
+        language,
+        hit,
+        file,
+      });
+      await this.showImported(target, res);
+    } catch (err) {
+      this.onlineStatus[target] = t('errors.importFailed', { error: errText(err) });
+      this.renderOnline(target);
+    }
+  }
+
+  /** Shared tail for kitsunekko and provider imports: fill the library, then offer the files. */
+  private async showImported(target: LibraryTarget, res: ImportResult): Promise<void> {
+    const failed = res.errors ? t('popup.toast.parseFailed', { count: res.errors }) : '';
+    if (target === 'pack') {
+      // The pack box only fills the library; selection happens in the two layer boxes.
+      await this.refreshLibrary();
+      this.onlineRows.pack = [];
+      this.onlineStatus.pack =
+        t('content.importedCount', { count: res.entries.length }) + failed + t('content.chooseAbove');
+      this.renderOnline('pack');
+      return;
+    }
+    const labels = describeSubtitles(res.entries.map((e) => e.name));
+    this.onlineRows[target] = res.entries.map((e) => ({
+      key: `entry:${e.id}`,
+      title: labels.get(e.name)?.label ?? e.name,
+      meta: res.packTitle,
+    }));
+    this.onlineStatus[target] = res.errors
+      ? t('content.importedCount', { count: res.entries.length }) + failed
+      : '';
+    this.renderOnline(target);
   }
 
   private async pickLibraryRow(target: LibraryTarget, key: string): Promise<void> {
@@ -884,28 +1074,42 @@ class Session {
     }
     const found = this.onlineTargets.get(key);
     if (!found) return;
-    if (found.kind === 'dir') await this.openRemoteDir(target, found.dir);
-    else await this.importRemote(target, found.dir, found.file);
+    switch (found.kind) {
+      case 'kitsuDir':
+        await this.openRemoteDir(target, found.dir);
+        break;
+      case 'kitsuFile':
+        await this.importRemote(target, found.dir, found.file);
+        break;
+      case 'providerSeries':
+        await this.openProviderSeries(target, found.language, found.hit);
+        break;
+      case 'providerFile':
+        await this.importProviderFile(target, found.language, found.hit, found.file);
+        break;
+    }
   }
 
   private async applyLibraryItem(target: LayerId, id: string): Promise<void> {
-    const [text, items] = await Promise.all([readLibraryText(id), listLibrary()]);
+    const [text, items, packs] = await Promise.all([readLibraryText(id), listLibrary(), listPacks()]);
     const entry = items.find((e) => e.id === id);
     if (!text || !entry) {
       log('library item unavailable', id);
       return;
     }
     const label = displayLabel(entry, items);
-    this.cfg.subs[target] = { ...this.cfg.subs[target], name: label, text };
-    this.applySubtitle(target, label, text);
+    // A fresh selection re-runs detection; the pack's declared language is only a fallback for
+    // text too short to classify.
+    this.cfg.subs[target] = { ...this.cfg.subs[target], name: label, text, languageAuto: true };
+    this.applySubtitle(target, label, text, packs.find((p) => p.id === entry.packId)?.language);
     this.overlay.syncPanel();
     this.onSubtitlePicked(target, { id, name: label, packId: entry.packId });
     this.save();
     if (target === 'a') void patchLibrarySettings({ lastId: id });
   }
 
-  private applySubtitle(target: LayerId, name: string, text: string): void {
-    const language = this.resolveSubtitleLanguage(target, text);
+  private applySubtitle(target: LayerId, name: string, text: string, languageHint?: string): void {
+    const language = this.resolveSubtitleLanguage(target, text, languageHint);
     const cues = parseSubtitles(text);
     this.timelines[target].setCues(cues);
     if (target === 'a') this.transcript.setCues(cues);
@@ -927,10 +1131,10 @@ class Session {
    * Language is content, not display: detect it from the subtitle text unless the user pinned a
    * language for this layer. The result is written back to the page config.
    */
-  private resolveSubtitleLanguage(target: LayerId, text: string): string {
+  private resolveSubtitleLanguage(target: LayerId, text: string, hint?: string): string {
     const sub = this.cfg.subs[target];
     if (sub.languageAuto === false && sub.language) return sub.language;
-    const language = detectLanguageId(text.slice(0, 4000));
+    const language = resolveLanguageHint(text.slice(0, 4000), hint);
     if (sub.language !== language) {
       this.cfg.subs[target] = { ...sub, language };
       this.save();
@@ -942,7 +1146,7 @@ class Session {
     const file = await pickFile();
     if (!file) return;
     const text = await file.text();
-    this.cfg.subs[target] = { ...this.cfg.subs[target], name: file.name, text };
+    this.cfg.subs[target] = { ...this.cfg.subs[target], name: file.name, text, languageAuto: true };
     this.applySubtitle(target, file.name, text);
     this.overlay.syncPanel();
     this.onSubtitlePicked(target, { id: '', name: file.name });
@@ -968,7 +1172,7 @@ class Session {
     event.stopPropagation();
     const target: LayerId = this.cfg.subs.a.text ? 'b' : 'a';
     void file.text().then((text) => {
-      this.cfg.subs[target] = { ...this.cfg.subs[target], name: file.name, text };
+      this.cfg.subs[target] = { ...this.cfg.subs[target], name: file.name, text, languageAuto: true };
       this.applySubtitle(target, file.name, text);
       this.overlay.syncPanel();
       this.onSubtitlePicked(target, { id: '', name: file.name });
@@ -1242,6 +1446,7 @@ const start = async (): Promise<void> => {
   const pushLibrary = async (): Promise<void> => {
     const [entries, packs] = await Promise.all([listLibrary(), listPacks()]);
     const titles = new Map(packs.map((p) => [p.id, p.title]));
+    const languages = new Map(packs.map((p) => [p.id, p.language]));
     const byPack = new Map<string, string[]>();
     for (const entry of entries) {
       const names = byPack.get(entry.packId);
@@ -1255,6 +1460,7 @@ const start = async (): Promise<void> => {
         name,
         label: labels.get(packId)?.get(name)?.label ?? name,
         packTitle: packTitleForDisplay(titles.get(packId) ?? UNFILED_TITLE, t),
+        language: languages.get(packId),
       })),
     );
   };

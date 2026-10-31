@@ -1,6 +1,8 @@
-# JP Subtitle Overlay
+# Visual Grammar Subtitles
 
-在任意网页视频上叠加本地字幕的 Chrome 扩展，面向「看动漫学日语」：日语词性着色、振假名、双层字幕、显示时长裁剪。
+Visual Grammar & Color-Coded Language Learning
+
+在任意网页视频上叠加本地字幕的 Chrome 扩展，把字幕变成可视化语法课：词性着色、振假名、双层字幕、显示时长裁剪。
 
 ## 安装
 
@@ -74,12 +76,14 @@ Chrome → `chrome://extensions` → 打开「开发者模式」→「加载已�
 
 分词使用 `@sglkc/kuromoji`（IPADIC），在 background service worker 中运行，词典随扩展打包（`.output/chrome-mv3/dict/`，约 14MB），完全离线。
 
-## 词汇卡（JLPT N1–N5）
+## 词汇卡（日语 / 英语 / 泰语）
 
-- 字幕里命中 JLPT 词表的词带虚线下划线，弹出词汇卡：读音、级别、词性、英文释义、例句，以及按句朗读（系统日语语音）。
+- 日语：字幕里命中 JLPT 词表的词带虚线下划线，弹出词汇卡：读音、级别、词性、英文释义、例句，以及按句朗读（系统日语语音）。
 - 选项页「学习词典」可整体开关，并按 N1–N5 勾选要标注的级别；改动在播放页立即生效，无需刷新。
 - 触发方式可选「点击单词」或「悬停即显示」；卡片持续可选「跟随字幕」（字幕换行/消失时关闭）或「固定时长」1–30 秒。
 - 词表由 `pnpm dict:build` 从 JMdict 与 open-anki-jlpt-decks 生成到 `public/dict/jlpt-dict.json`（约 1.8MB，已提交，构建无需联网）。数据来源与许可见 [NOTICE.md](NOTICE.md)。
+- 英语：`pnpm lexicon:build en` 从 ECDICT 生成 `public/dict/en/lexicon.json`；来源、字段映射与限制见 [docs/dict/en.md](docs/dict/en.md)。
+- 泰语：`pnpm lexicon:build th` 合并人工审核的中文词表与 kaikki.org 泰语数据生成 `public/dict/th/lexicon.json`；审核规则、许可与限制见 [docs/dict/th.md](docs/dict/th.md)。
 - 未收录词、助词 / 助动词、被 kuromoji 拆开的复合词片段不可点击。
 
 ## 站点规则（自动选集 / 广告补偿）

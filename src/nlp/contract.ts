@@ -1,7 +1,7 @@
 import { normalizePos, type Cue, type Token } from '@/shared/types';
 import { validateShape } from './schema';
 export type Span = { start: number; end: number };
-export type Annotation = { id: string; layer: string; label: string; quality: string; spans: Span[] };
+export type Annotation = { id: string; layer: string; label: string; quality: string; spans: Span[]; detail?: string; parentId?: string | null };
 export type AnalysisToken = Span & { id: string; surface: string; pos: string; rawPos?: string; lemma?: string; reading?: string };
 export type AnalysisUnit = { id: string; providerId: string; status: 'complete' | 'failed'; capabilities: string[]; text: string; offsetEncoding: 'utf16'; mappings: { unitStart: number; unitEnd: number; cueId: string; cueStart: number; cueEnd: number }[]; tokens: AnalysisToken[]; annotations: Annotation[]; dependencies: { dependentTokenId: string; headTokenId: string | null; relation: string }[] };
 export type TrackCue = { id: string; startMs: number; endMs: number; text: string };
@@ -49,7 +49,12 @@ export async function validateDocument(input: unknown, expectedHash?: string): P
       if (spans.some(s => m.cueStart < s.end && s.start < m.cueEnd)) throw Error('Overlapping mappings');
       spans.push({ start: m.cueStart, end: m.cueEnd }); covered.set(c.id, spans);
     }
-    for (const a of u.annotations) for (const s of a.spans) slice(u.text, s.start, s.end);
+    const annotationIds = new Set(u.annotations.map(a => a.id));
+    if (annotationIds.size !== u.annotations.length) throw Error('Duplicate annotation');
+    for (const a of u.annotations) {
+      for (const s of a.spans) slice(u.text, s.start, s.end);
+      if (a.parentId != null && (a.parentId === a.id || !annotationIds.has(a.parentId))) throw Error('Invalid annotation parent');
+    }
     for (const e of u.dependencies) if (!ids.has(e.dependentTokenId) || (e.headTokenId !== null && !ids.has(e.headTokenId))) throw Error('Invalid dependency');
   }
   return d;
@@ -59,7 +64,7 @@ export async function validateDocument(input: unknown, expectedHash?: string): P
 export function cueTokens(d: AnalysisDocument, cueId: string, profile: string): Token[] | null {
   const cue = d.track.cues.find(c => c.id === cueId);
   if (!cue) return null;
-  const parts: { start: number; end: number; token?: AnalysisToken; labels: string[]; groups: Record<string, string> }[] = [];
+  const parts: { start: number; end: number; token?: AnalysisToken; labels: string[]; groups: Record<string, string>; notes: string[] }[] = [];
   const mappings = d.units.flatMap(u => u.mappings.filter(m => m.cueId === cueId).map(m => ({ u, m }))).sort((a, b) => a.m.cueStart - b.m.cueStart);
   let end = 0;
   for (const { u, m } of mappings) {
@@ -76,12 +81,15 @@ export function cueTokens(d: AnalysisDocument, cueId: string, profile: string): 
       parts.push({ start: start - m.unitStart + m.cueStart, end: finish - m.unitStart + m.cueStart,
         token: u.tokens.find(t => t.start <= start && t.end >= finish),
         labels: covering.map(a => `${a.layer}:${a.label}`),
-        groups: Object.fromEntries(covering.map(a => [a.layer, a.id])) });
+        groups: Object.fromEntries(covering.map(a => [a.layer, a.id])),
+        // Only the extended modes carry a human-readable explanation; the label alone is enough
+        // for roles and chunks.
+        notes: covering.flatMap(a => a.detail ? [a.detail] : []) });
     }
   }
   if (end !== cue.text.length) return null;
   return parts.map(p => {
     const surface = cue.text.slice(p.start, p.end), t = p.token;
-    return { surface, pos: normalizePos(t?.pos), posRaw: t?.rawPos, baseForm: t?.lemma ?? '', reading: surface === t?.surface ? t.reading ?? '' : '', grammar: p.labels, groups: p.groups, studyProfile: profile };
+    return { surface, pos: normalizePos(t?.pos), posRaw: t?.rawPos, baseForm: t?.lemma ?? '', reading: surface === t?.surface ? t.reading ?? '' : '', grammar: p.labels, groups: p.groups, notes: p.notes.length ? p.notes : undefined, studyProfile: profile };
   });
 }

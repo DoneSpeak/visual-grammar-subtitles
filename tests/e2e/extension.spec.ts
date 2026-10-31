@@ -201,8 +201,8 @@ test('adds a second learning language without locking the options page', async (
   await expect(options.getByRole('link', { name: '词表分级' })).toHaveCount(2);
 
   await options.goto(`chrome-extension://${extensionId}/options.html#modes/en`);
-  await expect(options.getByRole('button', { name: /语法成分/ })).toBeVisible();
-  await expect(options.getByRole('button', { name: /短语语块/ })).toBeVisible();
+  await expect(options.getByRole('button', { name: /句子成分/ })).toBeVisible();
+  await expect(options.getByRole('button', { name: /语义组块/ }).first()).toBeVisible();
   await expect(options.locator('[data-preview="main"]:visible')).toContainText('offer');
 
   // Groups fold independently; Japanese starts open and closes on click.

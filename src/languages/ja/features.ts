@@ -27,23 +27,23 @@ export const EXPRESSION_ELEMENT = 'expression.grammar:all';
 export const CHUNK_ELEMENTS: string[] = chunkElements(CHUNK_GROUP_KEY);
 
 export const STUDY_FEATURES: StudyFeature[] = [
-  { id: 'pos', group: 'token', requires: 'local', elements: POS_GROUPS.map((group) => POS_ELEMENT[group]) },
-  { id: 'nouns', group: 'token', requires: 'local', dependsOn: 'pos', elements: [] },
-  { id: 'reading', group: 'token', requires: 'local', elements: [READING_ELEMENT] },
-  { id: 'expression', group: 'rule', requires: 'local', elements: [EXPRESSION_ELEMENT] },
-  { id: 'level', group: 'rule', requires: 'local', elements: [LEVEL_ELEMENT] },
+  { id: 'pos', group: 'token', sources: ['local'], elements: POS_GROUPS.map((group) => POS_ELEMENT[group]) },
+  { id: 'nouns', group: 'token', sources: ['local'], dependsOn: 'pos', elements: [] },
+  { id: 'reading', group: 'token', sources: ['local'], elements: [READING_ELEMENT] },
+  { id: 'expression', group: 'rule', sources: ['local'], elements: [EXPRESSION_ELEMENT] },
+  { id: 'level', group: 'rule', sources: ['local'], elements: [LEVEL_ELEMENT] },
   {
     id: 'chunk-rule',
     group: 'rule',
-    requires: 'local',
+    sources: ['local'],
     conflictsWith: ['chunk'],
     elements: [...CHUNK_ELEMENTS],
   },
-  { id: 'syntax', group: 'remote', requires: 'remote', elements: ROLE_ELEMENTS },
+  { id: 'syntax', group: 'remote', sources: ['remote'], elements: ROLE_ELEMENTS },
   {
     id: 'chunk',
     group: 'remote',
-    requires: 'remote',
+    sources: ['remote'],
     conflictsWith: ['chunk-rule'],
     elements: [...CHUNK_ELEMENTS],
   },

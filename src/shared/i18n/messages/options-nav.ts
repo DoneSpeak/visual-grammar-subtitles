@@ -4,6 +4,7 @@ export const optionsNav = defineMessages(
   {
     'options.nav.packs': 'Subtitle packs',
     'options.nav.dict': 'Learning dictionary',
+    'options.nav.cards': 'Word cards',
     'options.nav.vocab': 'Vocabulary pictures',
     'options.nav.rules': 'Site rules',
     'options.nav.binds': 'Series bindings',
@@ -29,6 +30,7 @@ export const optionsNav = defineMessages(
   {
     'options.nav.packs': '字幕包',
     'options.nav.dict': '学习词典',
+    'options.nav.cards': '词汇卡片',
     'options.nav.vocab': '词汇图示',
     'options.nav.rules': '站点规则',
     'options.nav.binds': '番剧绑定',

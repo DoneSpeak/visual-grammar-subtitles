@@ -1,13 +1,9 @@
 import { defaultBandSelection } from '@/languages/bands';
-import { resolveLanguage } from '@/languages/registry';
+import { featuresFor, resolveLanguage } from '@/languages/registry';
 import type { BandSelection, LanguageId } from '@/languages/types';
 import type { DictEntry } from '@/shared/dictionary';
 import type { Pos, Token } from '@/shared/types';
-import {
-  annotateChunks,
-  annotateExpressions,
-  annotateLevels,
-} from '@/features/overlay/tokenize/local';
+import { annotateLocal } from '@/features/overlay/tokenize/local';
 
 /**
  * Static, already-annotated examples, one per language. The options preview never calls NLP: the
@@ -21,7 +17,7 @@ import {
  */
 
 type Extra = Partial<
-  Pick<Token, 'conjForm' | 'reading' | 'dictIdx' | 'posDetail1' | 'baseForm' | 'posRaw'>
+  Pick<Token, 'conjForm' | 'reading' | 'dictIdx' | 'posDetail1' | 'baseForm' | 'posRaw' | 'notes'>
 >;
 
 const w = (
@@ -39,6 +35,7 @@ const w = (
   baseForm: extra.baseForm ?? '',
   reading: extra.reading ?? '',
   ...(extra.dictIdx !== undefined ? { dictIdx: extra.dictIdx } : {}),
+  ...(extra.notes ? { notes: extra.notes } : {}),
   ...(grammar.length ? { grammar } : {}),
 });
 
@@ -164,23 +161,54 @@ const S = (): Token => w(' ', 'SYM');
  * group the renderer colours. Spaces are tokens, as the English segmenter emits them.
  */
 const EN_LINE: Token[] = [
-  w("I'm", 'AUX', ['syntax.role:subject'], { baseForm: 'be' }),
+  w("I'm", 'AUX', ['syntax.role:subject', 'morph.form:contraction'], {
+    baseForm: 'be',
+    notes: ["I'm → I am"],
+  }),
   S(),
-  w('gonna', 'AUX', ['syntax.role:predicate'], { baseForm: 'gonna' }),
+  w('gonna', 'AUX', ['syntax.role:predicate', 'morph.form:contraction'], {
+    baseForm: 'gonna',
+    notes: ['gonna → going to (future intention)'],
+  }),
   S(),
-  w('make', 'VERB', ['syntax.role:predicate'], { baseForm: 'make' }),
+  w('make', 'VERB', ['syntax.role:predicate', 'phrase.structure:VP', 'morph.form:verbForm'], {
+    baseForm: 'make',
+    notes: ['VerbForm=Inf'],
+  }),
   S(),
-  w('him', 'PRON', ['syntax.role:object'], { baseForm: 'him' }),
+  w('him', 'PRON', ['syntax.role:object', 'phrase.structure:NP', 'phrase.structure:VP'], {
+    baseForm: 'him',
+  }),
   S(),
-  w('an', 'DET', ['syntax.role:attributive'], { baseForm: 'an' }),
+  w('an', 'DET', ['syntax.role:attributive', 'phrase.structure:NP'], { baseForm: 'an' }),
   S(),
-  w('offer', 'NOUN', ['syntax.role:object'], { baseForm: 'offer', dictIdx: 0 }),
+  w('offer', 'NOUN', ['syntax.role:object', 'phrase.structure:NP', 'phrase.structure:VP'], {
+    baseForm: 'offer',
+    dictIdx: 0,
+  }),
   S(),
-  w('he', 'PRON', ['syntax.role:subject'], { baseForm: 'he' }),
+  w('he', 'PRON', ['syntax.role:subject', 'syntax.clause:attributive', 'phrase.structure:NP'], {
+    baseForm: 'he',
+  }),
   S(),
-  w("can't", 'AUX', ['syntax.role:predicate'], { baseForm: 'can' }),
+  w(
+    "can't",
+    'AUX',
+    [
+      'syntax.role:predicate',
+      'syntax.clause:attributive',
+      'phrase.structure:VP',
+      'morph.form:contraction',
+      'morph.form:modal',
+      'morph.form:negation',
+    ],
+    { baseForm: 'can', notes: ["can't → cannot (modal + negation)"] },
+  ),
   S(),
-  w('refuse', 'VERB', ['syntax.role:predicate'], { baseForm: 'refuse' }),
+  w('refuse', 'VERB', ['syntax.role:predicate', 'syntax.clause:attributive', 'phrase.structure:VP'], {
+    baseForm: 'refuse',
+    notes: ["can't refuse → be unable to say no"],
+  }),
   w('.', 'PUNCT'),
 ];
 
@@ -204,35 +232,35 @@ const EN_SAMPLE_TAIL: Token[] = [
 // --- Thai ---------------------------------------------------------------------------------
 
 /**
- * ภาพในอดีตจริง ๆ ไม่เคยจากเราไปไหน (the image of the past never really leaves us).
+ * ถ้าเหนื่อยก็พักก่อน เดี๋ยวฉันช่วยเอง (if you're tired, rest first; I'll help in a moment).
  *
- * Thai writes without spaces except around the ๆ repetition mark, so those two spaces are tokens
- * of their own. The negation and the past-experience marker stay in the predicate.
+ * The reference sentence from `specs/261031-thai-subtitle-six-learning-modes.md`. The tokenizer
+ * emits exactly these tokens; word boundaries, chunks, aspect and expressions are then produced
+ * by the pack's local annotators. Syntax roles and clauses are the remote heuristic, so they are
+ * written by hand here to exercise the palette.
  */
 const TH_LINE: Token[] = [
-  w('ภาพ', 'NOUN', ['syntax.role:topic'], { baseForm: 'ภาพ' }),
-  w('ใน', 'ADP', ['syntax.role:modifier'], { baseForm: 'ใน' }),
-  w('อดีต', 'NOUN', ['syntax.role:modifier'], { baseForm: 'อดีต' }),
-  w('จริง', 'ADV', ['syntax.role:adverbial'], { baseForm: 'จริง' }),
+  w('ถ้า', 'SCONJ', ['syntax.clause:condition', 'aspect.function:conditional'], { baseForm: 'ถ้า' }),
+  w('เหนื่อย', 'ADJ', ['syntax.clause:condition', 'syntax.role:predicate'], { baseForm: 'เหนื่อย' }),
+  w('ก็', 'CCONJ', ['syntax.clause:result', 'aspect.function:connective'], { baseForm: 'ก็' }),
+  w('พัก', 'VERB', ['syntax.clause:result', 'syntax.role:predicate'], { baseForm: 'พัก' }),
+  w('ก่อน', 'ADV', ['syntax.clause:result', 'aspect.function:sequence'], { baseForm: 'ก่อน' }),
   w(' ', 'SYM'),
-  w('ๆ', 'PUNCT', ['syntax.role:adverbial']),
-  w(' ', 'SYM'),
-  w('ไม่', 'PART', ['syntax.role:predicate'], { baseForm: 'ไม่' }),
-  w('เคย', 'AUX', ['syntax.role:predicate'], { baseForm: 'เคย' }),
-  w('จาก', 'ADP', ['syntax.role:adverbial'], { baseForm: 'จาก' }),
-  w('เรา', 'PRON', ['syntax.role:object'], { baseForm: 'เรา' }),
-  w('ไป', 'VERB', ['syntax.role:predicate'], { baseForm: 'ไป' }),
-  w('ไหน', 'PRON', ['syntax.role:adverbial'], { baseForm: 'ไหน' }),
+  w('เดี๋ยว', 'ADV', ['syntax.clause:continuation', 'aspect.function:prospective'], { baseForm: 'เดี๋ยว' }),
+  w('ฉัน', 'PRON', ['syntax.clause:continuation', 'syntax.role:subject'], { baseForm: 'ฉัน' }),
+  w('ช่วย', 'VERB', ['syntax.clause:continuation', 'syntax.role:predicate'], { baseForm: 'ช่วย' }),
+  w('เอง', 'PART', ['syntax.clause:continuation', 'aspect.function:emphasis'], { baseForm: 'เอง' }),
 ];
 
 const TH_SAMPLE_TAIL: Token[] = [
-  w('แต่', 'CCONJ', [], { baseForm: 'แต่' }),
-  w('มาก', 'ADV', [], { baseForm: 'มาก' }),
-  w('สวย', 'ADJ', [], { baseForm: 'สวย' }),
-  w('โอ้', 'INTJ', [], { baseForm: 'โอ้' }),
+  w('แมว', 'NOUN', [], { baseForm: 'แมว' }),
   w('สาม', 'NUM', [], { baseForm: 'สาม' }),
   w('กรุงเทพ', 'PROPN', [], { baseForm: 'กรุงเทพ' }),
-  w('แล้ว', 'ADV', [], { baseForm: 'แล้ว' }),
+  w('โอ้', 'INTJ', [], { baseForm: 'โอ้' }),
+  w('และ', 'CCONJ', [], { baseForm: 'และ' }),
+  w('มาก', 'ADV', [], { baseForm: 'มาก' }),
+  w('สวย', 'ADJ', [], { baseForm: 'สวย' }),
+  w('ครับ', 'PART', [], { baseForm: 'ครับ' }),
 ];
 
 // --- Factory ------------------------------------------------------------------------------
@@ -257,11 +285,11 @@ const SPECS: Record<string, Spec> = {
 export const previewFor = (language: LanguageId, bands?: BandSelection): PreviewFixture => {
   const spec = SPECS[language] ?? SPECS.ja;
   const selection = bands ?? defaultBandSelection(resolveLanguage(language).bands);
-  const tokens = annotateLevels(
-    annotateExpressions(annotateChunks(spec.line, language), language),
-    spec.entries,
-    selection,
-    language,
-  );
+  // Every locally producible annotation, not the current preset: the preview shows what the
+  // palette can render, while the mode switches decide what playback actually turns on.
+  const features = featuresFor(language)
+    .features.filter((feature) => feature.sources.includes('local'))
+    .map((feature) => feature.id);
+  const tokens = annotateLocal(spec.line, spec.entries, selection, features, language);
   return { tokens, sample: [...tokens, ...spec.tail] };
 };

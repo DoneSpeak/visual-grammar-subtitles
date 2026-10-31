@@ -15,12 +15,13 @@ import {
   type StudyPreset,
   type SubtitleStyle,
 } from '@/shared/subtitleStyle';
-import { toRomaji } from '@/shared/romaji';
 import { DEFAULT_AD_DURATION } from '@/shared/siteRules';
+import { subtitleLanguageLabel, subtitleLanguageShortLabel } from '@/shared/subtitleLanguages';
 import type { AdSlot, LayerCfg, PageCfg, Token } from '@/shared/types';
 import { defaultLayer } from '@/shared/types';
-import { segment } from '@/languages/ja/text';
 import { DEFAULT_LANGUAGE, SELECTABLE_LANGUAGES, featuresFor, resolveLanguage } from '@/languages/registry';
+import { SUBDL_LANGUAGES } from '@/features/scraper/providers';
+import { DICT_CARD_CSS, renderDictCard } from './dictCard';
 import { renderPlain, renderTokens, type DictRender, type RenderOpts } from './tokenize/render';
 import { TRANSCRIPT_CSS } from './transcript';
 import type { PictureRect } from './video';
@@ -38,6 +39,9 @@ type LayerContent = { paragraphs: ParaContent[]; ruby: boolean };
 export type LibraryTarget = LayerId | 'pack';
 
 const LIB_TARGETS: LibraryTarget[] = ['a', 'b', 'pack'];
+
+/** Radix-free select sentinel: choosing it swaps in a free-text language field. */
+const CUSTOM_SOURCE = '__custom';
 
 type Controls = {
   offset: HTMLInputElement;
@@ -65,7 +69,14 @@ const CAP_PRESETS: [() => string, number][] = [
   [() => '1s', 1000],
 ];
 
-export type LibraryOption = { id: string; name: string; label: string; packTitle: string };
+export type LibraryOption = {
+  id: string;
+  name: string;
+  label: string;
+  packTitle: string;
+  /** Pack language id; surfaced in the cross-language search list. */
+  language?: string;
+};
 
 /** A row the player renders in a layer's subtitle search menu. */
 export type LibraryRow = { key: string; title: string; meta?: string };
@@ -90,6 +101,8 @@ export type OverlayCallbacks = {
   onClearSubtitle: (target: LayerId) => void;
   /** The layer's language select changed; null means auto-detect. */
   onLayerLanguage: (layer: LayerId, language: string | null) => void;
+  /** The pack search scope changed; null means every available source. */
+  onPackLanguage: (language: string | null) => void;
   onOpenLibrary: () => void;
   onCfgChange: () => void;
   /** Player time → subtitle (content) timeline. */
@@ -109,7 +122,7 @@ export type OverlayCallbacks = {
 };
 
 const CSS = `
-:host { --card-bg: rgba(18,20,26,.97); --card-fg: #e8eaed; --card-muted: #99a3b0; --card-accent: #7fd3ff; --card-line: rgba(255,255,255,.12); --card-tile-bg: #f6f7f9; --card-radius: 16px; position: fixed; inset: 0; pointer-events: none; z-index: 2147483646; font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif; }
+:host { position: fixed; inset: 0; pointer-events: none; z-index: 2147483646; font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif; }
 .stage { position: absolute; overflow: visible; }
 .layer[lang="th"] { font-family: "Noto Sans Thai", "Leelawadee UI", Thonburi, Tahoma, sans-serif; line-height: 1.7; word-break: normal; overflow-wrap: normal; }
 .layer { position: absolute; transform: translate(-50%, -100%); display: flex; align-items: center; justify-content: center; box-sizing: border-box; text-align: center; pointer-events: none; user-select: none; line-height: 1.38; font-weight: 700; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.92), 0 0 2px rgba(0,0,0,.92); transition: opacity 160ms linear; opacity: 0; }
@@ -164,6 +177,7 @@ const CSS = `
 .panel select:focus { outline: none; border-color: #7FD3FF; }
 .panel select option { background: #181b22; color: #e8eaed; }
 .panel select.lang-select { flex: 0 0 auto; max-width: 82px; }
+.panel input.lang-code { flex: 0 0 66px; width: 66px; }
 .panel button.icon { width: 22px; height: 22px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
 .panel button.icon svg { width: 13px; height: 13px; display: block; }
 .panel .chips { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
@@ -203,44 +217,6 @@ const CSS = `
 .panel .row > .hint { flex: 1; min-width: 0; }
 .dict-word { pointer-events: auto; cursor: pointer; border-bottom: 1px dashed rgba(255,255,255,.5); }
 .dict-word:hover { background: rgba(127,211,255,.22); border-bottom-color: #7FD3FF; }
-.card { position: absolute; z-index: 5; width: 320px; max-width: 92%; max-height: 62vh; overflow-y: auto; padding: 10px 20px 18px; border-radius: var(--card-radius); background: var(--card-bg); border: 1px solid rgba(255,255,255,.14); color: var(--card-fg); font-size: 12px; line-height: 1.5; text-align: center; pointer-events: auto; box-shadow: 0 18px 48px rgba(0,0,0,.6); transform: translate(-50%, -100%); }
-.card[hidden] { display: none; }
-.card .top { display: flex; align-items: center; justify-content: space-between; min-height: 26px; }
-.card .lv { padding: 1px 8px; border-radius: 99px; border: 1px solid rgba(127,211,255,.42); color: var(--card-accent); font-size: 10px; font-weight: 700; letter-spacing: .04em; }
-.card .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.06); color: var(--card-muted); cursor: pointer; transition: background 120ms, color 120ms; }
-.card .icon-btn:hover { background: rgba(127,211,255,.16); color: var(--card-accent); }
-.card .icon-btn svg { width: 14px; height: 14px; display: block; }
-.card .word-line { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; justify-items: center; margin-top: 4px; }
-.card .word { grid-column: 2; font-size: 44px; line-height: 1.15; font-weight: 700; letter-spacing: .01em; overflow-wrap: anywhere; }
-.card .word-line .icon-btn { grid-column: 3; justify-self: start; margin-left: 6px; width: 30px; height: 30px; flex: none; }
-.card .word-line .icon-btn svg { width: 19px; height: 19px; }
-/* Reading and romaji share a line while they fit; flex-wrap splits them only when the pair
-   overflows the card, so short words stay compact without a fixed width cutoff. */
-.card .pron { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 0 10px; margin-top: 6px; }
-.card .pron .reading { font-size: 18px; font-weight: 600; color: var(--card-accent); letter-spacing: .02em; white-space: nowrap; }
-.card .pron .romaji { font-size: 16px; color: var(--card-muted); letter-spacing: .09em; white-space: nowrap; }
-/* Part of speech and gloss form one row; a long gloss wraps under the chips instead of
-   pushing them onto their own line. */
-.card .meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--card-line); }
-.card .pos { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
-.card .pos span { padding: 0 6px; border-radius: 4px; background: rgba(255,255,255,.08); color: #b9c0c9; font-size: 10px; line-height: 1.7; }
-.card .gloss { font-size: 14px; font-weight: 500; line-height: 1.45; }
-.card .ex { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--card-line); text-align: left; }
-.card .ex-jp { display: flex; align-items: flex-start; gap: 6px; font-size: 12.5px; line-height: 1.55; }
-.card .ex-jp .text { flex: 1; min-width: 0; }
-.card .ex-jp .icon-btn { width: 22px; height: 22px; flex: none; margin-top: -2px; }
-.card .ex-jp .icon-btn svg { width: 12px; height: 12px; }
-.card .ex-en { margin-top: 2px; font-size: 11.5px; line-height: 1.5; color: var(--card-muted); }
-/* Image card: the picture anchors the word, so it gets its own light tile — OpenMoji
-   graphics are drawn for light surfaces and look muddy directly on the dark card. */
-.card.has-image { max-height: 70vh; }
-.card .img-tile { display: flex; align-items: center; justify-content: center; width: 100px; height: 100px; margin: 6px auto 0; border-radius: 20px; background: var(--card-tile-bg); opacity: 0; transition: opacity 160ms ease-out; }
-.card .img-tile.ready { opacity: 1; }
-.card .img-tile img { display: block; width: 84px; height: 84px; }
-.card.has-image .word { font-size: 38px; }
-.card .credit { margin-top: 10px; font-size: 9.5px; letter-spacing: .02em; color: var(--card-muted); opacity: .62; }
-.card .credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { .card .img-tile { transition: none; } }
 `;
 
 /**
@@ -324,6 +300,8 @@ export class Overlay {
   private subtitleStyle: SubtitleStyle = defaultSubtitleStyle();
   private presetSelect: HTMLSelectElement | null = null;
   private langSelects: Partial<Record<LayerId, HTMLSelectElement>> = {};
+  /** Online pack search scope; null is the 'auto' option. */
+  private packLangSelect: HTMLSelectElement | null = null;
   private lineDict = new WeakMap<HTMLElement, DictEntry[]>();
   /** Current cue, kept so a resize can re-run the layout without a new tokenization round trip. */
   private content: Record<LayerId, LayerContent | null> = { a: null, b: null };
@@ -370,7 +348,7 @@ export class Overlay {
     this.host.id = 'jp-sub-host';
     this.shadow = this.host.attachShadow({ mode: 'open' });
     const style = el('style');
-    style.textContent = `${CSS}${TRANSCRIPT_CSS}`;
+    style.textContent = `${CSS}${DICT_CARD_CSS}${TRANSCRIPT_CSS}`;
     this.shadow.appendChild(style);
 
     this.stage = el('div', 'stage');
@@ -425,7 +403,7 @@ export class Overlay {
       });
     }
 
-    this.card = el('div', 'card');
+    this.card = el('div', 'dict-card');
     this.card.hidden = true;
     this.card.addEventListener('mouseenter', () => {
       window.clearTimeout(this.hoverTimer);
@@ -713,7 +691,7 @@ export class Overlay {
           },
         };
       }
-      return { kind: 'plain', segments: language === 'th' ? resolveLanguage(language).text.segment(line) : segment(line) };
+      return { kind: 'plain', segments: resolveLanguage(language).text.segment(line) };
     });
     const ruby = paragraphs.some(
       (para) => para.kind === 'tokens' && furigana && para.tokens.some((token) => !!token.reading),
@@ -812,12 +790,19 @@ export class Overlay {
     this.fillPresetOptions();
   }
 
-  /** Rebuilds the panel's preset list for layer A's language; called on every storage change. */
+  /** The layer whose study modes the panel edits: the source layer once it has content. */
+  private presetLayer(): LayerId {
+    const cfg = this.getCfg();
+    if (cfg.subs.a.text) return 'a';
+    return cfg.subs.b.text ? 'b' : 'a';
+  }
+
+  /** Rebuilds the panel's preset list for the active language; called on every storage change. */
   private fillPresetOptions(): void {
     const select = this.presetSelect;
     if (!select) return;
     select.textContent = '';
-    const language = this.languageOf('a');
+    const language = this.languageOf(this.presetLayer());
     const registry = featuresFor(language);
     // A selectable language may not have a bucket yet; its seeded built-ins still belong in the
     // list, and selecting one writes through to storage below.
@@ -832,14 +817,27 @@ export class Overlay {
     select.value = activePreset(this.subtitleStyle, language).id;
   }
 
-  /** Language selects reflect the stored per-layer choice; 'auto' when the user has not picked. */
+  /**
+   * Language selects reflect the stored per-layer choice. In auto mode the option label carries
+   * the detected language, so the environment that the study layer switched to stays visible.
+   */
   private syncLanguageSelects(): void {
     for (const id of ['a', 'b'] as LayerId[]) {
       const select = this.langSelects[id];
       if (!select) continue;
       const sub = this.getCfg().subs[id];
-      select.value = sub.languageAuto === false && sub.language ? sub.language : 'auto';
+      const auto = sub.languageAuto !== false;
+      const detected = sub.language && sub.language !== 'plain' ? resolveLanguage(sub.language).shortLabel : '';
+      const autoOption = select.querySelector<HTMLOptionElement>('option[value="auto"]');
+      if (autoOption) {
+        autoOption.textContent =
+          auto && detected
+            ? t('overlay.panel.languageAutoDetected', { language: detected })
+            : t('overlay.panel.languageAuto');
+      }
+      select.value = !auto && sub.language ? sub.language : 'auto';
     }
+    if (this.packLangSelect) this.packLangSelect.value = this.getCfg().packLanguage ?? 'auto';
   }
 
   private showCard(entry: DictEntry, anchor: HTMLElement, layer: LayerId | 'doc'): void {
@@ -847,97 +845,16 @@ export class Overlay {
     this.hideCard();
     this.cardLayer = layer;
     this.cardAnchor = anchor;
-    const card = this.card;
-    // Romaji is a Japanese-reading aid; English cards show their IPA instead.
-    const isJa = !entry.lang || entry.lang === 'ja';
-    const speechLang = entry.lang === 'en' ? 'en' : 'ja';
-    const reading = isJa && entry.r && entry.r !== entry.w ? entry.r : '';
-    const roman = isJa && this.dictSettings.pronunciation.romaji ? toRomaji(entry.r || entry.w) : '';
-    const ipa = isJa ? '' : (entry.ipa ?? '');
-    const glosses = this.language === 'zh-CN' && entry.z?.length ? entry.z : entry.g;
-
-    card.classList.toggle('has-image', !!entry.img);
-
-    const top = el('div', 'top');
-    // `lv` is a language-specific band (JLPT); other languages leave it at 0 and get no badge.
-    if (entry.lv > 0) top.appendChild(el('span', 'lv', `N${entry.lv}`));
-    const close = this.iconBtn('close', t('overlay.card.close'));
-    close.addEventListener('click', () => this.hideCard());
-    top.appendChild(close);
-    card.appendChild(top);
-
-    // A reviewed image turns the card into a mnemonic flashcard; words without one keep
-    // the existing text-only layout. The word stays the largest text in both.
-    if (entry.img) card.appendChild(this.imageTile(entry, glosses[0]));
-
-    const wordLine = el('div', 'word-line');
-    wordLine.append(
-      el('span', 'word', entry.w),
-      this.speakButton(entry.w, t('overlay.card.speakWord', { word: entry.w }), speechLang),
-    );
-    card.appendChild(wordLine);
-
-    const pron = el('div', 'pron');
-    if (reading) pron.appendChild(el('span', 'reading', reading));
-    if (ipa) pron.appendChild(el('span', 'reading', ipa));
-    if (roman) pron.appendChild(el('span', 'romaji', roman));
-    if (pron.childElementCount) card.appendChild(pron);
-
-    const meta = el('div', 'meta');
-    const badges = [...entry.p, ...(entry.tags ?? []).map((tag) => tag.toUpperCase())];
-    if (badges.length) {
-      const pos = el('div', 'pos');
-      for (const badge of badges) pos.appendChild(el('span', '', badge));
-      meta.appendChild(pos);
-    }
-    if (glosses.length) meta.appendChild(el('span', 'gloss', glosses.join(', ')));
-    if (meta.childElementCount) card.appendChild(meta);
-
-    // The image already adds height; one example keeps the flashcard scannable.
-    for (const example of entry.img ? entry.x.slice(0, 1) : entry.x) {
-      const box = el('div', 'ex');
-      const jp = el('div', 'ex-jp');
-      jp.append(
-        el('span', 'text', example.j),
-        this.speakButton(example.j, t('overlay.card.speakExample'), speechLang),
-      );
-      box.append(jp, el('div', 'ex-en', example.e));
-      card.appendChild(box);
-    }
-    if (entry.img) card.appendChild(this.imageCredit());
-
-    card.hidden = false;
+    renderDictCard(this.card, entry, {
+      uiLanguage: this.language,
+      romaji: this.dictSettings.pronunciation.romaji,
+      closable: true,
+      onClose: () => this.hideCard(),
+      onSpeak: (text, language) => this.speak(text, language),
+    });
+    this.card.hidden = false;
     this.positionCard(anchor);
     this.armCardTimer();
-  }
-
-  /** Light tile + fixed box so the async SVG never shifts the card. */
-  private imageTile(entry: DictEntry, hint?: string): HTMLDivElement {
-    const tile = el('div', 'img-tile');
-    const img = document.createElement('img');
-    img.src = chrome.runtime.getURL(`vocab/openmoji/${entry.img}.svg`);
-    img.alt = hint ?? t('overlay.card.imageAlt', { word: entry.w });
-    img.decoding = 'async';
-    img.addEventListener('load', () => tile.classList.add('ready'));
-    img.addEventListener('error', () => {
-      // A missing file must not leave a blank tile or a stretched text layout.
-      tile.remove();
-      this.card.querySelector('.credit')?.remove();
-      this.card.classList.remove('has-image');
-    });
-    tile.appendChild(img);
-    return tile;
-  }
-
-  private imageCredit(): HTMLDivElement {
-    const credit = el('div', 'credit');
-    const link = document.createElement('a');
-    link.href = 'https://openmoji.org';
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = 'OpenMoji';
-    credit.append(document.createTextNode(t('overlay.card.imageCreditLead')), link, document.createTextNode(' · CC BY-SA 4.0'));
-    return credit;
   }
 
   private armCardTimer(): void {
@@ -978,24 +895,6 @@ export class Overlay {
     this.card.hidden = true;
     this.card.textContent = '';
     window.speechSynthesis?.cancel();
-  }
-
-  private iconBtn(name: IconName, label: string): HTMLButtonElement {
-    const button = el('button', 'icon-btn');
-    button.type = 'button';
-    button.title = label;
-    button.setAttribute('aria-label', label);
-    button.appendChild(createIcon(name));
-    return button;
-  }
-
-  private speakButton(text: string, label = t('overlay.card.speak'), lang = 'ja'): HTMLButtonElement {
-    const button = this.iconBtn('speaker', label);
-    button.addEventListener('click', (event) => {
-      event.stopPropagation();
-      this.speak(text, lang);
-    });
-    return button;
   }
 
   private speak(text: string, lang = 'ja'): void {
@@ -1437,9 +1336,14 @@ export class Overlay {
             i.packTitle.toLowerCase().includes(query),
         )
       : this.libraryItems;
-    const rows: LibraryRow[] = matches
-      .slice(0, 40)
-      .map((i) => ({ key: `local:${i.id}`, title: i.label, meta: i.packTitle }));
+    const rows: LibraryRow[] = matches.slice(0, 40).map((i) => {
+      const short = i.language ? resolveLanguage(i.language).shortLabel : '';
+      return {
+        key: `local:${i.id}`,
+        title: i.label,
+        meta: short ? `${i.packTitle} · ${short}` : i.packTitle,
+      };
+    });
     let status = '';
     if (query && !matches.length) {
       rows.push({ key: 'online', title: t('overlay.menu.onlineSearch', { query: typed }), meta: 'kitsunekko' });
@@ -1752,7 +1656,7 @@ export class Overlay {
     const presetSelect = el('select', 'preset-select');
     this.presetSelect = presetSelect;
     presetSelect.addEventListener('change', () => {
-      const language = this.languageOf('a');
+      const language = this.languageOf(this.presetLayer());
       this.subtitleStyle = {
         ...this.subtitleStyle,
         activePresetId: { ...this.subtitleStyle.activePresetId, [language]: presetSelect.value },
@@ -1770,7 +1674,78 @@ export class Overlay {
     pack.placeholder = t('overlay.panel.packPlaceholder');
     pack.title = t('overlay.panel.packTitle');
     this.bindLibrarySearch('pack', pack);
-    packRow.appendChild(pack);
+    // The search itself is cross-language; this only decides which online source answers it.
+    const packLang = el('select', 'lang-select');
+    packLang.title = t('overlay.panel.packLanguage');
+    packLang.setAttribute('aria-label', t('overlay.panel.packLanguage'));
+    const allSources = el('option', '', t('overlay.panel.packLanguageAuto'));
+    allSources.value = 'auto';
+    packLang.appendChild(allSources);
+    // Kitsunekko covers Japanese; the remaining sources are the languages SubDL serves, plus a
+    // code the user typed earlier so a rebuild can still show it as the current selection.
+    const sources: string[] = ['ja', ...SUBDL_LANGUAGES];
+    const committed = this.getCfg().packLanguage;
+    if (committed && !sources.includes(committed)) sources.push(committed);
+    for (const id of sources) {
+      const option = el('option', '', subtitleLanguageShortLabel(id));
+      option.value = id;
+      option.title = subtitleLanguageLabel(id);
+      packLang.appendChild(option);
+    }
+    const otherSource = el('option', '', t('overlay.panel.packLanguageOther'));
+    otherSource.value = CUSTOM_SOURCE;
+    packLang.appendChild(otherSource);
+    packLang.value = committed ?? 'auto';
+    this.packLangSelect = packLang;
+
+    // SubDL has far more languages than we ship labels for; this accepts a code such as `ko`.
+    const customLang = el('input', 'lang-code');
+    customLang.type = 'search';
+    customLang.placeholder = t('overlay.panel.packLanguagePlaceholder');
+    customLang.title = t('overlay.panel.packLanguage');
+    customLang.setAttribute('aria-label', t('overlay.panel.packLanguagePlaceholder'));
+    customLang.hidden = true;
+    const resetSource = () => {
+      customLang.hidden = true;
+      customLang.value = '';
+      packLang.value = this.getCfg().packLanguage ?? 'auto';
+    };
+    const commitSource = () => {
+      const code = customLang.value.trim();
+      if (!code) {
+        resetSource();
+        return;
+      }
+      // The select must own the value before `syncPanel` writes it back, or it renders blank.
+      if (!Array.from(packLang.options).some((option) => option.value === code)) {
+        const added = el('option', '', subtitleLanguageShortLabel(code));
+        added.value = code;
+        added.title = subtitleLanguageLabel(code);
+        packLang.insertBefore(added, otherSource);
+      }
+      packLang.value = code;
+      customLang.hidden = true;
+      customLang.value = '';
+      this.cb.onPackLanguage(code);
+    };
+    customLang.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') resetSource();
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        commitSource();
+      }
+    });
+    customLang.addEventListener('blur', commitSource);
+    packLang.addEventListener('change', () => {
+      if (packLang.value === CUSTOM_SOURCE) {
+        customLang.hidden = false;
+        customLang.focus();
+        return;
+      }
+      customLang.hidden = true;
+      this.cb.onPackLanguage(packLang.value === 'auto' ? null : packLang.value);
+    });
+    packRow.append(pack, packLang, customLang);
 
     const subRow = (id: LayerId) => {
       const row = el('div', 'row');

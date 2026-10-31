@@ -7,6 +7,9 @@ import { pageKeyFromUrl } from '@/shared/storage';
 import { listDir, mergeSeries, searchSeries } from '@/features/scraper/kitsunekko';
 import { translateToEnglish } from '@/shared/translate';
 import { importKitsunekkoArchive, loadKitsunekkoIndex } from '@/shared/kitsunekkoLibrary';
+import { providerFor } from '@/features/scraper/providers';
+import { PROVIDER_KEYS_KEY, sanitizeProviderKeys } from '@/shared/providerSettings';
+import { importLibraryFiles } from '@/shared/library';
 import { fetchPgcSeason } from '@/shared/bilibiliPgc';
 import { initI18n, t } from '@/shared/i18n';
 
@@ -150,6 +153,70 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           errors,
         }),
       )
+      .catch((err) => sendResponse({ error: errText(err) }));
+    return true;
+  }
+
+  // Provider traffic stays in the service worker: MV3 content scripts cannot fetch cross-origin
+  // even with host permissions, and the API key must never leave storage.
+  if (
+    msg?.type === 'providerSearch' ||
+    msg?.type === 'providerList' ||
+    msg?.type === 'providerImport'
+  ) {
+    const language = typeof msg.language === 'string' ? msg.language : '';
+    const descriptor = providerFor(language);
+    const resolve = async () => {
+      if (!descriptor || (typeof msg.provider === 'string' && msg.provider !== descriptor.id)) {
+        return { error: 'no-provider' } as const;
+      }
+      const raw = await chrome.storage.local.get(PROVIDER_KEYS_KEY);
+      const key = sanitizeProviderKeys(raw[PROVIDER_KEYS_KEY])[descriptor.id] ?? '';
+      if (descriptor.requiresKey && !key) return { error: 'no-key' } as const;
+      return { provider: descriptor.create(key, language), descriptor } as const;
+    };
+    void resolve()
+      .then(async (found) => {
+        if ('error' in found) {
+          sendResponse({ error: found.error });
+          return;
+        }
+        const { provider, descriptor } = found;
+        if (msg.type === 'providerSearch') {
+          const hits = await provider.search(String(msg.query ?? '').trim());
+          sendResponse({ hits });
+          return;
+        }
+        if (msg.type === 'providerList') {
+          const files = await provider.listEpisodes(msg.hit, {});
+          sendResponse({ files });
+          return;
+        }
+        const fetched = await provider.fetch(msg.file);
+        if (!fetched.length) {
+          sendResponse({ error: 'empty-file' });
+          return;
+        }
+        const files = fetched.map((item) => new File([item.text], item.name, { type: 'text/plain' }));
+        const { pack, added, errors } = await importLibraryFiles(files, {
+          title: String(msg.hit?.title ?? ''),
+          language,
+          origin: {
+            kind: 'provider',
+            provider: descriptor.id,
+            seriesId: msg.hit?.id,
+            release: msg.file?.release,
+            url: msg.file?.url,
+            sourceUrl: msg.file?.sourceUrl,
+            importedAt: Date.now(),
+          },
+        });
+        sendResponse({
+          packTitle: pack.title,
+          entries: added.map((entry) => ({ id: entry.id, name: entry.name })),
+          errors: errors.length,
+        });
+      })
       .catch((err) => sendResponse({ error: errText(err) }));
     return true;
   }

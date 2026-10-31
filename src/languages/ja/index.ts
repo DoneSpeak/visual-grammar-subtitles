@@ -39,4 +39,5 @@ export const ja: LanguagePack = {
   },
   features: jaFeatures,
   bands: JA_BANDS,
+  dictAttribution: 'dict.footnote.ja',
 };

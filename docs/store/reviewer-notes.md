@@ -8,7 +8,7 @@
 Thank you for reviewing.
 
 WHAT IT DOES
-JP Subtitle Overlay draws a subtitle layer over a <video> element and colours Japanese words by part of speech. It ships no videos and no subtitles; the user provides a subtitle file or imports one from the public kitsunekko.net catalogue. Nothing is unlocked, decrypted, or bypassed. The extension is free, has no account and no ads.
+Visual Grammar Subtitles draws a subtitle layer over a <video> element and colours words by part of speech. It ships no videos and no subtitles; the user provides a subtitle file or imports one from the public kitsunekko.net catalogue. Nothing is unlocked, decrypted, or bypassed. The extension is free, has no account and no ads.
 
 HOW TO TEST (about 2 minutes)
 1. Install the extension. No sign-in is required.

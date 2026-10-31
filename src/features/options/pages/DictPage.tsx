@@ -90,7 +90,6 @@ export function DictPage({ dict }: { dict: DictSettingsController }) {
           />
         </SettingRow>
       </Card>
-      <p className="text-2xs text-text-faint">{t('dict.footnote')}</p>
     </>
   );
 }

@@ -29,7 +29,8 @@ import {
   normalizeElementStyle,
   normalizeSubtitleStyle,
   presetElements,
-  presetRequiresRemote,
+  presetSources,
+  presetUsesRemote,
   type StudyPreset,
   type SubtitleStyle,
 } from '@/shared/subtitleStyle';
@@ -232,7 +233,11 @@ describe('english syntax clauses', () => {
         grammar: ['syntax.role:attributive', 'syntax.clause:attributive'],
       }),
     ];
-    const style = resolveElementStyle(E, tokenElements(E, tokens, 0, ['syntax']), E.elementDefaults);
+    const style = resolveElementStyle(
+      E,
+      tokenElements(E, tokens, 0, ['syntax', 'clause']),
+      E.elementDefaults,
+    );
     expect(style.color).toBe(E.elementDefaults['syntax.role:attributive'].color);
     expect(style.underline).toEqual(E.elementDefaults['syntax.clause:attributive'].underline);
   });
@@ -310,6 +315,22 @@ describe('presets', () => {
     expect(style.presets.ja['chunk-focus'].features).toEqual(['chunk-rule']);
   });
 
+  it('drops a stored built-in the current pack no longer ships', () => {
+    const style = normalizeSubtitleStyle({
+      version: 4,
+      activePresetId: { en: 'phrase-focus' },
+      presets: {
+        en: {
+          'phrase-focus': { id: 'phrase-focus', features: ['expression'], elements: {} },
+          'custom:x': { id: 'custom:x', features: ['pos'], elements: {} },
+        },
+      },
+    });
+    expect(style.presets.en['phrase-focus']).toBeUndefined();
+    expect(style.presets.en['custom:x']).toBeDefined();
+    expect(style.activePresetId.en).toBe('chunk-focus');
+  });
+
   it('stores a switched-off element through normalization', () => {
     const style = normalizeSubtitleStyle({
       version: 3,
@@ -351,12 +372,18 @@ describe('presets', () => {
     expect(source.elements[POS_ELEMENT.noun].underline?.color).toBe('#654321');
   });
 
-  it('drops remote features when the grammar service is unavailable', () => {
+  it('drops remote-only features when the grammar service is unavailable', () => {
     const remote = preset(['pos', 'syntax']);
-    expect(presetRequiresRemote(J, remote)).toBe(true);
+    expect(presetUsesRemote(J, remote)).toBe(true);
     const local = localOnlyPreset(J, remote);
     expect(local.features).toEqual(['pos']);
-    expect(presetRequiresRemote(J, local)).toBe(false);
+    expect(presetUsesRemote(J, local)).toBe(false);
+  });
+
+  it('keeps hybrid features when the grammar service is unavailable', () => {
+    const hybrid = preset(['pos', 'syntax']);
+    expect(presetSources(E, hybrid)).toEqual(['local', 'remote']);
+    expect(localOnlyPreset(E, hybrid).features).toEqual(['pos', 'syntax']);
   });
 });
 

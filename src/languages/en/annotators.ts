@@ -2,113 +2,42 @@ import { entryInBands } from '@/languages/bands';
 import type { BandSelection } from '@/languages/types';
 import type { DictEntry } from '@/shared/dictionary';
 import type { FeatureId } from '@/shared/studyFeatures';
-import type { Pos, Token } from '@/shared/types';
+import type { Token } from '@/shared/types';
 
 import { EN_BANDS } from './bands';
 import { CHUNK_GROUP_KEY, EXPRESSION_ELEMENT, LEVEL_ELEMENT } from './features';
+import { analyze, applyParse, chunkSpans, type Analysis, type ParseFeature } from './parse';
 import { PHRASES, phraseWords } from './phrases';
+import { isBreak, isSpace, withGrammar } from './words';
 
 /**
- * English annotations that need no grammar service: NP/VP/PP chunks, phrasal verbs and idioms,
- * and exam-vocabulary membership. They write into the same `groups` / `grammar` fields the remote
- * analyser uses, so the renderer never learns where a label came from.
+ * English annotations that need no grammar service: clause-aware semantic chunks, phrasal verbs
+ * and idioms, exam-vocabulary membership, and the shallow parser's roles/clauses/structure/morph.
+ * They write into the same `groups` / `grammar` fields the remote analyser uses, so the renderer
+ * never learns where a label came from.
  */
 
-const isSpace = (token: Token): boolean => !/\S/.test(token.surface);
+const PARSE_FEATURES = new Set<string>(['chunk', 'syntax', 'clause', 'structure', 'morph']);
+const PARSE_LAYERS: ParseFeature[] = ['syntax', 'clause', 'structure', 'morph'];
 
-/** Whitespace is transparent inside a phrase; punctuation is a hard boundary. */
-const isBreak = (token: Token): boolean =>
-  token.pos === 'PUNCT' || (token.pos === 'SYM' && !isSpace(token));
-
-const withGrammar = (token: Token, label: string): Token => ({
-  ...token,
-  grammar: token.grammar?.includes(label) ? token.grammar : [...(token.grammar ?? []), label],
-});
-
-const NP_POS = new Set<Pos>(['DET', 'ADJ', 'NOUN', 'PROPN', 'PRON', 'NUM']);
-const NP_HEADS = new Set<Pos>(['NOUN', 'PROPN', 'PRON', 'NUM']);
-const VP_POS = new Set<Pos>(['AUX', 'VERB', 'ADV']);
-
-type Word = { token: Token; index: number; run: number };
-
-const wordList = (tokens: Token[]): Word[] => {
-  const words: Word[] = [];
-  let run = 0;
-  tokens.forEach((token, index) => {
-    if (isSpace(token)) return;
-    if (isBreak(token)) {
-      run++;
-      return;
-    }
-    words.push({ token, index, run });
-  });
-  return words;
-};
-
-/** End index (inclusive) of the noun phrase starting at `start`, or -1. */
-const nounPhraseEnd = (words: Word[], start: number): number => {
-  const run = words[start]?.run;
-  let end = start;
-  while (end < words.length && words[end].run === run && NP_POS.has(words[end].token.pos)) end++;
-  const hasHead = words.slice(start, end).some((word) => NP_HEADS.has(word.token.pos));
-  return hasHead ? end - 1 : -1;
-};
-
-/** End index (inclusive) of the verb phrase starting at `start`, or -1. */
-const verbPhraseEnd = (words: Word[], start: number): number => {
-  const run = words[start]?.run;
-  let end = start;
-  while (end < words.length && words[end].run === run && VP_POS.has(words[end].token.pos)) end++;
-  const hasVerb = words.slice(start, end).some((word) => word.token.pos === 'VERB');
-  return hasVerb ? end - 1 : -1;
-};
-
-/**
- * Contiguous NP / VP / PP spans, never crossing punctuation. Whitespace inside a span is included
- * so the renderer sees one uninterrupted group and can round only the outer words.
- */
-export const chunks = (tokens: Token[]): Token[] => {
-  const words = wordList(tokens);
+/** Applies chunk spans to copied tokens; punctuation is skipped, so a group stays contiguous. */
+const applyChunks = (tokens: Token[], analysis: Analysis): Token[] => {
   const out = [...tokens];
   let group = 0;
-
-  const claim = (from: number, to: number): void => {
+  for (const span of chunkSpans(analysis)) {
     const id = `rule-${group++}`;
-    const first = words[from].index;
-    const last = words[to].index;
+    const first = analysis.words[span.start].index;
+    const last = analysis.words[span.end].index;
     for (let index = first; index <= last; index++) {
       if (isBreak(tokens[index])) continue;
       out[index] = { ...out[index], groups: { ...out[index].groups, [CHUNK_GROUP_KEY]: id } };
     }
-  };
-
-  let cursor = 0;
-  while (cursor < words.length) {
-    // A preposition plus its noun phrase is one PP; otherwise the NP starts on its own head.
-    if (words[cursor].token.pos === 'ADP' && words[cursor + 1]?.run === words[cursor].run) {
-      const end = nounPhraseEnd(words, cursor + 1);
-      if (end >= 0) {
-        claim(cursor, end);
-        cursor = end + 1;
-        continue;
-      }
-    }
-    const nounEnd = nounPhraseEnd(words, cursor);
-    if (nounEnd >= 0) {
-      claim(cursor, nounEnd);
-      cursor = nounEnd + 1;
-      continue;
-    }
-    const verbEnd = verbPhraseEnd(words, cursor);
-    if (verbEnd >= 0) {
-      claim(cursor, verbEnd);
-      cursor = verbEnd + 1;
-      continue;
-    }
-    cursor++;
   }
   return out;
 };
+
+/** Contiguous NP / PP / VP spans, clause-aware where the shallow parser can place them. */
+export const chunks = (tokens: Token[]): Token[] => applyChunks(tokens, analyze(tokens));
 
 /**
  * Matches `phrases.ts` entries across word-token boundaries. Whitespace is ignored; inflected
@@ -169,8 +98,13 @@ export const local = (
   bands: BandSelection,
   features: FeatureId[],
 ): Token[] => {
+  const analysis = features.some((id) => PARSE_FEATURES.has(id)) ? analyze(tokens) : undefined;
   let annotated = tokens;
-  if (features.includes('chunk')) annotated = chunks(annotated);
+  if (analysis) {
+    const layers = PARSE_LAYERS.filter((layer) => features.includes(layer));
+    if (layers.length) annotated = applyParse(annotated, analysis, layers);
+    if (features.includes('chunk')) annotated = applyChunks(annotated, analysis);
+  }
   if (features.includes('expression')) annotated = expressions(annotated);
   if (features.includes('exam')) annotated = levels(annotated, entries, bands);
   return annotated;

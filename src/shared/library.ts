@@ -24,7 +24,10 @@ export type SubtitleOrigin =
       season?: number;
       episode?: number;
       release?: string;
+      /** Direct download URL of the imported archive. */
       url?: string;
+      /** Human-facing page for the downloaded subtitle, kept so the pack can link back to it. */
+      sourceUrl?: string;
       importedAt: number;
     }
   | { kind: 'local'; note?: string; importedAt: number };
@@ -174,9 +177,11 @@ const samePack = (pack: LibraryPack, input: PackInput): boolean => {
     return pack.origin.seriesPath === input.origin.seriesPath;
   }
   if (pack.origin.kind === 'provider' && input.origin.kind === 'provider') {
+    // The same series id exists on every language's source; language keeps EN and TH packs apart.
     return (
       pack.origin.provider === input.origin.provider &&
-      pack.origin.seriesId === input.origin.seriesId
+      pack.origin.seriesId === input.origin.seriesId &&
+      pack.language === packLanguage(input)
     );
   }
   return pack.title === input.title;
@@ -203,11 +208,15 @@ const resolvePack = async (input: PackInput): Promise<LibraryPack> => {
     await chrome.storage.local.set({ [PACKS_KEY]: [...packs, pack] });
     return pack;
   }
+  const origin =
+    input.origin.kind === 'provider' && existing.origin.kind === 'provider'
+      ? { ...input.origin, sourceUrl: input.origin.sourceUrl ?? existing.origin.sourceUrl }
+      : input.origin;
   const updated: LibraryPack = {
     ...existing,
     title: input.title || existing.title,
     language: input.language ?? existing.language,
-    origin: input.origin,
+    origin,
     updatedAt: Date.now(),
   };
   await chrome.storage.local.set({ [PACKS_KEY]: packs.map((p) => (p.id === existing.id ? updated : p)) });

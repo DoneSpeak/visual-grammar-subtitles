@@ -7,6 +7,7 @@ import {
   detectLanguageId,
   isSelectableLanguage,
   resolveLanguage,
+  resolveLanguageHint,
 } from '@/languages/registry';
 
 describe('language detection routing', () => {
@@ -32,6 +33,15 @@ describe('language detection routing', () => {
   it('treats an unknown stored id as plain', () => {
     expect(resolveLanguage('xx').id).toBe('plain');
     expect(resolveLanguage(undefined).id).toBe('plain');
+  });
+
+  it('falls back to the pack hint only when detection is inconclusive', () => {
+    expect(resolveLanguageHint('ok', 'en')).toBe('en');
+    expect(resolveLanguageHint('', 'th')).toBe('th');
+    // Confident detection wins, so a mislabelled pack corrects itself.
+    expect(resolveLanguageHint('I have never really understood how this works.', 'th')).toBe('en');
+    expect(resolveLanguageHint('ok')).toBe('plain');
+    expect(resolveLanguageHint('ok', 'plain')).toBe('plain');
   });
 
   it('offers only annotatable packs in the panel, never plain', () => {

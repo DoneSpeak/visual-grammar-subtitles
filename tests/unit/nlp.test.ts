@@ -15,6 +15,30 @@ describe('subtitle annotation contract', () => {
       expect(tokens?.map(t => t.surface).join('')).toBe(cue.text);
     }
   });
+  it('carries annotation detail to the token and rejects dangling parents', async () => {
+    type Unit = { id: string; tokens: { start: number; end: number }[]; annotations: Record<string, unknown>[] };
+    const doc = structuredClone(fixture) as unknown as { units: Unit[] };
+    const unit = doc.units[0];
+    const token = unit.tokens[0];
+    const detail = "I'm → I am";
+    unit.annotations.push({
+      id: `${unit.id}-detail`,
+      layer: 'morph.form',
+      label: 'contraction',
+      quality: 'heuristic',
+      spans: [{ start: token.start, end: token.end }],
+      detail,
+    });
+
+    const validated = await validateDocument(doc);
+    const cue = validated.track.cues[0];
+    const tokens = cueTokens(validated, cue.id, 'syntax-focus');
+    expect(tokens?.some((candidate) => candidate.notes?.includes(detail))).toBe(true);
+
+    const broken = structuredClone(doc);
+    broken.units[0].annotations[broken.units[0].annotations.length - 1].parentId = 'missing';
+    await expect(validateDocument(broken)).rejects.toThrow();
+  });
   it('rejects another track, broken references, and split surrogate pairs', async () => {
     await expect(validateDocument(fixture, '0'.repeat(64))).rejects.toThrow();
     const bad = structuredClone(fixture);

@@ -21,6 +21,7 @@ import { DurationInput } from '@/features/dict/duration-input';
 import { useLanguage } from '@/features/i18n/use-language';
 import { useTheme } from '@/features/theme/use-theme';
 import { DEFAULT_LANGUAGE, resolveLanguage } from '@/languages/registry';
+import { subtitleLanguageLabel, subtitleLanguageShortLabel } from '@/shared/subtitleLanguages';
 import { packTitleForDisplay, ruleNameForDisplay, t, type MessageKey } from '@/shared/i18n';
 import type { LibraryEntry, LibraryPack } from '@/shared/library';
 import type { DictTrigger } from '@/shared/dictSettings';
@@ -63,10 +64,11 @@ function Header({ popup }: { popup: PopupController }) {
     <header className="flex items-center justify-between gap-2 px-3.5 pt-3 pb-2.5">
       <div className="flex min-w-0 items-center gap-2">
         <span className="grid size-6 flex-none place-items-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground">
-          JP
+          VG
         </span>
         <div className="min-w-0">
           <div className="truncate text-xs font-semibold">{t('meta.brand')}</div>
+          <div className="truncate text-2xs text-text-faint">{t('meta.tagline')}</div>
           <div className="text-2xs text-text-faint">v{version}</div>
         </div>
       </div>
@@ -209,7 +211,7 @@ function PackGroup({ popup, packId }: { popup: PopupController; packId: string }
       >
         <Package className="size-3.5 flex-none text-text-faint" />
         <span className="min-w-0 flex-1 truncate font-medium">{packTitleForDisplay(pack.title, t)}</span>
-        <Badge className="flex-none">{resolveLanguage(pack.language).shortLabel || pack.language}</Badge>
+        <Badge className="flex-none">{subtitleLanguageShortLabel(pack.language)}</Badge>
         <Badge className="flex-none">{t('popup.pack.fileCount', { count: packEntries.length })}</Badge>
         {popup.query.trim() ? null : open ? (
           <ChevronDown className="size-3.5 flex-none text-text-faint" />
@@ -309,7 +311,7 @@ function SubsResults({ popup }: { popup: PopupController }) {
               <React.Fragment key={language}>
                 {groups.size > 1 ? (
                   <div className="px-2 pt-1 pb-0.5 text-2xs font-medium text-text-faint">
-                    {resolveLanguage(language).displayName}
+                    {subtitleLanguageLabel(language)}
                   </div>
                 ) : null}
                 {packs.map((pack) => (

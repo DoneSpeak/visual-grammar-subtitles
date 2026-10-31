@@ -13,14 +13,16 @@ import type { MessageKey } from './i18n';
 import { normalizePosColor, POS_GROUPS } from './posColors';
 import {
   defaultElementsFor,
-  featuresRequireRemote,
+  featuresUseRemote,
   isFeatureId,
   localFeatures,
   POS_ELEMENT,
   resolveFeatures,
   ROLE_ELEMENTS,
+  sourcesForFeatures,
   type FeatureId,
   type FeatureRegistry,
+  type FeatureSource,
 } from './studyFeatures';
 
 /**
@@ -200,6 +202,10 @@ const normalizePresetMap = (
   }
   for (const [id, preset] of Object.entries(raw)) {
     if (presets[id]) continue;
+    // Anything that is neither a current built-in nor a `custom:` preset was a built-in of an
+    // older pack (English `phrase-focus`). Keeping it would resurrect it as a nameless mode the
+    // user cannot delete, so drop it; `activeIdFor` falls back to the default.
+    if (!isCustomPresetId(id)) continue;
     const normalized = normalizePreset(registry, preset, id);
     if (normalized) presets[id] = normalized;
   }
@@ -334,12 +340,17 @@ export const presetElements = (
   return elements;
 };
 
-export const presetRequiresRemote = (registry: FeatureRegistry, preset: StudyPreset): boolean =>
-  featuresRequireRemote(registry, preset.features);
+/** True when any feature can use the grammar service, even if it also works locally. */
+export const presetUsesRemote = (registry: FeatureRegistry, preset: StudyPreset): boolean =>
+  featuresUseRemote(registry, preset.features);
 
-/** Drops features that need the grammar service, keeping everything that works locally. */
+/** Where a preset's data comes from; drives the mode card's capability badge. */
+export const presetSources = (registry: FeatureRegistry, preset: StudyPreset): FeatureSource[] =>
+  sourcesForFeatures(registry, preset.features);
+
+/** Drops features only the grammar service can produce, keeping everything else. */
 export const localOnlyPreset = (registry: FeatureRegistry, preset: StudyPreset): StudyPreset => {
-  if (!presetRequiresRemote(registry, preset)) return preset;
+  if (!presetUsesRemote(registry, preset)) return preset;
   const features = localFeatures(registry, resolveFeatures(registry, preset.features));
   return { ...preset, features, base: baseForFeatures(features) };
 };

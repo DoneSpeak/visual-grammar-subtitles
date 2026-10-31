@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   BookOpen,
   ChevronRight,
+  IdCard,
   Keyboard,
   Images,
   Layers3,
@@ -39,6 +40,7 @@ import { useLibrary } from './hooks/use-library';
 import { useSiteRules } from './hooks/use-site-rules';
 import { BandsPage } from './pages/BandsPage';
 import { BindsPage } from './pages/BindsPage';
+import { CardsPage } from './pages/CardsPage';
 import { DictPage } from './pages/DictPage';
 import { KeysPage } from './pages/KeysPage';
 import { ModesPage } from './pages/ModesPage';
@@ -46,7 +48,7 @@ import { PacksPage } from './pages/PacksPage';
 import { RulesPage } from './pages/RulesPage';
 import { VocabPage } from './pages/VocabPage';
 
-type StaticPageId = 'packs' | 'dict' | 'vocab' | 'rules' | 'binds' | 'keys';
+type StaticPageId = 'packs' | 'dict' | 'cards' | 'vocab' | 'rules' | 'binds' | 'keys';
 type PageId = StaticPageId | `modes:${string}` | `bands:${string}`;
 
 type GroupId = 'content' | 'study' | 'site' | 'actions' | 'appearance';
@@ -63,6 +65,7 @@ const NAV: NavEntry[] = [
   { id: 'packs', labelKey: 'options.nav.packs', group: 'content', icon: Layers3, count: 'packs' },
   { id: 'vocab', labelKey: 'options.nav.vocab', group: 'content', icon: Images },
   { id: 'dict', labelKey: 'options.nav.dict', group: 'study', icon: BookOpen },
+  { id: 'cards', labelKey: 'options.nav.cards', group: 'study', icon: IdCard },
   { id: 'rules', labelKey: 'options.nav.rules', group: 'site', icon: SlidersHorizontal, count: 'rules' },
   { id: 'binds', labelKey: 'options.nav.binds', group: 'site', icon: Link2, count: 'binds' },
   { id: 'keys', labelKey: 'options.nav.keys', group: 'actions', icon: Keyboard },
@@ -208,11 +211,14 @@ export function App() {
   return (
     <div className="mx-auto flex min-h-screen max-w-[1180px] border-x border-border bg-card">
       <aside className="sticky top-0 flex h-screen w-[236px] flex-none flex-col gap-6.5 overflow-y-auto border-r border-border px-3.5 pt-7 pb-6">
-        <div className="flex items-center gap-2.5 px-2.5 text-xs font-semibold tracking-tight">
-          <span className="grid size-6 flex-none place-items-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground">
-            {brand}
-          </span>
-          <span>{t('meta.brand')}</span>
+        <div className="flex flex-col gap-0.5 px-2.5">
+          <div className="flex items-center gap-2.5 text-xs font-semibold tracking-tight">
+            <span className="grid size-6 flex-none place-items-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground">
+              {brand}
+            </span>
+            <span className="truncate">{t('meta.brand')}</span>
+          </div>
+          <div className="truncate pl-8.5 text-2xs text-text-faint">{t('meta.tagline')}</div>
         </div>
 
         <nav className="flex flex-col gap-4.5" aria-label={t('options.nav.aria')}>
@@ -331,6 +337,9 @@ export function App() {
           </section>
           <section className={page === 'dict' ? 'block' : 'hidden'}>
             <DictPage dict={dict} />
+          </section>
+          <section className={page === 'cards' ? 'block' : 'hidden'}>
+            <CardsPage />
           </section>
           <section className={page === 'vocab' ? 'block' : 'hidden'}>
             <VocabPage />

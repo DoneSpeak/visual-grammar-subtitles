@@ -3,6 +3,7 @@ import { content } from './content';
 import { errors } from './errors';
 import { meta } from './meta';
 import { optionsBinds } from './options-binds';
+import { optionsCards } from './options-cards';
 import { optionsDict } from './options-dict';
 import { optionsKeys } from './options-keys';
 import { optionsModes } from './options-modes';
@@ -27,6 +28,7 @@ export const sections = {
   optionsPacks,
   optionsRules,
   optionsBinds,
+  optionsCards,
   optionsDict,
   optionsVocab,
   optionsKeys,

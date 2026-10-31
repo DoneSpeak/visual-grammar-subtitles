@@ -78,7 +78,8 @@ export const renderTokens = (container: HTMLElement, tokens: Token[], opts: Rend
     }
     const span = document.createElement('span');
     if (opts.colorize) applyStyle(span, tokenStyle(registry, tokens, index, preset, elements));
-    if (token.grammar?.length) span.title = token.grammar.join(' · ');
+    const tooltip = [...(token.grammar ?? []), ...(token.notes ?? [])];
+    if (tooltip.length) span.title = tooltip.join(' · ');
     const ruby = !readingOff && opts.furigana && token.reading ? align(token.surface, token.reading) : null;
     if (ruby) {
       const r = document.createElement('ruby');

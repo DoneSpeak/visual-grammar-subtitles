@@ -1,12 +1,13 @@
-import type { LanguageId } from '@/languages/types';
 import { requestEnglishQuery } from '@/shared/translate';
+import type { SubtitleLanguageId } from '@/shared/subtitleLanguages';
 import { fetchSubtitleFiles, type FetchedSubtitle } from './subtitles';
 
 /**
  * Subtitle providers for packs that have an online source.
  *
- * Each provider serves exactly one language and returns files the library can store as a pack.
- * Search and download use the user's own API key; nothing is bundled with the extension.
+ * The language is chosen by the caller at request time: the learning language and the language
+ * the subtitles are written in are different questions. Search and download use the user's own
+ * API key; nothing is bundled with the extension.
  */
 
 export type ProviderId = 'subdl' | 'opensubtitles';
@@ -30,7 +31,8 @@ export type EpisodeQuery = { season?: number; episode?: number };
 
 export type SubtitleProvider = {
   id: ProviderId;
-  language: LanguageId;
+  /** The language the requested subtitles are written in, not the learning language. */
+  language: SubtitleLanguageId;
   requiresKey: boolean;
   search(query: string): Promise<SeriesHit[]>;
   listEpisodes(hit: SeriesHit, query: EpisodeQuery): Promise<EpisodeFile[]>;
@@ -39,19 +41,45 @@ export type SubtitleProvider = {
 
 export type ProviderDescriptor = {
   id: ProviderId;
-  language: LanguageId;
   requiresKey: boolean;
-  /** Bound to the user's key; the UI never passes the key through component state. */
-  create(key: string): SubtitleProvider;
+  /** Subtitle languages this provider can search for. */
+  subtitleLanguages: readonly SubtitleLanguageId[];
+  /** Bound to the user's key and language; the UI never passes the key through component state. */
+  create(key: string, language: SubtitleLanguageId): SubtitleProvider;
 };
 
 export const SUBDL_API = 'https://api.subdl.com/api/v1/subtitles';
 export const SUBDL_DOWNLOAD = 'https://dl.subdl.com';
 const SUBDL_SITE = 'https://subdl.com';
 
-/** Languages SubDL serves, mapped to its ISO 639-1 uppercase codes. */
-type SubdlLanguage = 'en' | 'th';
-const SUBDL_LANGUAGE_CODES: Record<SubdlLanguage, string> = { en: 'EN', th: 'TH' };
+/**
+ * Subtitle languages SubDL serves, mapped to its uppercase codes.
+ *
+ * `ZH` / `ZH_BG` (Big5) come from Bazarr's SubDL converter rather than SubDL's own docs and are
+ * not verified against a live key; keep them in one place so a wrong code is a one-line fix.
+ */
+const SUBDL_LANGUAGE_CODES: Record<string, string> = {
+  en: 'EN',
+  th: 'TH',
+  'zh-Hans': 'ZH',
+  'zh-Hant': 'ZH_BG',
+};
+
+export const SUBDL_LANGUAGES: readonly SubtitleLanguageId[] = Object.keys(SUBDL_LANGUAGE_CODES);
+
+/**
+ * SubDL code for a language id. The curated ids keep their documented codes; anything else is
+ * upper-cased with `-` → `_` (`ko` → `KO`, `pt-br` → `PT_BR`), so a user can type a language this
+ * extension does not list. A wrong guess is not fatal: SubDL answers with no results.
+ */
+export const subdlCode = (language: SubtitleLanguageId): string => {
+  const id = language.trim();
+  return (
+    SUBDL_LANGUAGE_CODES[id] ??
+    SUBDL_LANGUAGE_CODES[id.toLowerCase()] ??
+    id.toUpperCase().replace(/-/g, '_')
+  );
+};
 
 /**
  * Documented response shape. The API documents `status`/`error`/`results`/`subtitles`; the
@@ -160,14 +188,15 @@ const toEpisode = (subtitle: SubdlSubtitle, fallbackLanguage: string): EpisodeFi
 };
 
 /**
- * One provider instance per language. Both share the `subdl` key id, so a key saved for one
- * language is reused for the other.
+ * One provider instance per subtitle language, all sharing the `subdl` key id: a key saved while
+ * searching one language is reused for every other. Any language is accepted — the code is derived
+ * by `subdlCode`, so an id outside the curated list still reaches the API.
  */
 export const createSubdlProvider = (
   key: string,
-  language: SubdlLanguage = 'en',
+  language: SubtitleLanguageId = 'en',
 ): SubtitleProvider => {
-  const languageCode = SUBDL_LANGUAGE_CODES[language];
+  const languageCode = subdlCode(language);
   return {
     id: 'subdl',
     language,
@@ -196,10 +225,22 @@ export const createSubdlProvider = (
   };
 };
 
-export const PROVIDERS: ProviderDescriptor[] = [
-  { id: 'subdl', language: 'en', requiresKey: true, create: createSubdlProvider },
-  { id: 'subdl', language: 'th', requiresKey: true, create: (key) => createSubdlProvider(key, 'th') },
-];
+/** SubDL serves any language id, so it is the fallback for ids the curated lists do not name. */
+const SUBDL_DESCRIPTOR: ProviderDescriptor = {
+  id: 'subdl',
+  requiresKey: true,
+  subtitleLanguages: SUBDL_LANGUAGES,
+  create: createSubdlProvider,
+};
 
-export const providersFor = (language: LanguageId): ProviderDescriptor[] =>
-  PROVIDERS.filter((provider) => provider.language === language);
+export const PROVIDERS: ProviderDescriptor[] = [SUBDL_DESCRIPTOR];
+
+/**
+ * The provider that can search the given subtitle language. Japanese belongs to kitsunekko, so it
+ * has none here; every other id — including one typed by the user — resolves to SubDL.
+ */
+export const providerFor = (language: SubtitleLanguageId): ProviderDescriptor | undefined => {
+  const id = language.trim();
+  if (!id || id === 'ja') return undefined;
+  return PROVIDERS.find((provider) => provider.subtitleLanguages.includes(id)) ?? SUBDL_DESCRIPTOR;
+};

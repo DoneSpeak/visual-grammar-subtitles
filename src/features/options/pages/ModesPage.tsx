@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Copy, RotateCcw, Server, Trash2 } from 'lucide-react';
+import { Copy, Laptop, RotateCcw, Server, Trash2 } from 'lucide-react';
 
 import { Button, Card, CardTitle, Input, PageHeader, PillGroup, Switch, cn } from '@/design-system';
 import { renderTokens } from '@/features/overlay/tokenize/render';
@@ -17,9 +17,11 @@ import {
   POS_ELEMENT,
   READING_ELEMENT,
   resolveFeatures,
+  sourcesForFeatures,
   type FeatureGroupId,
   type FeatureId,
   type FeatureRegistry,
+  type FeatureSource,
 } from '@/shared/studyFeatures';
 import {
   defaultPreset,
@@ -30,7 +32,8 @@ import {
   presetDisplayName,
   presetElements,
   presetOrder,
-  presetRequiresRemote,
+  presetSources,
+  presetUsesRemote,
   type BoxStyle,
   type ElementId,
   type ElementStyle,
@@ -73,6 +76,25 @@ const GROUP_LABEL: Record<FeatureGroupId, MessageKey> = {
   remote: 'modes.group.remote',
 };
 
+/** One icon per data source: laptop for client rules, server for the analysis service. */
+const capabilityTitleKey = (sources: FeatureSource[]): MessageKey => {
+  const local = sources.includes('local');
+  const remote = sources.includes('remote');
+  if (local && remote) return 'modes.capability.mixed';
+  return remote ? 'modes.capability.remote' : 'modes.capability.local';
+};
+
+const CapabilityBadge = ({ sources }: { sources: FeatureSource[] }) => {
+  if (!sources.length) return null;
+  const title = t(capabilityTitleKey(sources));
+  return (
+    <span title={title} aria-label={title} className="flex flex-none items-center gap-0.5 text-text-faint">
+      {sources.includes('local') ? <Laptop aria-hidden className="size-3" /> : null}
+      {sources.includes('remote') ? <Server aria-hidden className="size-3" /> : null}
+    </span>
+  );
+};
+
 const STATIC_ELEMENT_LABEL: Record<string, MessageKey> = {
   'syntax.role:topic': 'modes.element.syntax.topic',
   'syntax.role:subject': 'modes.element.syntax.subject',
@@ -85,6 +107,30 @@ const STATIC_ELEMENT_LABEL: Record<string, MessageKey> = {
   'syntax.clause:attributive': 'modes.element.syntax.clauseAttributive',
   'syntax.clause:nominal': 'modes.element.syntax.clauseNominal',
   'syntax.clause:adverbial': 'modes.element.syntax.clauseAdverbial',
+  'phrase.structure:NP': 'modes.en.element.structure.np',
+  'phrase.structure:VP': 'modes.en.element.structure.vp',
+  'phrase.structure:PP': 'modes.en.element.structure.pp',
+  'morph.form:contraction': 'modes.en.element.morph.contraction',
+  'morph.form:modal': 'modes.en.element.morph.modal',
+  'morph.form:negation': 'modes.en.element.morph.negation',
+  'morph.form:auxiliary': 'modes.en.element.morph.auxiliary',
+  'morph.form:verbForm': 'modes.en.element.morph.verbForm',
+  'token.segment:word': 'modes.th.element.segment',
+  'syntax.clause:condition': 'modes.th.element.clauseCondition',
+  'syntax.clause:result': 'modes.th.element.clauseResult',
+  'syntax.clause:continuation': 'modes.th.element.clauseContinuation',
+  'aspect.function:conditional': 'modes.th.element.aspect.conditional',
+  'aspect.function:connective': 'modes.th.element.aspect.connective',
+  'aspect.function:sequence': 'modes.th.element.aspect.sequence',
+  'aspect.function:prospective': 'modes.th.element.aspect.prospective',
+  'aspect.function:emphasis': 'modes.th.element.aspect.emphasis',
+  'aspect.function:progressive': 'modes.th.element.aspect.progressive',
+  'pronunciation.syllable:syllable': 'modes.th.element.syllable',
+  'pronunciation.tone:mid': 'modes.th.element.tone.mid',
+  'pronunciation.tone:low': 'modes.th.element.tone.low',
+  'pronunciation.tone:falling': 'modes.th.element.tone.falling',
+  'pronunciation.tone:high': 'modes.th.element.tone.high',
+  'pronunciation.tone:rising': 'modes.th.element.tone.rising',
   [READING_ELEMENT]: 'modes.element.reading',
 };
 
@@ -94,15 +140,16 @@ const CHUNK_LABEL: Record<string, MessageKey> = {
   'chunk.bunsetsu:middle': 'modes.element.chunk.middle',
   'chunk.bunsetsu:last': 'modes.element.chunk.last',
   'chunk.bunsetsu:only': 'modes.element.chunk.only',
-  'chunk.phrase:first': 'modes.en.element.chunk.first',
-  'chunk.phrase:middle': 'modes.en.element.chunk.middle',
-  'chunk.phrase:last': 'modes.en.element.chunk.last',
-  'chunk.phrase:only': 'modes.en.element.chunk.only',
+  'chunk.semantic:first': 'modes.en.element.chunk.first',
+  'chunk.semantic:middle': 'modes.en.element.chunk.middle',
+  'chunk.semantic:last': 'modes.en.element.chunk.last',
+  'chunk.semantic:only': 'modes.en.element.chunk.only',
 };
 
 const EXPRESSION_LABEL: Record<string, MessageKey> = {
   'expression.grammar:all': 'modes.element.expression',
-  'expression.phrase:all': 'modes.en.element.expression',
+  'expression.collocation:all': 'modes.en.element.expression',
+  'expression.pattern:all': 'modes.th.element.expression',
 };
 
 const LEVEL_LABEL: Record<string, MessageKey> = {
@@ -562,7 +609,9 @@ export function ModesPage({
             const candidate = presets[id];
             if (!candidate) return null;
             const selected = id === preset.id;
-            const remote = presetRequiresRemote(registry, candidate);
+            const sources = presetSources(registry, candidate);
+            const usesRemote = sources.includes('remote');
+            const title = t(capabilityTitleKey(sources));
             return (
               <div
                 key={id}
@@ -580,7 +629,7 @@ export function ModesPage({
                   <span
                     className={cn(
                       'flex items-center gap-1.5 text-xs font-medium',
-                      selected ? 'pr-24' : remote ? 'pr-6' : '',
+                      selected ? 'pr-24' : sources.length >= 2 ? 'pr-12' : sources.length ? 'pr-6' : '',
                     )}
                   >
                     <span className="truncate">{presetDisplayName(registry, candidate, t)}</span>
@@ -612,12 +661,22 @@ export function ModesPage({
                 </button>
                 {/* The card owns its own actions; only the selected one shows them. */}
                 <div className="absolute top-1 right-1 flex items-center gap-0.5">
-                  {remote ? (
+                  {sources.includes('local') ? (
+                    <span
+                      role="img"
+                      className="flex size-6 items-center justify-center text-text-faint"
+                      aria-label={title}
+                      title={title}
+                    >
+                      <Laptop aria-hidden className="size-3.5" />
+                    </span>
+                  ) : null}
+                  {usesRemote ? (
                     <Button
                       size="icon-sm"
                       variant="ghost"
-                      aria-label={t('modes.capability.remote')}
-                      title={t('modes.capability.remote')}
+                      aria-label={title}
+                      title={title}
                       onClick={() => openNlpSettings(id)}
                     >
                       <Server aria-hidden className="size-3.5" />
@@ -754,15 +813,7 @@ export function ModesPage({
               <div key={group} className="grid gap-1.5">
                 <div className="flex items-center gap-2">
                   <span className="text-2xs font-medium text-muted-foreground">{t(GROUP_LABEL[group])}</span>
-                  {group === 'remote' ? (
-                    <span
-                      title={t('modes.capability.remote')}
-                      className="flex text-text-faint"
-                      aria-label={t('modes.capability.remote')}
-                    >
-                      <Server aria-hidden className="size-3" />
-                    </span>
-                  ) : null}
+                  <CapabilityBadge sources={sourcesForFeatures(registry, groupFeatures.map((feature) => feature.id))} />
                 </div>
                 <PillGroup
                   name={`features-${group}`}
@@ -815,9 +866,9 @@ export function ModesPage({
         </div>
       </Card>
 
-      {presetRequiresRemote(registry, preset) ? (
+      {presetUsesRemote(registry, preset) ? (
         <div id="nlp-settings" className="scroll-mt-4">
-          <NlpPanel />
+          <NlpPanel optional={!preset.features.every((id) => featureById(registry, id)?.sources.includes('remote'))} />
         </div>
       ) : (
         <p className="text-sm text-muted-foreground">{t('modes.nlp.localOnly')}</p>

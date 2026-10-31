@@ -2,13 +2,15 @@ import { defineMessages } from '../define-messages';
 
 export const meta = defineMessages(
   {
-    'meta.popupTitle': 'Subtitle Overlay',
-    'meta.optionsTitle': 'Settings · JP Subtitle Overlay',
-    'meta.brand': 'Subtitle Overlay',
+    'meta.popupTitle': 'Visual Grammar Subtitles',
+    'meta.optionsTitle': 'Settings · Visual Grammar Subtitles',
+    'meta.brand': 'Visual Grammar Subtitles',
+    'meta.tagline': 'Visual Grammar & Color-Coded Language Learning',
   },
   {
-    'meta.popupTitle': '字幕扩展',
-    'meta.optionsTitle': '设置 · JP Subtitle Overlay',
-    'meta.brand': '字幕扩展',
+    'meta.popupTitle': '视觉语法字幕',
+    'meta.optionsTitle': '设置 · 视觉语法字幕',
+    'meta.brand': '视觉语法字幕',
+    'meta.tagline': '视觉语法与彩色语言学习',
   },
 );

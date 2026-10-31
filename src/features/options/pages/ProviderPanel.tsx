@@ -8,12 +8,21 @@ import {
   Input,
   Progress,
   SearchField,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   SettingRow,
   cn,
   toast,
 } from '@/design-system';
 import type { LanguageId } from '@/languages/types';
 import { packTitleForDisplay, t } from '@/shared/i18n';
+import {
+  subtitleLanguageLabel,
+  type SubtitleLanguageId,
+} from '@/shared/subtitleLanguages';
 import { importLibraryFiles } from '@/shared/library';
 import type { EpisodeFile } from '@/features/scraper/providers';
 import { fmtSize } from '../lib/format';
@@ -22,18 +31,22 @@ import { useProviderSearch } from '../hooks/use-provider-search';
 const errorText = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
+/** Radix forbids an empty item value; this one switches the row to a free-typed language id. */
+const CUSTOM_LANGUAGE = '__custom';
+
 /**
- * Search-and-import card for a keyed subtitle provider. Shown on the pack tab of any language a
- * provider serves; the key is supplied by the user and never shipped.
+ * Search-and-import card for a keyed subtitle provider. The subtitle language is chosen here, so
+ * the tab's learning language never limits which translations are reachable; the key is supplied
+ * by the user and never shipped.
  */
 export function ProviderPanel({
-  language,
+  initialLanguage,
   onImported,
 }: {
-  language: LanguageId;
+  initialLanguage: SubtitleLanguageId;
   onImported: (packId: string, language: LanguageId) => void;
 }) {
-  const search = useProviderSearch(language);
+  const search = useProviderSearch(initialLanguage);
   const [draft, setDraft] = React.useState('');
   /** File being downloaded; its presence replaces the result list with the progress bar. */
   const [pending, setPending] = React.useState<EpisodeFile | null>(null);
@@ -41,6 +54,12 @@ export function ProviderPanel({
   const [phase, setPhase] = React.useState<'running' | 'done' | 'leaving' | null>(null);
   /** Kept true after a successful import so the result list stays folded away. */
   const [collapsed, setCollapsed] = React.useState(false);
+  /** Non-null while the user is typing a language id the provider list does not name. */
+  const [custom, setCustom] = React.useState<string | null>(() =>
+    search.provider?.subtitleLanguages.includes(initialLanguage) === false
+      ? initialLanguage
+      : null,
+  );
   const timers = React.useRef<number[]>([]);
 
   React.useEffect(() => setDraft(search.key), [search.key]);
@@ -75,7 +94,7 @@ export function ProviderPanel({
     setPhase('running');
     search.setImporting(file.id);
     try {
-      const fetched = await provider.create(search.key).fetch(file);
+      const fetched = await provider.create(search.key, search.subtitleLanguage).fetch(file);
       if (!fetched.length) {
         toast.error(t('packs.provider.emptyFile'));
         setPending(null);
@@ -87,7 +106,7 @@ export function ProviderPanel({
       );
       const { pack, added, errors } = await importLibraryFiles(files, {
         title: search.hit.title,
-        language: provider.language,
+        language: search.subtitleLanguage,
         origin: {
           kind: 'provider',
           provider: provider.id,
@@ -96,6 +115,7 @@ export function ProviderPanel({
           episode: search.episode ? Number(search.episode) : undefined,
           release: file.release,
           url: file.url,
+          sourceUrl: file.sourceUrl,
           importedAt: Date.now(),
         },
       });
@@ -143,6 +163,54 @@ export function ProviderPanel({
           >
             {t('packs.provider.key.save')}
           </Button>
+        </div>
+      </SettingRow>
+
+      <SettingRow title={t('packs.provider.language')}>
+        <div className="flex items-center gap-2">
+          <Select
+            value={custom !== null ? CUSTOM_LANGUAGE : search.subtitleLanguage}
+            onValueChange={(value) => {
+              if (value === CUSTOM_LANGUAGE) {
+                setCustom(search.subtitleLanguage);
+                return;
+              }
+              setCustom(null);
+              search.setSubtitleLanguage(value);
+            }}
+          >
+            <SelectTrigger
+              className="w-40 flex-none"
+              aria-label={t('packs.provider.languageAria')}
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {provider.subtitleLanguages.map((id) => (
+                <SelectItem key={id} value={id}>
+                  {subtitleLanguageLabel(id)}
+                </SelectItem>
+              ))}
+              <SelectItem value={CUSTOM_LANGUAGE}>{t('packs.provider.languageCustom')}</SelectItem>
+            </SelectContent>
+          </Select>
+          {custom === null ? null : (
+            <Input
+              autoFocus
+              value={custom}
+              placeholder={t('packs.provider.languageCustomPlaceholder')}
+              aria-label={t('packs.provider.languageCustomPlaceholder')}
+              autoComplete="off"
+              spellCheck={false}
+              className="w-28"
+              onFocus={(event) => event.currentTarget.select()}
+              onChange={(event) => {
+                const value = event.target.value;
+                setCustom(value);
+                if (value.trim()) search.setSubtitleLanguage(value.trim());
+              }}
+            />
+          )}
         </div>
       </SettingRow>
 

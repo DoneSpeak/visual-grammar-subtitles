@@ -286,6 +286,15 @@
                     "reviewed"
                   ]
                 },
+                "detail": {
+                  "type": "string"
+                },
+                "parentId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
                 "spans": {
                   "type": "array",
                   "items": {

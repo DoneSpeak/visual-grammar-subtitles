@@ -202,9 +202,10 @@ def test_english_provider_registered_only_with_model():
         present = False
     assert ('en' in providers.PROVIDERS) == present
     if not present:
-        assert providers.available_languages() == ['ja']
+        assert 'en' not in providers.available_languages()
         pytest.skip('en_core_web_sm is not installed; English-specific assertions skipped')
     assert providers.PROVIDERS['en'].id == 'p-en'
+    assert set(providers.PROVIDERS['en'].capabilities) == set(providers.EN_CAPABILITIES)
 
 
 def test_document_round_trips_with_requested_language(tmp_path, monkeypatch):
@@ -244,7 +245,7 @@ def test_document_round_trips_with_requested_language(tmp_path, monkeypatch):
         assert all(unit['providerId'] == 'p-fake' for unit in document['units'])
         validate(document)
         languages = client.get('/api/v1/capabilities', headers=auth).json()['languages']
-        assert languages == ['en', 'ja']
+        assert {'en', 'ja'} <= set(languages) and languages == sorted(languages)
 
 
 # `required` roles must appear; `allowed_clauses` is an upper bound, because the small model
@@ -324,5 +325,166 @@ def test_english_analyzer_round_trip_when_model_available():
     document = providers.PROVIDERS['en'].analyze(cues, 'en', source)
     assert document['track']['language'] == 'en'
     assert document['providers'][0]['id'] == 'p-en'
+    assert document['schemaVersion'] == '1.1.0'
     assert any(token['surface'] == 'Hello' for unit in document['units'] for token in unit['tokens'])
     validate(document)
+
+
+def test_english_six_mode_layers():
+    pytest.importorskip('en_core_web_sm')
+    cues = [
+        {'id': 'c000001', 'startMs': 0, 'endMs': 2000, 'text': "I'm gonna make him an offer."},
+        {'id': 'c000002', 'startMs': 2000, 'endMs': 4000, 'text': 'The man who called me is my uncle.'},
+    ]
+    source = dict(format='srt', rawSha256='0' * 64, normalizationVersion='track-v1', trackHash=track_hash(cues, 'en'))
+    document = providers.PROVIDERS['en'].analyze(cues, 'en', source)
+    validate(document)
+
+    annotations = [annotation for unit in document['units'] for annotation in unit['annotations']]
+    layers = {annotation['layer'] for annotation in annotations}
+    assert {'chunk.semantic', 'syntax.role', 'syntax.clause', 'phrase.structure', 'morph.form', 'expression.collocation'} <= layers
+
+    # `parentId` is a within-unit annotation reference; `detail` explains morphology and collocations.
+    details = {(annotation['layer'], annotation.get('detail')) for annotation in annotations if annotation.get('detail')}
+    assert any(layer == 'morph.form' for layer, _ in details)
+    assert any(layer == 'expression.collocation' for layer, _ in details)
+    for unit in document['units']:
+        ids = {annotation['id'] for annotation in unit['annotations']}
+        for annotation in unit['annotations']:
+            parent = annotation.get('parentId')
+            if parent is not None:
+                assert parent in ids and parent != annotation['id']
+
+
+def _english_document(*texts):
+    cues = [{'id': f'c{index:06}', 'startMs': index * 2000, 'endMs': (index + 1) * 2000, 'text': text} for index, text in enumerate(texts, 1)]
+    source = dict(format='srt', rawSha256='0' * 64, normalizationVersion='track-v1', trackHash=track_hash(cues, 'en'))
+    return providers.PROVIDERS['en'].analyze(cues, 'en', source)
+
+
+def _english_texts(unit, annotation):
+    return [unit['text'][interval['start']:interval['end']] for interval in annotation['spans']]
+
+
+def test_english_spec_sentence_matches_six_modes():
+    """The example from specs/261031-english-subtitle-six-learning-modes.md."""
+    pytest.importorskip('en_core_web_sm')
+    text = "I'm gonna make him an offer he can't refuse."
+    unit = _english_document(text)['units'][0]
+    annotations = unit['annotations']
+    layer = lambda name: [annotation for annotation in annotations if annotation['layer'] == name]
+
+    roles = {(annotation['label'], _english_texts(unit, annotation)[0]) for annotation in layer('syntax.role')}
+    assert ('subject', "I'm") in roles
+    # The predicate is the whole semi-modal chain, and the object is not turned into a clause.
+    assert ('predicate', "I'm gonna make") in roles
+    assert ('object', 'an offer') in roles
+    assert ('attributive', "he can't refuse") in roles
+
+    chunks = [_english_texts(unit, annotation)[0] for annotation in layer('chunk.semantic')]
+    assert chunks == ["I'm gonna", 'make him an offer', "he can't refuse"]
+
+    structures = list(layer('phrase.structure'))
+    assert ('VP', "I'm gonna make") in {(annotation['label'], _english_texts(unit, annotation)[0]) for annotation in structures}
+    center = next(annotation for annotation in structures if annotation['label'] == 'NP' and _english_texts(unit, annotation) == ['an offer'])
+    parent = next(annotation for annotation in structures if annotation['id'] == center['parentId'])
+    assert _english_texts(unit, parent) == ["an offer he can't refuse"]
+
+    morph = {(annotation['label'], _english_texts(unit, annotation)[0], annotation.get('detail')) for annotation in layer('morph.form')}
+    assert ('contraction', "I'm", 'I\'m → I am') in morph
+    assert ('contraction', 'gonna', 'gonna → going to') in morph
+    assert ('contraction', "can't", "can't → cannot") in morph
+
+    collocations = {_english_texts(unit, annotation)[0] for annotation in layer('expression.collocation')}
+    assert {'gonna make', 'make him an offer', "can't refuse"} <= collocations
+
+    # No annotation may start or end inside a word: "gonna" and "can't" must not be split.
+    for annotation in annotations:
+        for interval in annotation['spans']:
+            assert not any(match.start() < interval['start'] < match.end() for match in providers.EN_WORD.finditer(text))
+            assert not any(match.start() < interval['end'] < match.end() for match in providers.EN_WORD.finditer(text))
+
+
+def test_english_predicate_is_the_verb_not_the_infinitive():
+    nlp, mapper = _english_mapper()
+    sentence = 'She wants to go home.'
+    predicate = next(span for layer, label, span in mapper.roles(nlp(sentence)) if label == 'predicate')
+    assert sentence[predicate[0]:predicate[1]] == 'wants'
+
+
+# --- Thai ------------------------------------------------------------------------------------
+
+TH_REFERENCE = 'ถ้าเหนื่อยก็พักก่อน เดี๋ยวฉันช่วยเอง'
+
+
+def test_thai_provider_registered_only_with_pythainlp():
+    try:
+        import pythainlp  # noqa: F401
+        present = True
+    except ImportError:
+        present = False
+    assert ('th' in providers.PROVIDERS) == present
+    if not present:
+        assert 'th' not in providers.available_languages()
+        pytest.skip('pythainlp is not installed; Thai-specific assertions skipped')
+    assert providers.PROVIDERS['th'].id == 'p-th'
+    assert set(providers.PROVIDERS['th'].capabilities) == set(providers.TH_CAPABILITIES)
+
+
+def _thai_document(*texts, language='th'):
+    cues = [{'id': f'c{index:06}', 'startMs': index * 2000, 'endMs': (index + 1) * 2000, 'text': text} for index, text in enumerate(texts, 1)]
+    source = dict(format='srt', rawSha256='0' * 64, normalizationVersion='track-v1', trackHash=track_hash(cues, language))
+    return providers.PROVIDERS['th'].analyze(cues, language, source)
+
+
+def _annotation_texts(unit, annotation):
+    """UTF-16 offsets are boundaries only in this test: the fixture text is all BMP characters."""
+    return [unit['text'][interval['start']:interval['end']] for interval in annotation['spans']]
+
+
+def test_thai_reference_line_covers_six_modes():
+    pytest.importorskip('pythainlp')
+    document = _thai_document(TH_REFERENCE)
+    validate(document)
+    unit = document['units'][0]
+    annotations = unit['annotations']
+
+    layers = {annotation['layer'] for annotation in annotations}
+    assert {'chunk.semantic', 'syntax.role', 'syntax.clause', 'aspect.function'} <= layers
+
+    chunks = [annotation for annotation in annotations if annotation['layer'] == 'chunk.semantic']
+    assert [_annotation_texts(unit, annotation)[0] for annotation in chunks] == ['ถ้าเหนื่อย', 'ก็พักก่อน', 'เดี๋ยว', 'ฉันช่วยเอง']
+
+    clauses = {annotation['label']: _annotation_texts(unit, annotation)[0] for annotation in annotations if annotation['layer'] == 'syntax.clause'}
+    assert clauses == {'condition': 'ถ้าเหนื่อย', 'result': 'ก็พักก่อน', 'continuation': 'เดี๋ยวฉันช่วยเอง'}
+
+    roles = {(annotation['label'], _annotation_texts(unit, annotation)[0]) for annotation in annotations if annotation['layer'] == 'syntax.role'}
+    assert ('subject', 'ฉัน') in roles
+    assert ('predicate', 'ช่วย') in roles
+    assert all(label != 'object' for label, _ in roles)
+
+    aspects = {(annotation['label'], _annotation_texts(unit, annotation)[0]) for annotation in annotations if annotation['layer'] == 'aspect.function'}
+    assert {('conditional', 'ถ้า'), ('connective', 'ก็'), ('sequence', 'ก่อน'), ('prospective', 'เดี๋ยว'), ('emphasis', 'เอง')} <= aspects
+
+    expressions = {_annotation_texts(unit, annotation)[0] for annotation in annotations if annotation['layer'] == 'expression.pattern'}
+    assert {'ถ้าเหนื่อยก็', 'พักก่อน', 'เดี๋ยวฉันช่วยเอง'} <= expressions
+
+
+def test_thai_progressive_is_one_discontinuous_annotation():
+    pytest.importorskip('pythainlp')
+    document = _thai_document('ฉันกำลังกินข้าวอยู่')
+    unit = document['units'][0]
+    progressive = [annotation for annotation in unit['annotations'] if annotation['layer'] == 'aspect.function' and annotation['label'] == 'progressive']
+    assert len(progressive) == 1
+    assert _annotation_texts(unit, progressive[0]) == ['กำลัง', 'อยู่']
+
+
+def test_thai_syllables_only_when_engine_is_available():
+    pytest.importorskip('pythainlp')
+    document = _thai_document('ภาษาไทย')
+    unit = document['units'][0]
+    syllables = [_annotation_texts(unit, annotation)[0] for annotation in unit['annotations'] if annotation['layer'] == 'pronunciation.syllable']
+    # The dictionary engine is the one the base install ships; the spec's example splits 3 ways.
+    assert syllables == ['ภา', 'ษา', 'ไทย']
+    # No tone is ever emitted from surface text alone.
+    assert all(annotation['layer'] != 'pronunciation.tone' for annotation in unit['annotations'])

@@ -31,6 +31,27 @@ const AUX = mapWords(
   entry('AUX'),
 );
 
+/** Modal auxiliaries, for the parser's `morph.form:modal` layer. */
+export const MODALS: ReadonlySet<string> = new Set([
+  'can', 'could', 'may', 'might', 'must', 'shall', 'should', 'will', 'would', 'ought',
+]);
+
+/**
+ * Spoken semi-modals. `Intl.Segmenter` keeps them as one token, so they must be closed-class or
+ * the parser cannot see the modal that governs the following base form.
+ */
+const SEMI_MODAL = new Map<string, Tagged>([
+  ['gonna', entry('AUX', { baseForm: 'going' })],
+  ['gotta', entry('AUX', { baseForm: 'got' })],
+  ['wanna', entry('AUX', { baseForm: 'want' })],
+  ['lemme', entry('AUX', { baseForm: 'let' })],
+  ['gimme', entry('AUX', { baseForm: 'give' })],
+  ['hafta', entry('AUX', { baseForm: 'have' })],
+  ['oughta', entry('AUX', { baseForm: 'ought' })],
+]);
+
+export const SEMI_MODALS: ReadonlySet<string> = new Set(SEMI_MODAL.keys());
+
 /** Inflected auxiliaries still lemmatize to the form a dictionary would carry. */
 const AUX_LEMMAS: Record<string, string> = {
   am: 'be',
@@ -125,6 +146,7 @@ const INTJ = mapWords(
 
 const CLOSED: Map<string, Tagged> = MERGE([
   CONTRACTED_AUX,
+  SEMI_MODAL,
   AUX,
   DET,
   PRON,

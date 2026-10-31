@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   createSubdlProvider,
-  providersFor,
+  providerFor,
   SUBDL_DOWNLOAD,
 } from '@/features/scraper/providers';
 import { sanitizeProviderKeys } from '@/shared/providerSettings';
@@ -23,14 +23,23 @@ const captureFetch = (body: unknown): ReturnType<typeof vi.fn> => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('provider registry', () => {
-  it('serves English and Thai from SubDL and leaves Japanese to kitsunekko', () => {
-    expect(providersFor('en').map((provider) => provider.id)).toEqual(['subdl']);
-    expect(providersFor('th').map((provider) => provider.id)).toEqual(['subdl']);
-    expect(providersFor('ja')).toEqual([]);
+  it('serves English, Thai and both Chinese scripts from SubDL', () => {
+    for (const language of ['en', 'th', 'zh-Hans', 'zh-Hant']) {
+      expect(providerFor(language)?.id).toBe('subdl');
+    }
   });
 
-  it('shares one SubDL key between the English and Thai providers', () => {
-    expect(providersFor('en')[0].id).toBe(providersFor('th')[0].id);
+  it('leaves Japanese to kitsunekko', () => {
+    expect(providerFor('ja')).toBeUndefined();
+  });
+
+  it('falls back to SubDL for a language the user typed by hand', () => {
+    expect(providerFor('ko')?.id).toBe('subdl');
+    expect(providerFor('  ')).toBeUndefined();
+  });
+
+  it('shares one SubDL key between every subtitle language', () => {
+    expect(providerFor('en')?.id).toBe(providerFor('zh-Hans')?.id);
   });
 });
 
@@ -56,6 +65,26 @@ describe('subdl provider', () => {
     expect(new URL((fetchMock.mock.calls[0] as unknown as [URL])[0]).searchParams.get('languages')).toBe(
       'TH',
     );
+  });
+
+  it('maps Simplified and Traditional Chinese to SubDL codes', async () => {
+    const fetchMock = captureFetch({ status: true, subtitles: [] });
+    await createSubdlProvider('key', 'zh-Hans').listEpisodes({ id: '42', title: 'Show' }, {});
+    await createSubdlProvider('key', 'zh-Hant').listEpisodes({ id: '42', title: 'Show' }, {});
+    const asked = fetchMock.mock.calls.map((call) =>
+      new URL((call as unknown as [URL])[0]).searchParams.get('languages'),
+    );
+    expect(asked).toEqual(['ZH', 'ZH_BG']);
+  });
+
+  it('derives a SubDL code for a language outside the curated list', async () => {
+    const fetchMock = captureFetch({ status: true, subtitles: [] });
+    await createSubdlProvider('key', 'KO').listEpisodes({ id: '42', title: 'Show' }, {});
+    await createSubdlProvider('key', 'pt-br').listEpisodes({ id: '42', title: 'Show' }, {});
+    const asked = fetchMock.mock.calls.map((call) =>
+      new URL((call as unknown as [URL])[0]).searchParams.get('languages'),
+    );
+    expect(asked).toEqual(['KO', 'PT_BR']);
   });
 
   it('searches by title and maps results', async () => {

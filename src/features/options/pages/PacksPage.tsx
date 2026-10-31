@@ -30,8 +30,9 @@ import {
   toast,
   useConfirm,
 } from '@/design-system';
-import { DEFAULT_LANGUAGE, resolveLanguage } from '@/languages/registry';
+import { DEFAULT_LANGUAGE } from '@/languages/registry';
 import type { LanguageId } from '@/languages/types';
+import { subtitleLanguageLabel } from '@/shared/subtitleLanguages';
 import {
   originNoteForDisplay,
   packTitleForDisplay,
@@ -50,7 +51,7 @@ import {
 import { folderNote, LOCAL_IMPORT_TITLE, UNFILED_TITLE } from '@/shared/persistedText';
 import { describeSubtitles } from '@/shared/subtitleLabel';
 import type { SeriesDir, SubFile } from '@/features/scraper/kitsunekko';
-import { providersFor } from '@/features/scraper/providers';
+import { providerFor } from '@/features/scraper/providers';
 import { fmtDate, fmtSize } from '../lib/format';
 import { useKitsunekko, type KitsunekkoController } from '../hooks/use-kitsunekko';
 import { useLearningLanguages } from '../hooks/use-learning-languages';
@@ -82,6 +83,13 @@ const originSummary = (origin: SubtitleOrigin): string => {
         date: fmtDate(origin.importedAt),
       })
     : t('packs.origin.local', { date: fmtDate(origin.importedAt) });
+};
+
+/** Page the pack can be traced back to; undefined for local imports and providers without one. */
+const originSourceUrl = (origin: SubtitleOrigin): string | undefined => {
+  if (origin.kind === 'kitsunekko') return origin.seriesUrl;
+  if (origin.kind === 'provider') return origin.sourceUrl;
+  return undefined;
 };
 
 const originLabel = (origin: SubtitleOrigin): string => {
@@ -325,6 +333,7 @@ function PackCard({ pack, entries, open, onToggle, onChanged, confirm }: {
 
   const totalBytes = entries.reduce((sum, entry) => sum + entry.size, 0);
   const summary = originSummary(pack.origin);
+  const sourceUrl = originSourceUrl(pack.origin);
 
   const deletePack = async () => {
     const ok = await confirm({
@@ -410,9 +419,9 @@ function PackCard({ pack, entries, open, onToggle, onChanged, confirm }: {
           <Hint className="mt-2">
             <div className="flex flex-col gap-1">
               <span className="break-words">{summary}</span>
-              {pack.origin.kind === 'kitsunekko' ? (
+              {sourceUrl ? (
                 <a
-                  href={pack.origin.seriesUrl}
+                  href={sourceUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-0.5 self-start underline underline-offset-2"
@@ -435,14 +444,13 @@ function PackCard({ pack, entries, open, onToggle, onChanged, confirm }: {
   );
 }
 
-function PackList({ packs, entries, onChanged, expanded, setExpanded, confirm, canAddOnline, onAddOnline, onAddLocal }: {
+function PackList({ packs, entries, onChanged, expanded, setExpanded, confirm, onAddOnline, onAddLocal }: {
   packs: LibraryPack[];
   entries: LibraryEntry[];
   onChanged: () => Promise<void>;
   expanded: Set<string>;
   setExpanded: React.Dispatch<React.SetStateAction<Set<string>>>;
   confirm: ReturnType<typeof useConfirm>['confirm'];
-  canAddOnline: boolean;
   onAddOnline: () => void;
   onAddLocal: () => void;
 }) {
@@ -496,11 +504,9 @@ function PackList({ packs, entries, onChanged, expanded, setExpanded, confirm, c
           <div className="flex flex-col items-start gap-2.5 py-2">
             <EmptyState className="py-0">{t('packs.list.empty')}</EmptyState>
             <div className="flex flex-wrap items-center gap-2">
-              {canAddOnline ? (
-                <Button size="sm" onClick={onAddOnline}>
-                  {t('packs.list.emptyActionOnline')}
-                </Button>
-              ) : null}
+              <Button size="sm" onClick={onAddOnline}>
+                {t('packs.list.emptyActionOnline')}
+              </Button>
               <Button size="sm" onClick={onAddLocal}>
                 {t('packs.list.emptyActionLocal')}
               </Button>
@@ -530,12 +536,6 @@ export function PacksPage({ library }: { library: LibraryController }) {
     ? activeLanguage
     : (tabLanguages[0] ?? DEFAULT_LANGUAGE);
 
-  const hasOnline = language === 'ja' || providersFor(language).length > 0;
-
-  React.useEffect(() => {
-    if (!hasOnline) setTab('local');
-  }, [hasOnline]);
-
   const packs = React.useMemo(
     () => library.packs.filter((pack) => pack.language === language),
     [library.packs, language],
@@ -556,6 +556,14 @@ export function PacksPage({ library }: { library: LibraryController }) {
       expand(packId);
     },
     [expand],
+  );
+
+  const importProvider = React.useCallback(
+    (packId: string, packLanguage: LanguageId) => {
+      expandLanguage(packId, packLanguage);
+      void library.refresh();
+    },
+    [expandLanguage, library.refresh],
   );
 
   const importRemote = async (dir: SeriesDir, file: SubFile) => {
@@ -586,7 +594,7 @@ export function PacksPage({ library }: { library: LibraryController }) {
           value={language}
           options={tabLanguages.map((id) => ({
             value: id,
-            label: resolveLanguage(id).displayName,
+            label: subtitleLanguageLabel(id),
           }))}
           onChange={(value) => setActiveLanguage(value as LanguageId)}
           aria-label={t('packs.language.aria')}
@@ -596,51 +604,46 @@ export function PacksPage({ library }: { library: LibraryController }) {
       <Card className="mt-5">
         <div className="flex items-center gap-1.5">
           <CardTitle>{t('packs.add.title')}</CardTitle>
-          {hasOnline ? (
-            <Popover label={t('packs.hint.label')} align="start">
-              <p className="m-0 mb-1 font-medium text-foreground">{t('packs.hint.title')}</p>
-              <ul className="m-0 flex list-disc flex-col gap-1 pl-4">
-                {language === 'ja' ? <li>{t('packs.hint.naming')}</li> : null}
-                {providersFor(language).length ? <li>{t('packs.hint.providerKey')}</li> : null}
-                <li>
-                  {t('packs.hint.opensubtitles')}{' '}
-                  <a
-                    href="https://www.opensubtitles.org"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline underline-offset-2"
-                  >
-                    opensubtitles.org
-                  </a>
-                </li>
-              </ul>
-            </Popover>
-          ) : null}
+          <Popover label={t('packs.hint.label')} align="start">
+            <p className="m-0 mb-1 font-medium text-foreground">{t('packs.hint.title')}</p>
+            <ul className="m-0 flex list-disc flex-col gap-1 pl-4">
+              {language === 'ja' ? <li>{t('packs.hint.naming')}</li> : null}
+              {language !== 'ja' ? <li>{t('packs.hint.providerKey')}</li> : null}
+              <li>
+                {t('packs.hint.opensubtitles')}{' '}
+                <a
+                  href="https://www.opensubtitles.org"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline underline-offset-2"
+                >
+                  opensubtitles.org
+                </a>
+              </li>
+            </ul>
+          </Popover>
         </div>
 
-        {hasOnline ? (
-          <Tabs value={tab} onValueChange={(value) => setTab(value as 'online' | 'local')} className="mt-3">
-            <TabsList aria-label={t('packs.tabs.aria')}>
-              <TabsTrigger value="online">{t('packs.tabs.online')}</TabsTrigger>
-              <TabsTrigger value="local">{t('packs.tabs.local')}</TabsTrigger>
-            </TabsList>
-            <TabsContent value="online" className="mt-2.5">
-              {language === 'ja' ? (
-                <KitsuPanel kitsu={kitsu} onImport={importRemote} importing={importing} />
-              ) : null}
-              {providersFor(language).length ? (
-                <ProviderPanel key={language} language={language} onImported={expandLanguage} />
-              ) : null}
-            </TabsContent>
-            <TabsContent value="local" className="mt-2.5">
-              <LocalImportPanel library={library} onImported={expandLanguage} />
-            </TabsContent>
-          </Tabs>
-        ) : (
-          <div className="mt-3">
+        <Tabs value={tab} onValueChange={(value) => setTab(value as 'online' | 'local')} className="mt-3">
+          <TabsList aria-label={t('packs.tabs.aria')}>
+            <TabsTrigger value="online">{t('packs.tabs.online')}</TabsTrigger>
+            <TabsTrigger value="local">{t('packs.tabs.local')}</TabsTrigger>
+          </TabsList>
+          <TabsContent value="online" className="mt-2.5">
+            {language === 'ja' ? (
+              <KitsuPanel kitsu={kitsu} onImport={importRemote} importing={importing} />
+            ) : (
+              <ProviderPanel
+                key={language}
+                initialLanguage={providerFor(language) ? language : 'en'}
+                onImported={importProvider}
+              />
+            )}
+          </TabsContent>
+          <TabsContent value="local" className="mt-2.5">
             <LocalImportPanel library={library} onImported={expandLanguage} />
-          </div>
-        )}
+          </TabsContent>
+        </Tabs>
       </Card>
 
       <PackList
@@ -650,7 +653,6 @@ export function PacksPage({ library }: { library: LibraryController }) {
         expanded={expanded}
         setExpanded={setExpanded}
         confirm={confirmState.confirm}
-        canAddOnline={hasOnline}
         onAddOnline={() => setTab('online')}
         onAddLocal={() => setTab('local')}
       />

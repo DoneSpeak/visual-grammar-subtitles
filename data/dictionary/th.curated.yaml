@@ -1,0 +1,513 @@
+schemaVersion: 1
+language: th
+
+# Thai → Chinese learning lexicon.
+#
+# Every entry is drafted AI-assisted (`reviewedBy: claude-assisted`) and marked
+# `reviewStatus: approved`, matching python/vocabulary/data/concepts/ja.yaml.
+# Only `approved` entries reach public/dict/th/lexicon.json. Public releases must
+# be spot-checked by a human; change `reviewedBy` to whoever signs off.
+#
+# `pos` is a UPOS tag. `en` is optional: without it the build takes English glosses
+# from the kaikki.org Thai extract. Expand the list in this file and rerun
+# `pnpm lexicon:build th`.
+
+entries:
+  # Pronouns and question words
+  - { word: ฉัน, pos: PRON, zh: 我（女性用）, en: I, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ผม, pos: PRON, zh: 我（男性用）, en: I, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คุณ, pos: PRON, zh: 你；您, en: you, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เรา, pos: PRON, zh: 我们, en: we, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เขา, pos: PRON, zh: 他；她, en: he; she, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: มัน, pos: PRON, zh: 它, en: it, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พวกเขา, pos: PRON, zh: 他们, en: they, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตัวเอง, pos: PRON, zh: 自己, en: oneself, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นี้, pos: DET, zh: 这个, en: this, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นั้น, pos: DET, zh: 那个, en: that, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ที่นี่, pos: ADV, zh: 这里, en: here, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ที่นั่น, pos: ADV, zh: 那里, en: there, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ใคร, pos: PRON, zh: 谁, en: who, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อะไร, pos: PRON, zh: 什么, en: what, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทำไม, pos: ADV, zh: 为什么, en: why, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อย่างไร, pos: ADV, zh: 怎样, en: how, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เมื่อไหร่, pos: ADV, zh: 什么时候, en: when, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ที่ไหน, pos: ADV, zh: 哪里, en: where, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Particles and connectors
+  - { word: ครับ, pos: PART, zh: 语气词（男性礼貌）, en: polite particle (male), reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ค่ะ, pos: PART, zh: 语气词（女性礼貌）, en: polite particle (female), reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นะ, pos: PART, zh: 语气词（提醒/请求）, en: softening particle, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จ้ะ, pos: PART, zh: 语气词（亲切）, en: friendly particle, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หรือ, pos: PART, zh: 疑问语气词, en: question particle, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: และ, pos: CCONJ, zh: 和；与, en: and, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แต่, pos: CCONJ, zh: 但是, en: but, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เพราะ, pos: SCONJ, zh: 因为, en: because, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ถ้า, pos: SCONJ, zh: 如果, en: if, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เมื่อ, pos: SCONJ, zh: 当……时, en: when, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เพื่อ, pos: ADP, zh: 为了, en: in order to, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กับ, pos: ADP, zh: 和；与, en: with, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ใน, pos: ADP, zh: 在……里, en: in, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: บน, pos: ADP, zh: 在……上, en: on, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ใต้, pos: ADP, zh: 在……下, en: under, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ข้างหน้า, pos: ADP, zh: 在……前面, en: in front of, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ข้างหลัง, pos: ADP, zh: 在……后面, en: behind, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ใกล้, pos: ADJ, zh: 近, en: near, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ไกล, pos: ADJ, zh: 远, en: far, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ระหว่าง, pos: ADP, zh: 在……之间, en: between, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ก่อน, pos: ADP, zh: 在……之前, en: before, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หลังจาก, pos: ADP, zh: 在……之后, en: after, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จาก, pos: ADP, zh: 从, en: from, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ถึง, pos: ADP, zh: 到；至, en: to; until, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เกี่ยวกับ, pos: ADP, zh: 关于, en: about, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตาม, pos: ADP, zh: 按照；沿着, en: according to; along, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โดย, pos: ADP, zh: 由；通过, en: by, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Core verbs
+  - { word: กิน, pos: VERB, zh: 吃, en: eat, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดื่ม, pos: VERB, zh: 喝, en: drink, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นอน, pos: VERB, zh: 睡；躺, en: sleep, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตื่น, pos: VERB, zh: 醒, en: wake up, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ไป, pos: VERB, zh: 去, en: go, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: มา, pos: VERB, zh: 来, en: come, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กลับ, pos: VERB, zh: 回；返回, en: return, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: วิ่ง, pos: VERB, zh: 跑, en: run, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เดิน, pos: VERB, zh: 走, en: walk, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นั่ง, pos: VERB, zh: 坐, en: sit, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ยืน, pos: VERB, zh: 站, en: stand, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พูด, pos: VERB, zh: 说, en: speak, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: บอก, pos: VERB, zh: 告诉, en: tell, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ถาม, pos: VERB, zh: 问, en: ask, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตอบ, pos: VERB, zh: 回答, en: answer, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ฟัง, pos: VERB, zh: 听, en: listen, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ได้ยิน, pos: VERB, zh: 听见, en: hear, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดู, pos: VERB, zh: 看, en: look; watch, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เห็น, pos: VERB, zh: 看见, en: see, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อ่าน, pos: VERB, zh: 读, en: read, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เขียน, pos: VERB, zh: 写, en: write, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เรียน, pos: VERB, zh: 学习；上课, en: study, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สอน, pos: VERB, zh: 教, en: teach, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทำงาน, pos: VERB, zh: 工作, en: work, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เล่น, pos: VERB, zh: 玩；演奏, en: play, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ซื้อ, pos: VERB, zh: 买, en: buy, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ขาย, pos: VERB, zh: 卖, en: sell, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ให้, pos: VERB, zh: 给, en: give, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: รับ, pos: VERB, zh: 收；接受, en: receive, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เอา, pos: VERB, zh: 拿；要, en: take, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: วาง, pos: VERB, zh: 放, en: put, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เปิด, pos: VERB, zh: 打开, en: open, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ปิด, pos: VERB, zh: 关；关闭, en: close, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เริ่ม, pos: VERB, zh: 开始, en: start, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จบ, pos: VERB, zh: 结束, en: finish, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: รัก, pos: VERB, zh: 爱, en: love, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ชอบ, pos: VERB, zh: 喜欢, en: like, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เกลียด, pos: VERB, zh: 讨厌；恨, en: hate, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ต้องการ, pos: VERB, zh: 需要；想要, en: need; want, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อยาก, pos: VERB, zh: 想；想要, en: want to, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ต้อง, pos: AUX, zh: 必须, en: must, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สามารถ, pos: AUX, zh: 能够, en: can, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทำ, pos: VERB, zh: 做；制作, en: do; make, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ใช้, pos: VERB, zh: 用；使用, en: use, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หา, pos: VERB, zh: 找；寻找, en: look for, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เจอ, pos: VERB, zh: 遇到；找到, en: meet; find, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พบ, pos: VERB, zh: 遇见, en: meet, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: รู้, pos: VERB, zh: 知道, en: know, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เข้าใจ, pos: VERB, zh: 理解, en: understand, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คิด, pos: VERB, zh: 想；思考, en: think, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จำ, pos: VERB, zh: 记得, en: remember, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ลืม, pos: VERB, zh: 忘记, en: forget, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: รอ, pos: VERB, zh: 等, en: wait, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ช่วย, pos: VERB, zh: 帮助, en: help, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ขอบคุณ, pos: VERB, zh: 感谢, en: thank, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ขอ, pos: VERB, zh: 请求；要, en: request, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อนุญาต, pos: VERB, zh: 允许, en: allow, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ห้าม, pos: VERB, zh: 禁止, en: forbid, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อยู่, pos: VERB, zh: 在；住, en: stay; live, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อาศัย, pos: VERB, zh: 居住, en: reside, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตาย, pos: VERB, zh: 死, en: die, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เกิด, pos: VERB, zh: 出生；发生, en: be born; happen, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดึง, pos: VERB, zh: 拉, en: pull, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดัน, pos: VERB, zh: 推, en: push, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตี, pos: VERB, zh: 打；敲, en: hit, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ต่อสู้, pos: VERB, zh: 战斗；斗争, en: fight, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ชนะ, pos: VERB, zh: 赢, en: win, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แพ้, pos: VERB, zh: 输, en: lose, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หัวเราะ, pos: VERB, zh: 笑, en: laugh, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ร้องไห้, pos: VERB, zh: 哭, en: cry, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ยิ้ม, pos: VERB, zh: 微笑, en: smile, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กอด, pos: VERB, zh: 拥抱, en: hug, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จูบ, pos: VERB, zh: 吻, en: kiss, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แต่งงาน, pos: VERB, zh: 结婚, en: marry, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โต, pos: VERB, zh: 长大, en: grow, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เปลี่ยน, pos: VERB, zh: 改变；更换, en: change, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ซ่อม, pos: VERB, zh: 修理, en: repair, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ล้าง, pos: VERB, zh: 洗, en: wash, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทำอาหาร, pos: VERB, zh: 做饭, en: cook, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เดินทาง, pos: VERB, zh: 旅行, en: travel, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ขับ, pos: VERB, zh: 驾驶, en: drive, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ขี่, pos: VERB, zh: 骑, en: ride, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: บิน, pos: VERB, zh: 飞, en: fly, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ว่ายน้ำ, pos: VERB, zh: 游泳, en: swim, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เต้น, pos: VERB, zh: 跳舞, en: dance, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ร้องเพลง, pos: VERB, zh: 唱歌, en: sing, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: วาด, pos: VERB, zh: 画, en: draw, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โทร, pos: VERB, zh: 打电话, en: call, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ส่ง, pos: VERB, zh: 送；寄, en: send, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จ่าย, pos: VERB, zh: 支付, en: pay, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เก็บ, pos: VERB, zh: 收；保存, en: keep; save, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ยืม, pos: VERB, zh: 借入, en: borrow, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คืน, pos: VERB, zh: 归还, en: return, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เลือก, pos: VERB, zh: 选择, en: choose, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตัดสินใจ, pos: VERB, zh: 决定, en: decide, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พยายาม, pos: VERB, zh: 努力, en: try, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สำเร็จ, pos: VERB, zh: 成功, en: succeed, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ล้มเหลว, pos: VERB, zh: 失败, en: fail, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หยุด, pos: VERB, zh: 停止, en: stop, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # People, family and roles
+  - { word: คน, pos: NOUN, zh: 人, en: person, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ผู้ชาย, pos: NOUN, zh: 男人, en: man, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ผู้หญิง, pos: NOUN, zh: 女人, en: woman, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เด็ก, pos: NOUN, zh: 孩子, en: child, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทารก, pos: NOUN, zh: 婴儿, en: baby, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พ่อ, pos: NOUN, zh: 父亲, en: father, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แม่, pos: NOUN, zh: 母亲, en: mother, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พี่, pos: NOUN, zh: 哥哥；姐姐, en: older sibling, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: น้อง, pos: NOUN, zh: 弟弟；妹妹, en: younger sibling, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พี่ชาย, pos: NOUN, zh: 哥哥, en: older brother, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พี่สาว, pos: NOUN, zh: 姐姐, en: older sister, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ปู่, pos: NOUN, zh: 祖父, en: paternal grandfather, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ย่า, pos: NOUN, zh: 祖母, en: paternal grandmother, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตา, pos: NOUN, zh: 外祖父；眼睛, en: maternal grandfather; eye, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ยาย, pos: NOUN, zh: 外祖母, en: maternal grandmother, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ลูก, pos: NOUN, zh: 孩子；子女, en: child, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ครอบครัว, pos: NOUN, zh: 家庭, en: family, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เพื่อน, pos: NOUN, zh: 朋友, en: friend, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แฟน, pos: NOUN, zh: 恋人, en: partner, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สามี, pos: NOUN, zh: 丈夫, en: husband, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ภรรยา, pos: NOUN, zh: 妻子, en: wife, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ครู, pos: NOUN, zh: 老师, en: teacher, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นักเรียน, pos: NOUN, zh: 学生, en: student, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หมอ, pos: NOUN, zh: 医生, en: doctor, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พยาบาล, pos: NOUN, zh: 护士, en: nurse, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตำรวจ, pos: NOUN, zh: 警察, en: police, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทหาร, pos: NOUN, zh: 士兵, en: soldier, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คนงาน, pos: NOUN, zh: 工人, en: worker, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ชาวนา, pos: NOUN, zh: 农民, en: farmer, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พ่อค้า, pos: NOUN, zh: 商人, en: merchant, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นักร้อง, pos: NOUN, zh: 歌手, en: singer, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นักแสดง, pos: NOUN, zh: 演员, en: actor, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นักเขียน, pos: NOUN, zh: 作家, en: writer, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ช่าง, pos: NOUN, zh: 工匠；技师, en: craftsman, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หัวหน้า, pos: NOUN, zh: 上司；首领, en: boss, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ลูกค้า, pos: NOUN, zh: 顾客, en: customer, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Food and kitchen
+  - { word: อาหาร, pos: NOUN, zh: 食物；饭菜, en: food, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: น้ำ, pos: NOUN, zh: 水, en: water, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นม, pos: NOUN, zh: 牛奶, en: milk, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กาแฟ, pos: NOUN, zh: 咖啡, en: coffee, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ชา, pos: NOUN, zh: 茶, en: tea, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ข้าว, pos: NOUN, zh: 米饭；饭, en: rice; meal, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เนื้อ, pos: NOUN, zh: 肉, en: meat, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ปลา, pos: NOUN, zh: 鱼, en: fish, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ไก่, pos: NOUN, zh: 鸡, en: chicken, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หมู, pos: NOUN, zh: 猪；猪肉, en: pork, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ไข่, pos: NOUN, zh: 蛋；鸡蛋, en: egg, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ผัก, pos: NOUN, zh: 蔬菜, en: vegetable, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ผลไม้, pos: NOUN, zh: 水果, en: fruit, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แอปเปิล, pos: NOUN, zh: 苹果, en: apple, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กล้วย, pos: NOUN, zh: 香蕉, en: banana, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ส้ม, pos: NOUN, zh: 橙子, en: orange, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: มะม่วง, pos: NOUN, zh: 芒果, en: mango, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ขนม, pos: NOUN, zh: 点心；甜点, en: snack; dessert, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: น้ำตาล, pos: NOUN, zh: 糖, en: sugar, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เกลือ, pos: NOUN, zh: 盐, en: salt, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: น้ำมัน, pos: NOUN, zh: 油, en: oil, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จาน, pos: NOUN, zh: 盘子, en: plate, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ชาม, pos: NOUN, zh: 碗, en: bowl, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แก้ว, pos: NOUN, zh: 杯子；玻璃, en: glass, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ช้อน, pos: NOUN, zh: 勺子, en: spoon, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ส้อม, pos: NOUN, zh: 叉子, en: fork, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: มีด, pos: NOUN, zh: 刀, en: knife, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หม้อ, pos: NOUN, zh: 锅, en: pot, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กระทะ, pos: NOUN, zh: 平底锅, en: pan, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เตา, pos: NOUN, zh: 炉子, en: stove, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตู้เย็น, pos: NOUN, zh: 冰箱, en: refrigerator, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Home and places
+  - { word: โต๊ะ, pos: NOUN, zh: 桌子, en: table, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เก้าอี้, pos: NOUN, zh: 椅子, en: chair, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เตียง, pos: NOUN, zh: 床, en: bed, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หมอน, pos: NOUN, zh: 枕头, en: pillow, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ผ้าห่ม, pos: NOUN, zh: 被子, en: blanket, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: บ้าน, pos: NOUN, zh: 家；房子, en: house, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ห้อง, pos: NOUN, zh: 房间, en: room, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ประตู, pos: NOUN, zh: 门, en: door, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หน้าต่าง, pos: NOUN, zh: 窗户, en: window, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กำแพง, pos: NOUN, zh: 墙, en: wall, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พื้น, pos: NOUN, zh: 地板, en: floor, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: บันได, pos: NOUN, zh: 楼梯, en: stairs, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ห้องน้ำ, pos: NOUN, zh: 洗手间, en: bathroom, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ห้องครัว, pos: NOUN, zh: 厨房, en: kitchen, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ห้องนอน, pos: NOUN, zh: 卧室, en: bedroom, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โรงเรียน, pos: NOUN, zh: 学校, en: school, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โรงพยาบาล, pos: NOUN, zh: 医院, en: hospital, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตลาด, pos: NOUN, zh: 市场, en: market, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ร้าน, pos: NOUN, zh: 店, en: shop, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โรงแรม, pos: NOUN, zh: 酒店, en: hotel, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ร้านอาหาร, pos: NOUN, zh: 餐馆, en: restaurant, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ธนาคาร, pos: NOUN, zh: 银行, en: bank, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สนามบิน, pos: NOUN, zh: 机场, en: airport, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สถานี, pos: NOUN, zh: 车站, en: station, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ถนน, pos: NOUN, zh: 马路, en: road, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทาง, pos: NOUN, zh: 路；方向, en: way, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สะพาน, pos: NOUN, zh: 桥, en: bridge, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Nature
+  - { word: แม่น้ำ, pos: NOUN, zh: 河流, en: river, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทะเล, pos: NOUN, zh: 海, en: sea, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: มหาสมุทร, pos: NOUN, zh: 大洋, en: ocean, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ภูเขา, pos: NOUN, zh: 山, en: mountain, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ป่า, pos: NOUN, zh: 森林, en: forest, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ต้นไม้, pos: NOUN, zh: 树, en: tree, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดอกไม้, pos: NOUN, zh: 花, en: flower, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หญ้า, pos: NOUN, zh: 草, en: grass, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ใบไม้, pos: NOUN, zh: 树叶, en: leaf, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดิน, pos: NOUN, zh: 土, en: soil, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หิน, pos: NOUN, zh: 石头, en: stone, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทราย, pos: NOUN, zh: 沙子, en: sand, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ท้องฟ้า, pos: NOUN, zh: 天空, en: sky, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดวงอาทิตย์, pos: NOUN, zh: 太阳, en: sun, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดวงจันทร์, pos: NOUN, zh: 月亮, en: moon, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดาว, pos: NOUN, zh: 星星, en: star, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เมฆ, pos: NOUN, zh: 云, en: cloud, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ฝน, pos: NOUN, zh: 雨, en: rain, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ลม, pos: NOUN, zh: 风, en: wind, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หิมะ, pos: NOUN, zh: 雪, en: snow, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ไฟ, pos: NOUN, zh: 火, en: fire, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แสง, pos: NOUN, zh: 光, en: light, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Objects and transport
+  - { word: เสียง, pos: NOUN, zh: 声音, en: sound, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เพลง, pos: NOUN, zh: 歌曲, en: song, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ภาพ, pos: NOUN, zh: 图片, en: picture, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ภาพยนตร์, pos: NOUN, zh: 电影, en: movie, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หนังสือ, pos: NOUN, zh: 书, en: book, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กระดาษ, pos: NOUN, zh: 纸, en: paper, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ปากกา, pos: NOUN, zh: 钢笔；笔, en: pen, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดินสอ, pos: NOUN, zh: 铅笔, en: pencil, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คอมพิวเตอร์, pos: NOUN, zh: 电脑, en: computer, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โทรศัพท์, pos: NOUN, zh: 电话, en: telephone, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: รถ, pos: NOUN, zh: 车, en: car, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: รถไฟ, pos: NOUN, zh: 火车, en: train, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เรือ, pos: NOUN, zh: 船, en: boat, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เครื่องบิน, pos: NOUN, zh: 飞机, en: airplane, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จักรยาน, pos: NOUN, zh: 自行车, en: bicycle, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เสื้อ, pos: NOUN, zh: 上衣, en: shirt, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กางเกง, pos: NOUN, zh: 裤子, en: pants, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กระโปรง, pos: NOUN, zh: 裙子, en: skirt, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: รองเท้า, pos: NOUN, zh: 鞋, en: shoes, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หมวก, pos: NOUN, zh: 帽子, en: hat, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ถุงเท้า, pos: NOUN, zh: 袜子, en: socks, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กระเป๋า, pos: NOUN, zh: 包；袋子, en: bag, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แว่นตา, pos: NOUN, zh: 眼镜, en: glasses, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นาฬิกา, pos: NOUN, zh: 钟；手表, en: clock; watch, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กุญแจ, pos: NOUN, zh: 钥匙, en: key, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เงิน, pos: NOUN, zh: 钱；银子, en: money; silver, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ราคา, pos: NOUN, zh: 价格, en: price, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Time
+  - { word: งาน, pos: NOUN, zh: 工作, en: job; work, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เวลา, pos: NOUN, zh: 时间, en: time, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: วัน, pos: NOUN, zh: 天；日, en: day, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คืน, pos: NOUN, zh: 夜, en: night, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เช้า, pos: NOUN, zh: 早上, en: morning, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: บ่าย, pos: NOUN, zh: 下午, en: afternoon, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เย็น, pos: NOUN, zh: 傍晚；凉, en: evening; cool, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สัปดาห์, pos: NOUN, zh: 星期；周, en: week, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เดือน, pos: NOUN, zh: 月；月份, en: month, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ปี, pos: NOUN, zh: 年, en: year, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: วันนี้, pos: NOUN, zh: 今天, en: today, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พรุ่งนี้, pos: NOUN, zh: 明天, en: tomorrow, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เมื่อวาน, pos: NOUN, zh: 昨天, en: yesterday, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ชั่วโมง, pos: NOUN, zh: 小时, en: hour, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นาที, pos: NOUN, zh: 分钟, en: minute, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: วินาที, pos: NOUN, zh: 秒, en: second, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Society and abstractions
+  - { word: โลก, pos: NOUN, zh: 世界, en: world, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ประเทศ, pos: NOUN, zh: 国家, en: country, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เมือง, pos: NOUN, zh: 城市, en: city, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หมู่บ้าน, pos: NOUN, zh: 村庄, en: village, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ภาษา, pos: NOUN, zh: 语言, en: language, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: วัฒนธรรม, pos: NOUN, zh: 文化, en: culture, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ประวัติศาสตร์, pos: NOUN, zh: 历史, en: history, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: วิทยาศาสตร์, pos: NOUN, zh: 科学, en: science, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คณิตศาสตร์, pos: NOUN, zh: 数学, en: mathematics, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ศิลปะ, pos: NOUN, zh: 艺术, en: art, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดนตรี, pos: NOUN, zh: 音乐, en: music, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กีฬา, pos: NOUN, zh: 体育；运动, en: sport, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เกม, pos: NOUN, zh: 游戏, en: game, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ความรัก, pos: NOUN, zh: 爱情, en: love, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ความสุข, pos: NOUN, zh: 幸福, en: happiness, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ความเศร้า, pos: NOUN, zh: 悲伤, en: sadness, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ความกลัว, pos: NOUN, zh: 恐惧, en: fear, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ความโกรธ, pos: NOUN, zh: 愤怒, en: anger, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ความหวัง, pos: NOUN, zh: 希望, en: hope, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ความฝัน, pos: NOUN, zh: 梦想, en: dream, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ปัญหา, pos: NOUN, zh: 问题, en: problem, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คำตอบ, pos: NOUN, zh: 答案, en: answer, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คำถาม, pos: NOUN, zh: 问题；提问, en: question, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เหตุผล, pos: NOUN, zh: 理由, en: reason, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ผลลัพธ์, pos: NOUN, zh: 结果, en: result, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โอกาส, pos: NOUN, zh: 机会, en: opportunity, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อันตราย, pos: NOUN, zh: 危险, en: danger, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ความปลอดภัย, pos: NOUN, zh: 安全, en: safety, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สุขภาพ, pos: NOUN, zh: 健康, en: health, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โรค, pos: NOUN, zh: 疾病, en: disease, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ยา, pos: NOUN, zh: 药, en: medicine, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ความเจ็บปวด, pos: NOUN, zh: 疼痛, en: pain, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Body
+  - { word: หัว, pos: NOUN, zh: 头, en: head, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ผม, pos: NOUN, zh: 头发, en: hair, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หู, pos: NOUN, zh: 耳朵, en: ear, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จมูก, pos: NOUN, zh: 鼻子, en: nose, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ปาก, pos: NOUN, zh: 嘴, en: mouth, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ฟัน, pos: NOUN, zh: 牙齿, en: tooth, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ลิ้น, pos: NOUN, zh: 舌头, en: tongue, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คอ, pos: NOUN, zh: 脖子, en: neck, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ไหล่, pos: NOUN, zh: 肩膀, en: shoulder, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แขน, pos: NOUN, zh: 胳膊, en: arm, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: มือ, pos: NOUN, zh: 手, en: hand, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: นิ้ว, pos: NOUN, zh: 手指, en: finger, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หลัง, pos: NOUN, zh: 背；后面, en: back, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ขา, pos: NOUN, zh: 腿, en: leg, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เท้า, pos: NOUN, zh: 脚, en: foot, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หัวใจ, pos: NOUN, zh: 心；心脏, en: heart, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เลือด, pos: NOUN, zh: 血, en: blood, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กระดูก, pos: NOUN, zh: 骨头, en: bone, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ผิว, pos: NOUN, zh: 皮肤, en: skin, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ตัว, pos: NOUN, zh: 身体；身躯, en: body, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หน้า, pos: NOUN, zh: 脸；页, en: face; page, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ท้อง, pos: NOUN, zh: 肚子, en: stomach, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สมอง, pos: NOUN, zh: 大脑, en: brain, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Adjectives
+  - { word: ดี, pos: ADJ, zh: 好, en: good, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เลว, pos: ADJ, zh: 坏, en: bad, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ใหญ่, pos: ADJ, zh: 大, en: big, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เล็ก, pos: ADJ, zh: 小, en: small, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สูง, pos: ADJ, zh: 高, en: tall; high, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ต่ำ, pos: ADJ, zh: 低, en: low, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ยาว, pos: ADJ, zh: 长, en: long, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สั้น, pos: ADJ, zh: 短, en: short, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กว้าง, pos: ADJ, zh: 宽, en: wide, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แคบ, pos: ADJ, zh: 窄, en: narrow, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หนา, pos: ADJ, zh: 厚, en: thick, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: บาง, pos: ADJ, zh: 薄, en: thin, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หนัก, pos: ADJ, zh: 重, en: heavy, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เบา, pos: ADJ, zh: 轻, en: light, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เร็ว, pos: ADJ, zh: 快, en: fast, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ช้า, pos: ADJ, zh: 慢, en: slow, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ร้อน, pos: ADJ, zh: 热, en: hot, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อบอุ่น, pos: ADJ, zh: 温暖, en: warm, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ใหม่, pos: ADJ, zh: 新, en: new, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เก่า, pos: ADJ, zh: 旧；老, en: old, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สวย, pos: ADJ, zh: 美丽, en: beautiful, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หล่อ, pos: ADJ, zh: 英俊, en: handsome, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: น่ารัก, pos: ADJ, zh: 可爱, en: cute, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: น่าเกลียด, pos: ADJ, zh: 丑陋, en: ugly, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สะอาด, pos: ADJ, zh: 干净, en: clean, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สกปรก, pos: ADJ, zh: 脏, en: dirty, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ง่าย, pos: ADJ, zh: 容易, en: easy, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ยาก, pos: ADJ, zh: 难, en: difficult, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แพง, pos: ADJ, zh: 贵, en: expensive, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ถูก, pos: ADJ, zh: 便宜；正确, en: cheap; correct, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: รวย, pos: ADJ, zh: 富有, en: rich, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จน, pos: ADJ, zh: 穷, en: poor, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แข็ง, pos: ADJ, zh: 硬；强壮, en: hard; strong, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อ่อน, pos: ADJ, zh: 软；弱, en: soft; weak, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ฉลาด, pos: ADJ, zh: 聪明, en: smart, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โง่, pos: ADJ, zh: 笨, en: stupid, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ขยัน, pos: ADJ, zh: 勤奋, en: hardworking, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ขี้เกียจ, pos: ADJ, zh: 懒, en: lazy, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: มีความสุข, pos: ADJ, zh: 快乐的, en: happy, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เศร้า, pos: ADJ, zh: 悲伤, en: sad, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: โกรธ, pos: ADJ, zh: 生气, en: angry, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กลัว, pos: ADJ, zh: 害怕, en: afraid, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เหนื่อย, pos: ADJ, zh: 累, en: tired, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หิว, pos: ADJ, zh: 饿, en: hungry, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อิ่ม, pos: ADJ, zh: 饱, en: full, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ป่วย, pos: ADJ, zh: 生病, en: sick, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แข็งแรง, pos: ADJ, zh: 健康；强壮, en: healthy; strong, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จริง, pos: ADJ, zh: 真的, en: "true", reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ผิด, pos: ADJ, zh: 错的, en: wrong, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เหมือน, pos: ADJ, zh: 相同；像, en: same; like, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ต่าง, pos: ADJ, zh: 不同, en: different, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สำคัญ, pos: ADJ, zh: 重要, en: important, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จำเป็น, pos: ADJ, zh: 必要, en: necessary, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ปลอดภัย, pos: ADJ, zh: 安全, en: safe, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: น่าสนใจ, pos: ADJ, zh: 有趣, en: interesting, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: น่าเบื่อ, pos: ADJ, zh: 无聊, en: boring, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สนุก, pos: ADJ, zh: 好玩, en: fun, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ใจดี, pos: ADJ, zh: 善良, en: kind, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ซื่อสัตย์, pos: ADJ, zh: 诚实, en: honest, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กล้า, pos: ADJ, zh: 勇敢, en: brave, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สุภาพ, pos: ADJ, zh: 礼貌, en: polite, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Adverbs and quantities
+  - { word: มาก, pos: ADV, zh: 很；多, en: very; much, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: น้อย, pos: ADV, zh: 少, en: few; little, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ด้วยกัน, pos: ADV, zh: 一起, en: together, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: คนเดียว, pos: ADV, zh: 独自, en: alone, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เสมอ, pos: ADV, zh: 总是, en: always, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: บ่อย, pos: ADV, zh: 经常, en: often, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: บางครั้ง, pos: ADV, zh: 有时, en: sometimes, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ไม่เคย, pos: ADV, zh: 从不, en: never, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แล้ว, pos: ADV, zh: 已经；了, en: already, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จะ, pos: AUX, zh: 将；会, en: will, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เพิ่ง, pos: ADV, zh: 刚刚, en: just, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ยัง, pos: ADV, zh: 还, en: still, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อีก, pos: ADV, zh: 再；又, en: again; more, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เท่านั้น, pos: ADV, zh: 只；仅, en: only, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เกือบ, pos: ADV, zh: 几乎, en: almost, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: จริงๆ, pos: ADV, zh: 真的；确实, en: really, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อาจจะ, pos: ADV, zh: 也许, en: maybe, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แน่นอน, pos: ADV, zh: 当然, en: certainly, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ที่สุด, pos: ADV, zh: 最, en: most, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: กว่า, pos: ADP, zh: 比, en: than, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เช่นกัน, pos: ADV, zh: 也；同样, en: also, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เช่น, pos: ADP, zh: 例如, en: for example, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดังนั้น, pos: CCONJ, zh: 因此, en: therefore, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ถึงแม้, pos: SCONJ, zh: 尽管, en: although, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทั้งหมด, pos: DET, zh: 全部, en: all, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: บาง, pos: DET, zh: 一些, en: some, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ทุก, pos: DET, zh: 每个；所有, en: every, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: อื่น, pos: ADJ, zh: 其他, en: other, reviewStatus: approved, reviewedBy: claude-assisted }
+
+  # Numbers and colours
+  - { word: หนึ่ง, pos: NUM, zh: 一, en: one, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สอง, pos: NUM, zh: 二, en: two, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สาม, pos: NUM, zh: 三, en: three, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สี่, pos: NUM, zh: 四, en: four, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ห้า, pos: NUM, zh: 五, en: five, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: หก, pos: NUM, zh: 六, en: six, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เจ็ด, pos: NUM, zh: 七, en: seven, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แปด, pos: NUM, zh: 八, en: eight, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เก้า, pos: NUM, zh: 九, en: nine, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สิบ, pos: NUM, zh: 十, en: ten, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ร้อย, pos: NUM, zh: 百, en: hundred, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: พัน, pos: NUM, zh: 千, en: thousand, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ล้าน, pos: NUM, zh: 百万, en: million, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ศูนย์, pos: NUM, zh: 零, en: zero, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: สี, pos: NOUN, zh: 颜色, en: color, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: แดง, pos: ADJ, zh: 红色, en: red, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: น้ำเงิน, pos: ADJ, zh: 蓝色, en: blue, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เขียว, pos: ADJ, zh: 绿色, en: green, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เหลือง, pos: ADJ, zh: 黄色, en: yellow, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ดำ, pos: ADJ, zh: 黑色, en: black, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ขาว, pos: ADJ, zh: 白色, en: white, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: เทา, pos: ADJ, zh: 灰色, en: gray, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ชมพู, pos: ADJ, zh: 粉色, en: pink, reviewStatus: approved, reviewedBy: claude-assisted }
+  - { word: ม่วง, pos: ADJ, zh: 紫色, en: purple, reviewStatus: approved, reviewedBy: claude-assisted }

@@ -103,6 +103,13 @@ def validate(doc):
         for annotation in unit['annotations']:
             for span in annotation['spans']:
                 fragment(unit['text'], span['start'], span['end'])
+        annotation_ids = {a['id'] for a in unit['annotations']}
+        if len(annotation_ids) != len(unit['annotations']):
+            raise ValueError('Duplicate annotation')
+        for annotation in unit['annotations']:
+            parent = annotation.get('parentId')
+            if parent is not None and (parent == annotation['id'] or parent not in annotation_ids):
+                raise ValueError('Invalid annotation parent')
         for edge in unit.get('dependencies', []):
             if edge['dependentTokenId'] not in tokens or (edge['headTokenId'] is not None and edge['headTokenId'] not in tokens):
                 raise ValueError('Invalid dependency')

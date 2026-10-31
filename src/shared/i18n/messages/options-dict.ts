@@ -26,8 +26,11 @@ export const optionsDict = defineMessages(
     'dict.duration.cue': 'Follow cue',
     'dict.duration.fixed': 'Fixed',
     'dict.pronounce.romaji': 'Romaji',
-    'dict.footnote':
+    'dict.footnote.ja':
       'Word list from JMdict + open-anki-jlpt-decks; words not in the list are not clickable.',
+    'dict.footnote.en': 'Word list from ECDICT; words not in the list are not clickable.',
+    'dict.footnote.th':
+      'Word list from a curated gloss table + Wiktionary (kaikki.org); words not in the list are not clickable.',
   },
   {
     'dict.title': '学习词典',
@@ -53,6 +56,8 @@ export const optionsDict = defineMessages(
     'dict.duration.cue': '跟随字幕',
     'dict.duration.fixed': '固定',
     'dict.pronounce.romaji': '罗马音',
-    'dict.footnote': '词表来自 JMdict + open-anki-jlpt-decks；未收录的词不可点击。',
+    'dict.footnote.ja': '词表来自 JMdict + open-anki-jlpt-decks；未收录的词不可点击。',
+    'dict.footnote.en': '词表来自 ECDICT；未收录的词不可点击。',
+    'dict.footnote.th': '词表来自人工整理的中文释义表与 Wiktionary（kaikki.org）；未收录的词不可点击。',
   },
 );

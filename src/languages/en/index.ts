@@ -46,6 +46,7 @@ export const en: LanguagePack = {
   presentation: { reading },
   features: enFeatures,
   bands: EN_BANDS,
+  dictAttribution: 'dict.footnote.en',
 };
 
 export { createEnRuntime } from './tokenizer';

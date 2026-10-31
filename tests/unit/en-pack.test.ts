@@ -111,16 +111,34 @@ describe('English feature registry', () => {
       'exam',
       'chunk',
       'expression',
+      'structure',
+      'morph',
+      'clause',
       'syntax',
     ]);
-    expect(enFeatures.order).toEqual(['pos', 'exam', 'chunk', 'expression', 'syntax']);
-    expect(enFeatures.features.find((feature) => feature.id === 'syntax')?.requires).toBe('remote');
+    // Precedence puts clause last so its underline beats the role underline it annotates.
+    expect(enFeatures.order).toEqual([
+      'pos',
+      'exam',
+      'chunk',
+      'expression',
+      'structure',
+      'morph',
+      'syntax',
+      'clause',
+    ]);
+    for (const id of ['structure', 'morph', 'clause', 'syntax']) {
+      expect(enFeatures.features.find((feature) => feature.id === id)?.sources).toEqual([
+        'local',
+        'remote',
+      ]);
+    }
   });
 
-  it('names its expression, level and chunk layers', () => {
-    expect(enFeatures.expressionElement).toBe('expression.phrase:all');
+  it('names its expression, level and chunk layers after the six modes', () => {
+    expect(enFeatures.expressionElement).toBe('expression.collocation:all');
     expect(enFeatures.levelElement).toBe('exam.tags:all');
-    expect(enFeatures.chunkGroupKey).toBe('chunk.phrase');
+    expect(enFeatures.chunkGroupKey).toBe('chunk.semantic');
   });
 
   it('gives every declared element a default style', () => {
@@ -135,11 +153,14 @@ describe('English feature registry', () => {
     expect(enFeatures.builtIns.map((seed) => seed.id)).toEqual([
       'plain',
       'pos-basic',
-      'phrase-focus',
       'chunk-focus',
       'syntax-focus',
+      'clause-focus',
+      'structure-focus',
+      'morph-focus',
+      'collocation-focus',
     ]);
-    expect(enFeatures.defaultPresetId).toBe('pos-basic');
+    expect(enFeatures.defaultPresetId).toBe('chunk-focus');
     for (const seed of enFeatures.builtIns) {
       expect(enGB[seed.labelKey], seed.labelKey).toBeTruthy();
       expect(zhCN[seed.labelKey], seed.labelKey).toBeTruthy();

@@ -7,19 +7,22 @@ import {
   type ProviderKeys,
 } from '@/shared/providerSettings';
 import {
-  providersFor,
+  providerFor,
   type EpisodeFile,
   type ProviderDescriptor,
   type SeriesHit,
 } from '@/features/scraper/providers';
-import type { LanguageId } from '@/languages/types';
+import type { SubtitleLanguageId } from '@/shared/subtitleLanguages';
 
 /**
- * Search state for one provider: the stored key, the series hit under inspection, its episode
- * files, and the season/episode filter. The key is read once and written back explicitly.
+ * Search state for one provider: the chosen subtitle language, the stored key, the series hit
+ * under inspection, its episode files, and the season/episode filter. The learning language and
+ * the subtitle language are independent; the key is read once and written back explicitly.
  */
-export const useProviderSearch = (language: LanguageId) => {
-  const provider: ProviderDescriptor | undefined = providersFor(language)[0];
+export const useProviderSearch = (initialLanguage: SubtitleLanguageId) => {
+  const [subtitleLanguage, setSubtitleLanguageState] =
+    React.useState<SubtitleLanguageId>(initialLanguage);
+  const provider: ProviderDescriptor | undefined = providerFor(subtitleLanguage);
   const [keys, setKeys] = React.useState<ProviderKeys>({});
   const [query, setQuery] = React.useState('');
   const [season, setSeason] = React.useState('');
@@ -39,6 +42,14 @@ export const useProviderSearch = (language: LanguageId) => {
 
   const key = provider ? (keys[provider.id] ?? '') : '';
 
+  /** A different language invalidates every result on screen; the key and query survive. */
+  const setSubtitleLanguage = React.useCallback((language: SubtitleLanguageId) => {
+    setSubtitleLanguageState(language);
+    setHits(null);
+    setHit(null);
+    setFiles([]);
+  }, []);
+
   const saveKey = React.useCallback(
     async (id: ProviderKeyId, value: string) => {
       const next = sanitizeProviderKeys({ ...keys, [id]: value });
@@ -54,12 +65,12 @@ export const useProviderSearch = (language: LanguageId) => {
     setHit(null);
     setFiles([]);
     try {
-      const found = await provider.create(key).search(query.trim());
+      const found = await provider.create(key, subtitleLanguage).search(query.trim());
       setHits(found);
     } finally {
       setSearching(false);
     }
-  }, [provider, key, query]);
+  }, [provider, key, subtitleLanguage, query]);
 
   const open = React.useCallback(
     async (target: SeriesHit) => {
@@ -67,7 +78,7 @@ export const useProviderSearch = (language: LanguageId) => {
       setListing(true);
       setHit(target);
       try {
-        const found = await provider.create(key).listEpisodes(target, {
+        const found = await provider.create(key, subtitleLanguage).listEpisodes(target, {
           season: season ? Number(season) : undefined,
           episode: episode ? Number(episode) : undefined,
         });
@@ -76,11 +87,13 @@ export const useProviderSearch = (language: LanguageId) => {
         setListing(false);
       }
     },
-    [provider, key, season, episode],
+    [provider, key, subtitleLanguage, season, episode],
   );
 
   return {
     provider,
+    subtitleLanguage,
+    setSubtitleLanguage,
     key,
     saveKey,
     query,

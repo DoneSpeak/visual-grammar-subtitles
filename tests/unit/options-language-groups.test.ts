@@ -89,7 +89,7 @@ describe('dictionary band storage', () => {
   });
 
   it('keeps other languages when only one slice is stored', async () => {
-    stub({ bands: { en: { cet4: false, cet6: true, kaoyan: true, ielts: true, toefl: true, bec: true } } });
+    stub({ bands: { en: { cet4: false, cet6: true, kaoyan: true, ielts: true, toefl: true } } });
     const { bands } = await loadDictSettings();
     expect(bands.en?.cet4).toBe(false);
     expect(bands.ja).toEqual({ 1: true, 2: true, 3: true, 4: true, 5: true });

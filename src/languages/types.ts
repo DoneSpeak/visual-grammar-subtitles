@@ -1,4 +1,5 @@
 import type { DictEntry } from '@/shared/dictionary';
+import type { MessageKey } from '@/shared/i18n';
 import type { FeatureId, FeatureRegistry } from '@/shared/studyFeatures';
 import type { Pos, PosGroup, Token } from '@/shared/types';
 
@@ -104,4 +105,9 @@ export type LanguagePack = {
   features?: FeatureRegistry;
   /** Dictionary bands the UI may filter by. Absent when the language has none (or no lexicon). */
   bands?: BandDeclaration;
+  /**
+   * Where this language's word list comes from, shown under the bands page. A message key, not
+   * text: the pack declares its sources but never its copy. Absent when there is no lexicon.
+   */
+  dictAttribution?: MessageKey;
 };
