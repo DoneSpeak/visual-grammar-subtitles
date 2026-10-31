@@ -16,7 +16,7 @@ def digest(value):
     return hashlib.sha256(json.dumps(value, ensure_ascii=False, separators=(',', ':')).encode()).hexdigest()
 
 
-def track_hash(cues, language='ja'):
+def track_hash(cues, language):
     return digest(['track-v1', language, [[c['startMs'], c['endMs'], c['text']] for c in cues]])
 
 

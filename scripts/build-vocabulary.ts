@@ -9,12 +9,16 @@
  *   python/vocabulary/dist/licenses/*
  *
  * Outputs (committed, so `pnpm build` needs neither Python nor PyYAML):
- *   public/dict/vocabulary.json   entry id → OpenMoji hexcode + zh gloss
- *   public/vocab/openmoji/*.svg   copied byte-for-byte, unmodified
- *   public/vocab/licenses/*       upstream licence texts
+ *   public/dict/vocabulary.json      entry id → OpenMoji hexcode + zh gloss (Japanese)
+ *   public/dict/vocabulary.en.json   concept id → the same image, English label
+ *   public/dict/vocabulary.th.json   concept id → the same image, Thai label
+ *   public/vocab/openmoji/*.svg      copied byte-for-byte, unmodified
+ *   public/vocab/licenses/*          upstream licence texts
  *
  * Only `approved` entries with a single sense reach this file; the Python
  * builder already enforced review status, visual score and SVG safety.
+ * The English/Thai galleries reuse the reviewed concept → image mapping, so a
+ * concept shows the identical OpenMoji asset in every language.
  */
 import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -24,7 +28,15 @@ import { parse } from 'yaml';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC_DIR = join(root, 'python/vocabulary/dist');
 const DICT_FILE = join(root, 'public/dict/jlpt-dict.json');
+/** Multilingual labels live with the reviewed concepts; Japanese words come from the JLPT data. */
+const CONCEPTS_FILE = join(root, 'python/vocabulary/data/concepts/ja.yaml');
 const OUT_JSON = join(root, 'public/dict/vocabulary.json');
+/** Each file records its language so the gallery can filter without guessing. */
+const LANGUAGE = 'ja';
+const GALLERY_LANGUAGES = ['en', 'th'] as const;
+type GalleryLanguage = (typeof GALLERY_LANGUAGES)[number];
+const outGallery = (language: GalleryLanguage): string =>
+  join(root, `public/dict/vocabulary.${language}.json`);
 const OUT_ASSETS = join(root, 'public/vocab/openmoji');
 const OUT_LICENSES = join(root, 'public/vocab/licenses');
 
@@ -39,12 +51,53 @@ type VocabularyEntry = {
   lemma: string;
   reading: string;
   level: string;
+  pos: string[];
   senses: VocabularySense[];
 };
 type VocabularyDoc = { entries: VocabularyEntry[] };
-type DictRow = { id: string; w: string; r: string; lv: number };
+type ConceptDoc = { concepts: { id: string; gloss: Gloss }[] };
+type DictRow = { id: string; w: string; r: string; lv: number; p?: string[] };
+type Pos =
+  | 'NOUN' | 'PROPN' | 'PRON' | 'VERB' | 'AUX' | 'ADJ' | 'ADV' | 'ADP'
+  | 'PART' | 'SCONJ' | 'CCONJ' | 'DET' | 'NUM' | 'INTJ' | 'PUNCT' | 'SYM' | 'X';
 /** The options gallery reads the headword back from here; the card only needs `i`/`z`. */
-type ImageRecord = { i: string; z?: string; w: string; r: string; lv: number };
+type ImageRecord = { i: string; z?: string; w: string; r: string; lv: number; p?: Pos };
+/** English/Thai tiles have no reading or JLPT level, and are keyed by concept. */
+type GalleryRecord = { i: string; z?: string; w: string; p?: Pos };
+
+/**
+ * JLPT dictionary rows carry JMdict-style Japanese POS abbreviations. First abbreviation only:
+ * the gallery groups tiles into the eight colour groups, so a secondary sense adds nothing.
+ */
+const POS_ABBREVIATIONS: Record<string, Pos> = {
+  名: 'NOUN',
+  代: 'PRON',
+  動: 'VERB',
+  形: 'ADJ',
+  副: 'ADV',
+  接: 'CCONJ',
+  感: 'INTJ',
+  助: 'ADP',
+  助動: 'AUX',
+  表: 'X',
+};
+
+const posOf = (row: DictRow): Pos | undefined => {
+  const key = row.p?.[0];
+  return key ? POS_ABBREVIATIONS[key] : undefined;
+};
+
+/** OpenJLPT labels verbs as `v1`/`v5r`/…, so match the family rather than every code. */
+const entryPos = (pos: string[] | undefined): Pos | undefined => {
+  const key = pos?.[0];
+  if (!key) return undefined;
+  if (/^v/.test(key)) return 'VERB';
+  if (key === 'n') return 'NOUN';
+  if (key.startsWith('adj')) return 'ADJ';
+  if (key === 'num') return 'NUM';
+  if (key === 'adv') return 'ADV';
+  return 'X';
+};
 
 const toHiragana = (text: string): string =>
   text.replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
@@ -68,6 +121,8 @@ const matchEntry = (word: VocabularyEntry, dict: DictRow[], byWord: Map<string, 
 
 const main = async (): Promise<void> => {
   const doc = parse(await readFile(join(SRC_DIR, 'vocabulary.ja.yaml'), 'utf8')) as VocabularyDoc;
+  const concepts = parse(await readFile(CONCEPTS_FILE, 'utf8')) as ConceptDoc;
+  const conceptGloss = new Map(concepts.concepts.map((concept) => [concept.id, concept.gloss]));
   const dict = (await readJson<{ entries: DictRow[] }>(DICT_FILE)).entries;
 
   const byWord = new Map<string, DictRow[]>();
@@ -79,6 +134,7 @@ const main = async (): Promise<void> => {
   }
 
   const images: Record<string, ImageRecord> = {};
+  const gallery: Record<GalleryLanguage, Record<string, GalleryRecord>> = { en: {}, th: {} };
   const hexcodes = new Set<string>();
   const unmatched: string[] = [];
 
@@ -93,19 +149,52 @@ const main = async (): Promise<void> => {
       continue;
     }
     if (images[row.id]) continue;
+    const pos = posOf(row);
     images[row.id] = {
       i: sense.image.hexcode,
       ...(sense.gloss['zh-Hans'] ? { z: sense.gloss['zh-Hans'] } : {}),
       w: row.w,
       r: row.r,
       lv: row.lv,
+      ...(pos ? { p: pos } : {}),
     };
+    hexcodes.add(sense.image.hexcode);
+  }
+
+  // English/Thai galleries derive from the reviewed concepts, so a word the
+  // JLPT dictionary cannot resolve still gets its picture and translated label.
+  for (const word of doc.entries) {
+    if (word.senses.length !== 1) continue;
+    const sense = word.senses[0];
+    const gloss = conceptGloss.get(sense.conceptId) ?? sense.gloss;
+    const pos = entryPos(word.pos);
+    for (const language of GALLERY_LANGUAGES) {
+      const label = gloss[language];
+      // A concept without a translated label stays out of that language's gallery.
+      if (!label || gallery[language][sense.conceptId]) continue;
+      gallery[language][sense.conceptId] = {
+        i: sense.image.hexcode,
+        ...(sense.gloss['zh-Hans'] ? { z: sense.gloss['zh-Hans'] } : {}),
+        w: label,
+        ...(pos ? { p: pos } : {}),
+      };
+    }
     hexcodes.add(sense.image.hexcode);
   }
 
   const sorted = Object.fromEntries(Object.entries(images).sort(([a], [b]) => a.localeCompare(b)));
   await mkdir(dirname(OUT_JSON), { recursive: true });
-  await writeFile(OUT_JSON, `${JSON.stringify({ v: 1, images: sorted })}\n`);
+  await writeFile(OUT_JSON, `${JSON.stringify({ v: 1, language: LANGUAGE, images: sorted })}\n`);
+
+  for (const language of GALLERY_LANGUAGES) {
+    const sortedGallery = Object.fromEntries(
+      Object.entries(gallery[language]).sort(([a], [b]) => a.localeCompare(b)),
+    );
+    await writeFile(
+      outGallery(language),
+      `${JSON.stringify({ v: 1, language, images: sortedGallery })}\n`,
+    );
+  }
 
   await mkdir(OUT_ASSETS, { recursive: true });
   const available = new Set((await readdir(join(SRC_DIR, 'assets/openmoji'))).map((name) => name.replace(/\.svg$/, '')));
@@ -120,6 +209,9 @@ const main = async (): Promise<void> => {
   }
 
   console.log(`[vocab] ${Object.keys(sorted).length} entries, ${hexcodes.size} images → public/vocab`);
+  console.log(
+    `[vocab] gallery ${GALLERY_LANGUAGES.map((language) => `${language}:${Object.keys(gallery[language]).length}`).join(' ')}`,
+  );
   if (unmatched.length) console.log(`[vocab] ${unmatched.length} words not in the JLPT dictionary: ${unmatched.join('、')}`);
 };
 

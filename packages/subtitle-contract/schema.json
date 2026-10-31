@@ -51,9 +51,8 @@
       "type": "object",
       "properties": {
         "language": {
-          "enum": [
-            "ja"
-          ]
+          "type": "string",
+          "pattern": "^[a-z]{2,8}(-[A-Za-z0-9]+)?$"
         },
         "cues": {
           "type": "array",

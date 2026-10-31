@@ -58,6 +58,29 @@ describe('vocabularyGallery', () => {
     });
   });
 
+  it('carries the POS and language so the gallery can group and filter', () => {
+    const [item] = vocabularyGallery({
+      v: 1,
+      language: 'ja',
+      images: { 1: { i: '1F34E', w: '林檎', r: 'りんご', lv: 5, p: 'NOUN' } },
+    });
+    expect(item.pos).toBe('NOUN');
+    expect(item.language).toBe('ja');
+  });
+
+  it('sorts a translated index by word when there is no reading or level', () => {
+    const gallery = vocabularyGallery({
+      v: 1,
+      language: 'th',
+      images: {
+        'animals.dog': { i: '1F415', w: 'สุนัข', p: 'NOUN' },
+        'animals.cat': { i: '1F408', w: 'แมว', p: 'NOUN' },
+      },
+    });
+    expect(gallery.map((item) => item.word)).toEqual(['แมว', 'สุนัข']);
+    expect(gallery[0]).toMatchObject({ language: 'th', reading: '', pos: 'NOUN' });
+  });
+
   it('returns an empty list when the vocabulary file is absent', () => {
     expect(vocabularyGallery(null)).toEqual([]);
   });

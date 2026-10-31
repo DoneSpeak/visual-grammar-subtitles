@@ -1196,7 +1196,7 @@
       {
         "surface": "遅い",
         "groups": {
-          "chunk.bunsetsu": "rule-0"
+          "chunk.bunsetsu": "rule-1"
         }
       },
       {
@@ -1211,25 +1211,25 @@
       {
         "surface": "こんな",
         "groups": {
-          "chunk.bunsetsu": "rule-3"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
         "surface": "時間",
         "groups": {
-          "chunk.bunsetsu": "rule-3"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
         "surface": "に",
         "groups": {
-          "chunk.bunsetsu": "rule-3"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
         "surface": "何",
         "groups": {
-          "chunk.bunsetsu": "rule-4"
+          "chunk.bunsetsu": "rule-3"
         }
       },
       {
@@ -1241,13 +1241,13 @@
       {
         "surface": "てる",
         "groups": {
-          "chunk.bunsetsu": "rule-5"
+          "chunk.bunsetsu": "rule-4"
         }
       },
       {
         "surface": "の",
         "groups": {
-          "chunk.bunsetsu": "rule-6"
+          "chunk.bunsetsu": "rule-4"
         }
       },
       {
@@ -1285,13 +1285,13 @@
       {
         "surface": "こと",
         "groups": {
-          "chunk.bunsetsu": "rule-2"
+          "chunk.bunsetsu": "rule-1"
         }
       },
       {
         "surface": "を",
         "groups": {
-          "chunk.bunsetsu": "rule-2"
+          "chunk.bunsetsu": "rule-1"
         }
       },
       {
@@ -1300,7 +1300,7 @@
           "token.level:plan"
         ],
         "groups": {
-          "chunk.bunsetsu": "rule-3"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
@@ -1312,7 +1312,7 @@
       {
         "surface": "ない",
         "groups": {
-          "chunk.bunsetsu": "rule-4"
+          "chunk.bunsetsu": "rule-3"
         }
       },
       {
@@ -1332,7 +1332,7 @@
           "expression.grammar:all"
         ],
         "groups": {
-          "chunk.bunsetsu": "rule-1"
+          "chunk.bunsetsu": "rule-0"
         }
       },
       {
@@ -1341,7 +1341,7 @@
           "expression.grammar:all"
         ],
         "groups": {
-          "chunk.bunsetsu": "rule-2"
+          "chunk.bunsetsu": "rule-0"
         }
       },
       {
@@ -1350,7 +1350,7 @@
           "expression.grammar:all"
         ],
         "groups": {
-          "chunk.bunsetsu": "rule-3"
+          "chunk.bunsetsu": "rule-0"
         }
       },
       {
@@ -1359,7 +1359,7 @@
           "expression.grammar:all"
         ],
         "groups": {
-          "chunk.bunsetsu": "rule-4"
+          "chunk.bunsetsu": "rule-0"
         }
       },
       {
@@ -1403,19 +1403,19 @@
       {
         "surface": "て",
         "groups": {
-          "chunk.bunsetsu": "rule-3"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
         "surface": "い",
         "groups": {
-          "chunk.bunsetsu": "rule-4"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
         "surface": "た",
         "groups": {
-          "chunk.bunsetsu": "rule-5"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
@@ -1447,13 +1447,13 @@
       {
         "surface": "綺麗",
         "groups": {
-          "chunk.bunsetsu": "rule-1"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
         "surface": "だっ",
         "groups": {
-          "chunk.bunsetsu": "rule-1"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
@@ -1476,7 +1476,7 @@
       {
         "surface": "待っ",
         "groups": {
-          "chunk.bunsetsu": "rule-0"
+          "chunk.bunsetsu": "rule-1"
         }
       },
       {
@@ -1488,7 +1488,7 @@
       {
         "surface": "ください",
         "groups": {
-          "chunk.bunsetsu": "rule-2"
+          "chunk.bunsetsu": "rule-1"
         }
       },
       {
@@ -1508,7 +1508,7 @@
           "token.level:plan"
         ],
         "groups": {
-          "chunk.bunsetsu": "rule-0"
+          "chunk.bunsetsu": "rule-1"
         }
       },
       {
@@ -1517,7 +1517,7 @@
           "token.level:plan"
         ],
         "groups": {
-          "chunk.bunsetsu": "rule-0"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
@@ -1546,37 +1546,37 @@
       {
         "surface": "た",
         "groups": {
-          "chunk.bunsetsu": "rule-2"
+          "chunk.bunsetsu": "rule-1"
         }
       },
       {
         "surface": "こと",
         "groups": {
-          "chunk.bunsetsu": "rule-3"
+          "chunk.bunsetsu": "rule-1"
         }
       },
       {
         "surface": "が",
         "groups": {
-          "chunk.bunsetsu": "rule-3"
+          "chunk.bunsetsu": "rule-1"
         }
       },
       {
         "surface": "あり",
         "groups": {
-          "chunk.bunsetsu": "rule-4"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
         "surface": "ます",
         "groups": {
-          "chunk.bunsetsu": "rule-5"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
         "surface": "か",
         "groups": {
-          "chunk.bunsetsu": "rule-6"
+          "chunk.bunsetsu": "rule-2"
         }
       },
       {
@@ -1730,6 +1730,26 @@
           "matched": [
             {
               "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
               "element": "chunk.bunsetsu:first"
             }
           ],
@@ -1764,26 +1784,6 @@
             },
             "radiusPx": 6,
             "radiusSides": "end"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all"
           }
         },
         {
@@ -1853,6 +1853,26 @@
           "matched": [
             {
               "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
               "element": "chunk.bunsetsu:first"
             }
           ],
@@ -1873,6 +1893,25 @@
           "matched": [
             {
               "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 0
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
               "element": "chunk.bunsetsu:last"
             }
           ],
@@ -1887,46 +1926,6 @@
             },
             "radiusPx": 6,
             "radiusSides": "end"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all"
           }
         },
         {
@@ -2043,11 +2042,37 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
+              "element": "chunk.bunsetsu:only"
             }
           ],
           "style": {
             "color": "#0F9D58",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADJ"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#B8860B",
             "backgroundColor": "#38BDF84D",
             "underline": {
               "enabled": true,
@@ -2065,37 +2090,11 @@
           "matched": [
             {
               "feature": "pos",
-              "element": "token.pos:ADJ"
-            },
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:last"
-            }
-          ],
-          "style": {
-            "color": "#B8860B",
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "end",
-            "opacity": 0.35
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "pos",
               "element": "token.pos:ADP"
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:last"
             }
           ],
           "style": {
@@ -2109,7 +2108,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusSides": "end",
             "opacity": 0.35
           }
         },
@@ -2210,7 +2209,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
+              "element": "chunk.bunsetsu:only"
             }
           ],
           "style": {
@@ -2225,7 +2224,7 @@
             },
             "opacity": 0.6,
             "radiusPx": 6,
-            "radiusSides": "start"
+            "radiusSides": "all"
           }
         },
         {
@@ -2236,7 +2235,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:last"
+              "element": "chunk.bunsetsu:first"
             }
           ],
           "style": {
@@ -2250,7 +2249,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "end",
+            "radiusSides": "start",
             "opacity": 0.35
           }
         },
@@ -2262,7 +2261,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -2275,8 +2274,7 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusPx": 0,
             "opacity": 0.35
           }
         },
@@ -2288,7 +2286,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:last"
             }
           ],
           "style": {
@@ -2302,7 +2300,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusSides": "end",
             "opacity": 0.35
           }
         },
@@ -2503,7 +2501,7 @@
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:last"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -2515,15 +2513,14 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "end"
+            "radiusPx": 0
           }
         },
         {
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -2535,48 +2532,7 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "start"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:last"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "end"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "start"
+            "radiusPx": 0
           }
         },
         {
@@ -2617,6 +2573,46 @@
             },
             "radiusPx": 6,
             "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
           }
         },
         {
@@ -2797,7 +2793,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:last"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -2810,8 +2806,7 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "end",
+            "radiusPx": 0,
             "opacity": 0.35
           }
         },
@@ -2823,7 +2818,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -2837,8 +2832,7 @@
               "offsetPx": 4
             },
             "opacity": 0.6,
-            "radiusPx": 6,
-            "radiusSides": "start"
+            "radiusPx": 0
           }
         },
         {
@@ -2879,7 +2873,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
+              "element": "chunk.bunsetsu:only"
             }
           ],
           "style": {
@@ -2891,7 +2885,7 @@
               "color": "#FF00FF"
             },
             "radiusPx": 3,
-            "radiusSides": "start",
+            "radiusSides": "all",
             "opacity": 0.35
           }
         },
@@ -2903,7 +2897,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:last"
+              "element": "chunk.bunsetsu:first"
             }
           ],
           "style": {
@@ -2917,7 +2911,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "end",
+            "radiusSides": "start",
             "opacity": 0.35
           }
         },
@@ -2929,7 +2923,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:last"
             }
           ],
           "style": {
@@ -2943,7 +2937,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusSides": "end",
             "opacity": 0.35
           }
         },
@@ -3045,7 +3039,7 @@
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:first"
             }
           ],
           "style": {
@@ -3058,14 +3052,14 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusSides": "start"
           }
         },
         {
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -3077,15 +3071,14 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusPx": 0
           }
         },
         {
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -3097,15 +3090,14 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusPx": 0
           }
         },
         {
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -3117,15 +3109,14 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusPx": 0
           }
         },
         {
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:last"
             }
           ],
           "style": {
@@ -3138,7 +3129,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusSides": "end"
           }
         },
         {
@@ -3239,7 +3230,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:first"
             }
           ],
           "style": {
@@ -3253,7 +3244,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusSides": "start",
             "opacity": 0.35
           }
         },
@@ -3269,7 +3260,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -3283,7 +3274,6 @@
               "offsetPx": 4
             },
             "radiusPx": 4,
-            "radiusSides": "all",
             "opacity": 0.35
           }
         },
@@ -3299,7 +3289,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -3313,7 +3303,6 @@
               "offsetPx": 4
             },
             "radiusPx": 4,
-            "radiusSides": "all",
             "opacity": 0.35
           }
         },
@@ -3329,7 +3318,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -3343,7 +3332,6 @@
               "offsetPx": 4
             },
             "radiusPx": 4,
-            "radiusSides": "all",
             "opacity": 0.35
           }
         },
@@ -3359,7 +3347,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:last"
             }
           ],
           "style": {
@@ -3373,7 +3361,7 @@
               "offsetPx": 4
             },
             "radiusPx": 4,
-            "radiusSides": "all",
+            "radiusSides": "end",
             "opacity": 0.35
           }
         },
@@ -3588,7 +3576,7 @@
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:first"
             }
           ],
           "style": {
@@ -3601,14 +3589,14 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusSides": "start"
           }
         },
         {
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -3620,15 +3608,14 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusPx": 0
           }
         },
         {
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -3640,15 +3627,14 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusPx": 0
           }
         },
         {
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:last"
             }
           ],
           "style": {
@@ -3661,7 +3647,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusSides": "end"
           }
         },
         {
@@ -3862,7 +3848,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:first"
             }
           ],
           "style": {
@@ -3874,7 +3860,7 @@
               "color": "#FF00FF"
             },
             "radiusPx": 3,
-            "radiusSides": "all",
+            "radiusSides": "start",
             "opacity": 0.35
           }
         },
@@ -3886,7 +3872,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -3899,8 +3885,7 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusPx": 0,
             "opacity": 0.35
           }
         },
@@ -3912,7 +3897,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -3925,8 +3910,7 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusPx": 0,
             "opacity": 0.35
           }
         },
@@ -3938,7 +3922,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:last"
             }
           ],
           "style": {
@@ -3952,7 +3936,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusSides": "end",
             "opacity": 0.35
           }
         },
@@ -4095,6 +4079,26 @@
           "matched": [
             {
               "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
               "element": "chunk.bunsetsu:first"
             }
           ],
@@ -4148,26 +4152,6 @@
             },
             "radiusPx": 6,
             "radiusSides": "end"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all"
           }
         },
         {
@@ -4298,7 +4282,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
+              "element": "chunk.bunsetsu:only"
             }
           ],
           "style": {
@@ -4312,7 +4296,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "start",
+            "radiusSides": "all",
             "opacity": 0.35
           }
         },
@@ -4324,7 +4308,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:middle"
+              "element": "chunk.bunsetsu:first"
             }
           ],
           "style": {
@@ -4338,7 +4322,33 @@
               "offsetPx": 4
             },
             "opacity": 0.6,
-            "radiusPx": 0
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 0,
+            "opacity": 0.35
           }
         },
         {
@@ -4364,32 +4374,6 @@
             },
             "radiusPx": 6,
             "radiusSides": "end",
-            "opacity": 0.35
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:ADP"
-            },
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "color": "#8A8F98",
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all",
             "opacity": 0.35
           }
         },
@@ -4480,46 +4464,6 @@
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "start"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:last"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "end"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
               "element": "chunk.bunsetsu:only"
             }
           ],
@@ -4536,242 +4480,6 @@
             "radiusSides": "all"
           }
         },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all"
-          }
-        },
-        {
-          "matched": [],
-          "style": null
-        }
-      ],
-      "expression-focus": [
-        {
-          "matched": [],
-          "style": null
-        },
-        {
-          "matched": [],
-          "style": null
-        },
-        {
-          "matched": [],
-          "style": null
-        },
-        {
-          "matched": [],
-          "style": null
-        },
-        {
-          "matched": [],
-          "style": null
-        }
-      ],
-      "reading-assist": [
-        {
-          "matched": [],
-          "style": null
-        },
-        {
-          "matched": [],
-          "style": null
-        },
-        {
-          "matched": [],
-          "style": null
-        },
-        {
-          "matched": [],
-          "style": null
-        },
-        {
-          "matched": [],
-          "style": null
-        }
-      ],
-      "custom": [
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:ADV"
-            },
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
-            }
-          ],
-          "style": {
-            "color": "#0F9D58",
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "start",
-            "opacity": 0.35
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:VERB"
-            },
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:last"
-            }
-          ],
-          "style": {
-            "color": "#E5533D",
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "end",
-            "opacity": 0.35
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:ADP"
-            },
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "color": "#8A8F98",
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all",
-            "opacity": 0.35
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:VERB"
-            },
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "color": "#E5533D",
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all",
-            "opacity": 0.35
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:PUNCT"
-            }
-          ],
-          "style": {
-            "color": "#6E737C",
-            "opacity": 0.35
-          }
-        }
-      ]
-    },
-    "case-7": {
-      "pos-basic": [
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:ADV"
-            }
-          ],
-          "style": {
-            "color": "#0F9D58"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:ADV"
-            }
-          ],
-          "style": {
-            "color": "#0F9D58"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:VERB"
-            }
-          ],
-          "style": {
-            "color": "#E5533D"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:PUNCT"
-            }
-          ],
-          "style": {
-            "color": "#6E737C"
-          }
-        }
-      ],
-      "chunk-focus": [
         {
           "matched": [
             {
@@ -4852,6 +4560,281 @@
         {
           "matched": [],
           "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "reading-assist": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "custom": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 0,
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C",
+            "opacity": 0.35
+          }
+        }
+      ]
+    },
+    "case-7": {
+      "pos-basic": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C"
+          }
+        }
+      ],
+      "chunk-focus": [
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "expression-focus": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
         }
       ],
       "reading-assist": [
@@ -4881,7 +4864,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
+              "element": "chunk.bunsetsu:only"
             }
           ],
           "style": {
@@ -4895,7 +4878,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "start",
+            "radiusSides": "all",
             "opacity": 0.35
           }
         },
@@ -4911,7 +4894,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:middle"
+              "element": "chunk.bunsetsu:only"
             }
           ],
           "style": {
@@ -4923,6 +4906,7 @@
               "color": "#FF00FF"
             },
             "radiusPx": 3,
+            "radiusSides": "all",
             "opacity": 0.35
           }
         },
@@ -4938,7 +4922,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:last"
+              "element": "chunk.bunsetsu:only"
             }
           ],
           "style": {
@@ -4950,7 +4934,7 @@
               "color": "#FF00FF"
             },
             "radiusPx": 3,
-            "radiusSides": "end",
+            "radiusSides": "all",
             "opacity": 0.35
           }
         },
@@ -5136,46 +5120,6 @@
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all"
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "chunk-rule",
               "element": "chunk.bunsetsu:first"
             }
           ],
@@ -5190,6 +5134,44 @@
             },
             "radiusPx": 6,
             "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 0
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 0
           }
         },
         {
@@ -5216,7 +5198,7 @@
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:first"
             }
           ],
           "style": {
@@ -5229,14 +5211,14 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusSides": "start"
           }
         },
         {
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -5248,15 +5230,14 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusPx": 0
           }
         },
         {
           "matched": [
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:last"
             }
           ],
           "style": {
@@ -5269,7 +5250,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all"
+            "radiusSides": "end"
           }
         },
         {
@@ -5422,7 +5403,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:first"
             }
           ],
           "style": {
@@ -5436,7 +5417,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusSides": "start",
             "opacity": 0.35
           }
         },
@@ -5448,7 +5429,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -5461,8 +5442,7 @@
               "thicknessPx": 2,
               "offsetPx": 4
             },
-            "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusPx": 0,
             "opacity": 0.35
           }
         },
@@ -5474,7 +5454,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:first"
+              "element": "chunk.bunsetsu:middle"
             }
           ],
           "style": {
@@ -5488,8 +5468,7 @@
               "offsetPx": 4
             },
             "opacity": 0.6,
-            "radiusPx": 6,
-            "radiusSides": "start"
+            "radiusPx": 0
           }
         },
         {
@@ -5526,7 +5505,7 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:first"
             }
           ],
           "style": {
@@ -5540,7 +5519,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusSides": "start",
             "opacity": 0.35
           }
         },
@@ -5552,7 +5531,32 @@
             },
             {
               "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 0,
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
             }
           ],
           "style": {
@@ -5566,33 +5570,7 @@
               "offsetPx": 4
             },
             "radiusPx": 6,
-            "radiusSides": "all",
-            "opacity": 0.35
-          }
-        },
-        {
-          "matched": [
-            {
-              "feature": "pos",
-              "element": "token.pos:ADP"
-            },
-            {
-              "feature": "chunk-rule",
-              "element": "chunk.bunsetsu:only"
-            }
-          ],
-          "style": {
-            "color": "#8A8F98",
-            "backgroundColor": "#38BDF84D",
-            "underline": {
-              "enabled": true,
-              "style": "solid",
-              "color": "#7DD3FC",
-              "thicknessPx": 2,
-              "offsetPx": 4
-            },
-            "radiusPx": 6,
-            "radiusSides": "all",
+            "radiusSides": "end",
             "opacity": 0.35
           }
         },

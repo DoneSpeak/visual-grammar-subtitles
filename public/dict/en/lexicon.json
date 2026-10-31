@@ -1,0 +1,4168 @@
+{
+  "v": 1,
+  "entries": [
+    {
+      "id": "en:ability",
+      "w": "ability",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "能力"
+      ],
+      "x": [],
+      "ipa": "/əˈbɪləti/",
+      "tags": [
+        "cet4",
+        "kaoyan"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:access",
+      "w": "access",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "进入；使用权"
+      ],
+      "x": [],
+      "ipa": "/ˈækses/",
+      "tags": [
+        "cet4",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:account",
+      "w": "account",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "账户；描述"
+      ],
+      "x": [],
+      "ipa": "/əˈkaʊnt/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:action",
+      "w": "action",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "行动"
+      ],
+      "x": [],
+      "ipa": "/ˈækʃən/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:advantage",
+      "w": "advantage",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "优势"
+      ],
+      "x": [],
+      "ipa": "/ədˈvæntɪdʒ/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:advice",
+      "w": "advice",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "建议"
+      ],
+      "x": [],
+      "ipa": "/ədˈvaɪs/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:agreement",
+      "w": "agreement",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "协议；同意"
+      ],
+      "x": [],
+      "ipa": "/əˈɡriːmənt/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:amount",
+      "w": "amount",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "数量"
+      ],
+      "x": [],
+      "ipa": "/əˈmaʊnt/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:analysis",
+      "w": "analysis",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "分析"
+      ],
+      "x": [],
+      "ipa": "/əˈnæləsɪs/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl",
+        "kaoyan"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:answer",
+      "w": "answer",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "回答"
+      ],
+      "x": [],
+      "ipa": "/ˈɑːnsə(r)/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:approach",
+      "w": "approach",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "方法；接近"
+      ],
+      "x": [],
+      "ipa": "/əˈprəʊtʃ/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:area",
+      "w": "area",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "区域；领域"
+      ],
+      "x": [],
+      "ipa": "/ˈeəriə/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:argument",
+      "w": "argument",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "论点；争论"
+      ],
+      "x": [],
+      "ipa": "/ˈɑːɡjumənt/",
+      "tags": [
+        "cet6",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:article",
+      "w": "article",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "文章；条款"
+      ],
+      "x": [],
+      "ipa": "/ˈɑːtɪkl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:aspect",
+      "w": "aspect",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "方面"
+      ],
+      "x": [],
+      "ipa": "/ˈæspekt/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:attention",
+      "w": "attention",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "注意"
+      ],
+      "x": [],
+      "ipa": "/əˈtenʃn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:attitude",
+      "w": "attitude",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "态度"
+      ],
+      "x": [],
+      "ipa": "/ˈætɪtjuːd/",
+      "tags": [
+        "cet6",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:authority",
+      "w": "authority",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "权威；当局"
+      ],
+      "x": [],
+      "ipa": "/ɔːˈθɒrəti/",
+      "tags": [
+        "cet6",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:balance",
+      "w": "balance",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "平衡"
+      ],
+      "x": [],
+      "ipa": "/ˈbæləns/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:basis",
+      "w": "basis",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "基础"
+      ],
+      "x": [],
+      "ipa": "/ˈbeɪsɪs/",
+      "tags": [
+        "cet6",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:benefit",
+      "w": "benefit",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "好处"
+      ],
+      "x": [
+        {
+          "j": "Regular exercise has many health benefits.",
+          "e": "经常锻炼对健康有很多好处。"
+        }
+      ],
+      "ipa": "/ˈbenɪfɪt/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:business",
+      "w": "business",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "商业"
+      ],
+      "x": [],
+      "ipa": "/ˈbɪznəs/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:case",
+      "w": "case",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "情况；案例"
+      ],
+      "x": [],
+      "ipa": "/keɪs/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:cause",
+      "w": "cause",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "原因；导致"
+      ],
+      "x": [],
+      "ipa": "/kɔːz/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:century",
+      "w": "century",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "世纪"
+      ],
+      "x": [],
+      "ipa": "/ˈsentʃəri/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:challenge",
+      "w": "challenge",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "挑战"
+      ],
+      "x": [
+        {
+          "j": "Learning a new language is a real challenge.",
+          "e": "学习一门新语言是真正的挑战。"
+        }
+      ],
+      "ipa": "/ˈtʃælɪndʒ/",
+      "tags": [
+        "cet6",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:change",
+      "w": "change",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "变化"
+      ],
+      "x": [],
+      "ipa": "/tʃeɪndʒ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:child",
+      "w": "child",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "孩子"
+      ],
+      "x": [],
+      "ipa": "/tʃaɪld/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:choice",
+      "w": "choice",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "选择"
+      ],
+      "x": [],
+      "ipa": "/tʃɔɪs/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:community",
+      "w": "community",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "社区"
+      ],
+      "x": [],
+      "ipa": "/kəˈmjuːnəti/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:company",
+      "w": "company",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "公司"
+      ],
+      "x": [],
+      "ipa": "/ˈkʌmpəni/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:concept",
+      "w": "concept",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "概念"
+      ],
+      "x": [],
+      "ipa": "/ˈkɒnsept/",
+      "tags": [
+        "cet6",
+        "toefl",
+        "kaoyan"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:concern",
+      "w": "concern",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "担忧；关切"
+      ],
+      "x": [],
+      "ipa": "/kənˈsɜːn/",
+      "tags": [
+        "cet6",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:condition",
+      "w": "condition",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "条件；状况"
+      ],
+      "x": [],
+      "ipa": "/kənˈdɪʃn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:context",
+      "w": "context",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "语境；背景"
+      ],
+      "x": [],
+      "ipa": "/ˈkɒntekst/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:cost",
+      "w": "cost",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "成本；花费"
+      ],
+      "x": [],
+      "ipa": "/kɒst/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:country",
+      "w": "country",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "国家"
+      ],
+      "x": [],
+      "ipa": "/ˈkʌntri/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:course",
+      "w": "course",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "课程；过程"
+      ],
+      "x": [],
+      "ipa": "/kɔːs/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:culture",
+      "w": "culture",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "文化"
+      ],
+      "x": [],
+      "ipa": "/ˈkʌltʃə(r)/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:customer",
+      "w": "customer",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "顾客"
+      ],
+      "x": [],
+      "ipa": "/ˈkʌstəmə(r)/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:data",
+      "w": "data",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "数据"
+      ],
+      "x": [],
+      "ipa": "/ˈdeɪtə/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:decision",
+      "w": "decision",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "决定"
+      ],
+      "x": [],
+      "ipa": "/dɪˈsɪʒn/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:demand",
+      "w": "demand",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "需求；要求"
+      ],
+      "x": [],
+      "ipa": "/dɪˈmɑːnd/",
+      "tags": [
+        "cet6",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:detail",
+      "w": "detail",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "细节"
+      ],
+      "x": [],
+      "ipa": "/ˈdiːteɪl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:development",
+      "w": "development",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "发展"
+      ],
+      "x": [],
+      "ipa": "/dɪˈveləpmənt/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:difference",
+      "w": "difference",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "差异"
+      ],
+      "x": [],
+      "ipa": "/ˈdɪfrəns/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:difficulty",
+      "w": "difficulty",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "困难"
+      ],
+      "x": [],
+      "ipa": "/ˈdɪfɪkəlti/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:effect",
+      "w": "effect",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "影响；效果"
+      ],
+      "x": [],
+      "ipa": "/ɪˈfekt/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:effort",
+      "w": "effort",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "努力"
+      ],
+      "x": [],
+      "ipa": "/ˈefət/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:environment",
+      "w": "environment",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "环境"
+      ],
+      "x": [],
+      "ipa": "/ɪnˈvaɪrənmənt/",
+      "tags": [
+        "cet4",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:evidence",
+      "w": "evidence",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "证据"
+      ],
+      "x": [
+        {
+          "j": "There is little evidence for that claim.",
+          "e": "那个说法几乎没有证据。"
+        }
+      ],
+      "ipa": "/ˈevɪdəns/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:example",
+      "w": "example",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "例子"
+      ],
+      "x": [],
+      "ipa": "/ɪɡˈzɑːmpl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:experience",
+      "w": "experience",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "经验；经历"
+      ],
+      "x": [],
+      "ipa": "/ɪkˈspɪəriəns/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:fact",
+      "w": "fact",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "事实"
+      ],
+      "x": [],
+      "ipa": "/fækt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:factor",
+      "w": "factor",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "因素"
+      ],
+      "x": [],
+      "ipa": "/ˈfæktə(r)/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:family",
+      "w": "family",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "家庭"
+      ],
+      "x": [],
+      "ipa": "/ˈfæməli/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:feature",
+      "w": "feature",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "特征"
+      ],
+      "x": [],
+      "ipa": "/ˈfiːtʃə(r)/",
+      "tags": [
+        "cet4",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:focus",
+      "w": "focus",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "焦点；专注"
+      ],
+      "x": [],
+      "ipa": "/ˈfəʊkəs/",
+      "tags": [
+        "cet6",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:form",
+      "w": "form",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "形式；表格"
+      ],
+      "x": [],
+      "ipa": "/fɔːm/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:function",
+      "w": "function",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "功能"
+      ],
+      "x": [],
+      "ipa": "/ˈfʌŋkʃn/",
+      "tags": [
+        "cet4",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:goal",
+      "w": "goal",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "目标"
+      ],
+      "x": [],
+      "ipa": "/ɡəʊl/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:government",
+      "w": "government",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "政府"
+      ],
+      "x": [],
+      "ipa": "/ˈɡʌvənmənt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:group",
+      "w": "group",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "群体"
+      ],
+      "x": [],
+      "ipa": "/ɡruːp/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:growth",
+      "w": "growth",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "增长"
+      ],
+      "x": [],
+      "ipa": "/ɡrəʊθ/",
+      "tags": [
+        "cet6",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:idea",
+      "w": "idea",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "想法"
+      ],
+      "x": [],
+      "ipa": "/aɪˈdɪə/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:impact",
+      "w": "impact",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "影响"
+      ],
+      "x": [],
+      "ipa": "/ˈɪmpækt/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:importance",
+      "w": "importance",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "重要性"
+      ],
+      "x": [],
+      "ipa": "/ɪmˈpɔːtns/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:information",
+      "w": "information",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "信息"
+      ],
+      "x": [],
+      "ipa": "/ˌɪnfəˈmeɪʃn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:interest",
+      "w": "interest",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "兴趣；利益"
+      ],
+      "x": [],
+      "ipa": "/ˈɪntrəst/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:issue",
+      "w": "issue",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "问题；议题"
+      ],
+      "x": [],
+      "ipa": "/ˈɪʃuː/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:knowledge",
+      "w": "knowledge",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "知识"
+      ],
+      "x": [],
+      "ipa": "/ˈnɒlɪdʒ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:language",
+      "w": "language",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "语言"
+      ],
+      "x": [],
+      "ipa": "/ˈlæŋɡwɪdʒ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:law",
+      "w": "law",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "法律"
+      ],
+      "x": [],
+      "ipa": "/lɔː/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:level",
+      "w": "level",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "ADJ"
+      ],
+      "g": [
+        "水平"
+      ],
+      "x": [],
+      "ipa": "/ˈlevl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:life",
+      "w": "life",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "生活；生命"
+      ],
+      "x": [],
+      "ipa": "/laɪf/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:market",
+      "w": "market",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "市场"
+      ],
+      "x": [],
+      "ipa": "/ˈmɑːkɪt/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:method",
+      "w": "method",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "方法"
+      ],
+      "x": [],
+      "ipa": "/ˈmeθəd/",
+      "tags": [
+        "cet4",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:model",
+      "w": "model",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "模型"
+      ],
+      "x": [],
+      "ipa": "/ˈmɒdl/",
+      "tags": [
+        "cet4",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:moment",
+      "w": "moment",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "时刻"
+      ],
+      "x": [],
+      "ipa": "/ˈməʊmənt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:money",
+      "w": "money",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "钱"
+      ],
+      "x": [],
+      "ipa": "/ˈmʌni/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:nature",
+      "w": "nature",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "自然；本质"
+      ],
+      "x": [],
+      "ipa": "/ˈneɪtʃə(r)/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:need",
+      "w": "need",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "需要"
+      ],
+      "x": [],
+      "ipa": "/niːd/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:number",
+      "w": "number",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "数字"
+      ],
+      "x": [],
+      "ipa": "/ˈnʌmbə(r)/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:opportunity",
+      "w": "opportunity",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "机会"
+      ],
+      "x": [],
+      "ipa": "/ˌɒpəˈtjuːnəti/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:option",
+      "w": "option",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "选项"
+      ],
+      "x": [],
+      "ipa": "/ˈɒpʃn/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:order",
+      "w": "order",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "顺序；订单"
+      ],
+      "x": [],
+      "ipa": "/ˈɔːdə(r)/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:organization",
+      "w": "organization",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "组织"
+      ],
+      "x": [],
+      "ipa": "/ˌɔːɡənaɪˈzeɪʃn/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:part",
+      "w": "part",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "部分"
+      ],
+      "x": [],
+      "ipa": "/pɑːt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:people",
+      "w": "people",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "人们"
+      ],
+      "x": [],
+      "ipa": "/ˈpiːpl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:period",
+      "w": "period",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "时期"
+      ],
+      "x": [],
+      "ipa": "/ˈpɪəriəd/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:person",
+      "w": "person",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "人"
+      ],
+      "x": [],
+      "ipa": "/ˈpɜːsn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:place",
+      "w": "place",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "地方"
+      ],
+      "x": [],
+      "ipa": "/pleɪs/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:plan",
+      "w": "plan",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "计划"
+      ],
+      "x": [],
+      "ipa": "/plæn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:point",
+      "w": "point",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "点；观点"
+      ],
+      "x": [],
+      "ipa": "/pɔɪnt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:policy",
+      "w": "policy",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "政策"
+      ],
+      "x": [],
+      "ipa": "/ˈpɒləsi/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:power",
+      "w": "power",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "力量；权力"
+      ],
+      "x": [],
+      "ipa": "/ˈpaʊə(r)/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:problem",
+      "w": "problem",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "问题"
+      ],
+      "x": [],
+      "ipa": "/ˈprɒbləm/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:process",
+      "w": "process",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "过程"
+      ],
+      "x": [],
+      "ipa": "/ˈprəʊses/",
+      "tags": [
+        "cet4",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:product",
+      "w": "product",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "产品"
+      ],
+      "x": [],
+      "ipa": "/ˈprɒdʌkt/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:program",
+      "w": "program",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "项目；程序"
+      ],
+      "x": [],
+      "ipa": "/ˈprəʊɡræm/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:project",
+      "w": "project",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "项目"
+      ],
+      "x": [],
+      "ipa": "/ˈprɒdʒekt/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:purpose",
+      "w": "purpose",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "目的"
+      ],
+      "x": [],
+      "ipa": "/ˈpɜːpəs/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:quality",
+      "w": "quality",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "质量"
+      ],
+      "x": [],
+      "ipa": "/ˈkwɒləti/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:question",
+      "w": "question",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "问题"
+      ],
+      "x": [],
+      "ipa": "/ˈkwestʃən/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:range",
+      "w": "range",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "范围"
+      ],
+      "x": [],
+      "ipa": "/reɪndʒ/",
+      "tags": [
+        "cet4",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:rate",
+      "w": "rate",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "比率；速度"
+      ],
+      "x": [],
+      "ipa": "/reɪt/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:reason",
+      "w": "reason",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "原因"
+      ],
+      "x": [],
+      "ipa": "/ˈriːzn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:relationship",
+      "w": "relationship",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "关系"
+      ],
+      "x": [],
+      "ipa": "/rɪˈleɪʃnʃɪp/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:research",
+      "w": "research",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "研究"
+      ],
+      "x": [],
+      "ipa": "/rɪˈsɜːtʃ/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:resource",
+      "w": "resource",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "资源"
+      ],
+      "x": [],
+      "ipa": "/rɪˈsɔːs/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:result",
+      "w": "result",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "结果"
+      ],
+      "x": [],
+      "ipa": "/rɪˈzʌlt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:risk",
+      "w": "risk",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "风险"
+      ],
+      "x": [],
+      "ipa": "/rɪsk/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:role",
+      "w": "role",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "角色"
+      ],
+      "x": [],
+      "ipa": "/rəʊl/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:rule",
+      "w": "rule",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "规则"
+      ],
+      "x": [],
+      "ipa": "/ruːl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:school",
+      "w": "school",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "学校"
+      ],
+      "x": [],
+      "ipa": "/skuːl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:science",
+      "w": "science",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "科学"
+      ],
+      "x": [],
+      "ipa": "/ˈsaɪəns/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:service",
+      "w": "service",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "服务"
+      ],
+      "x": [],
+      "ipa": "/ˈsɜːvɪs/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:situation",
+      "w": "situation",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "情况"
+      ],
+      "x": [],
+      "ipa": "/ˌsɪtʃuˈeɪʃn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:society",
+      "w": "society",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "社会"
+      ],
+      "x": [],
+      "ipa": "/səˈsaɪəti/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:solution",
+      "w": "solution",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "解决方案"
+      ],
+      "x": [],
+      "ipa": "/səˈluːʃn/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:source",
+      "w": "source",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "来源"
+      ],
+      "x": [],
+      "ipa": "/sɔːs/",
+      "tags": [
+        "cet4",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:space",
+      "w": "space",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "空间"
+      ],
+      "x": [],
+      "ipa": "/speɪs/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:stage",
+      "w": "stage",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "阶段；舞台"
+      ],
+      "x": [],
+      "ipa": "/steɪdʒ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:standard",
+      "w": "standard",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "ADJ"
+      ],
+      "g": [
+        "标准"
+      ],
+      "x": [],
+      "ipa": "/ˈstændəd/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:state",
+      "w": "state",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "状态；国家"
+      ],
+      "x": [],
+      "ipa": "/steɪt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:step",
+      "w": "step",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "步骤"
+      ],
+      "x": [],
+      "ipa": "/step/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:story",
+      "w": "story",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "故事"
+      ],
+      "x": [],
+      "ipa": "/ˈstɔːri/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:strategy",
+      "w": "strategy",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "策略"
+      ],
+      "x": [],
+      "ipa": "/ˈstrætədʒi/",
+      "tags": [
+        "cet6",
+        "bec",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:structure",
+      "w": "structure",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "结构"
+      ],
+      "x": [],
+      "ipa": "/ˈstrʌktʃə(r)/",
+      "tags": [
+        "cet6",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:student",
+      "w": "student",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "学生"
+      ],
+      "x": [],
+      "ipa": "/ˈstjuːdnt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:study",
+      "w": "study",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "学习；研究"
+      ],
+      "x": [],
+      "ipa": "/ˈstʌdi/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:subject",
+      "w": "subject",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "ADJ"
+      ],
+      "g": [
+        "主题；学科"
+      ],
+      "x": [],
+      "ipa": "/ˈsʌbdʒɪkt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:system",
+      "w": "system",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "系统"
+      ],
+      "x": [],
+      "ipa": "/ˈsɪstəm/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:task",
+      "w": "task",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "任务"
+      ],
+      "x": [],
+      "ipa": "/tɑːsk/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:technology",
+      "w": "technology",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "技术"
+      ],
+      "x": [],
+      "ipa": "/tekˈnɒlədʒi/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:theory",
+      "w": "theory",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "理论"
+      ],
+      "x": [],
+      "ipa": "/ˈθɪəri/",
+      "tags": [
+        "cet6",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:thing",
+      "w": "thing",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "事物"
+      ],
+      "x": [],
+      "ipa": "/θɪŋ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:time",
+      "w": "time",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "时间"
+      ],
+      "x": [],
+      "ipa": "/taɪm/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:topic",
+      "w": "topic",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "话题"
+      ],
+      "x": [],
+      "ipa": "/ˈtɒpɪk/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:type",
+      "w": "type",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "类型"
+      ],
+      "x": [],
+      "ipa": "/taɪp/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:value",
+      "w": "value",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "价值"
+      ],
+      "x": [],
+      "ipa": "/ˈvæljuː/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:view",
+      "w": "view",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "观点；景色"
+      ],
+      "x": [],
+      "ipa": "/vjuː/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:way",
+      "w": "way",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "方式；道路"
+      ],
+      "x": [],
+      "ipa": "/weɪ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:word",
+      "w": "word",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "单词"
+      ],
+      "x": [],
+      "ipa": "/wɜːd/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:work",
+      "w": "work",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN",
+        "VERB"
+      ],
+      "g": [
+        "工作"
+      ],
+      "x": [],
+      "ipa": "/wɜːk/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:world",
+      "w": "world",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "世界"
+      ],
+      "x": [],
+      "ipa": "/wɜːld/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:year",
+      "w": "year",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "NOUN"
+      ],
+      "g": [
+        "年"
+      ],
+      "x": [],
+      "ipa": "/jɪə(r)/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:achieve",
+      "w": "achieve",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "实现"
+      ],
+      "x": [
+        {
+          "j": "They worked hard to achieve their goal.",
+          "e": "他们努力工作以实现目标。"
+        }
+      ],
+      "ipa": "/əˈtʃiːv/",
+      "tags": [
+        "cet4",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:affect",
+      "w": "affect",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "影响"
+      ],
+      "x": [],
+      "ipa": "/əˈfekt/",
+      "tags": [
+        "cet6",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:allow",
+      "w": "allow",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "允许"
+      ],
+      "x": [],
+      "ipa": "/əˈlaʊ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:analyze",
+      "w": "analyze",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "分析"
+      ],
+      "x": [],
+      "ipa": "/ˈænəlaɪz/",
+      "tags": [
+        "cet6",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:apply",
+      "w": "apply",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "申请；应用"
+      ],
+      "x": [],
+      "ipa": "/əˈplaɪ/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:argue",
+      "w": "argue",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "争论"
+      ],
+      "x": [],
+      "ipa": "/ˈɑːɡjuː/",
+      "tags": [
+        "cet6",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:avoid",
+      "w": "avoid",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "避免"
+      ],
+      "x": [],
+      "ipa": "/əˈvɔɪd/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:become",
+      "w": "become",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "成为"
+      ],
+      "x": [],
+      "ipa": "/bɪˈkʌm/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:believe",
+      "w": "believe",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "相信"
+      ],
+      "x": [],
+      "ipa": "/bɪˈliːv/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:build",
+      "w": "build",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "建造"
+      ],
+      "x": [],
+      "ipa": "/bɪld/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:carry",
+      "w": "carry",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "携带"
+      ],
+      "x": [],
+      "ipa": "/ˈkæri/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:compare",
+      "w": "compare",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "比较"
+      ],
+      "x": [],
+      "ipa": "/kəmˈpeə(r)/",
+      "tags": [
+        "cet4",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:consider",
+      "w": "consider",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "考虑"
+      ],
+      "x": [],
+      "ipa": "/kənˈsɪdə(r)/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:continue",
+      "w": "continue",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "继续"
+      ],
+      "x": [],
+      "ipa": "/kənˈtɪnjuː/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:create",
+      "w": "create",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "创造"
+      ],
+      "x": [],
+      "ipa": "/kriˈeɪt/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:decide",
+      "w": "decide",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "决定"
+      ],
+      "x": [],
+      "ipa": "/dɪˈsaɪd/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:develop",
+      "w": "develop",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "发展"
+      ],
+      "x": [],
+      "ipa": "/dɪˈveləp/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:discuss",
+      "w": "discuss",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "讨论"
+      ],
+      "x": [],
+      "ipa": "/dɪˈskʌs/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:explain",
+      "w": "explain",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "解释"
+      ],
+      "x": [],
+      "ipa": "/ɪkˈspleɪn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:follow",
+      "w": "follow",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "跟随"
+      ],
+      "x": [],
+      "ipa": "/ˈfɒləʊ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:happen",
+      "w": "happen",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "发生"
+      ],
+      "x": [],
+      "ipa": "/ˈhæpən/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:help",
+      "w": "help",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "帮助"
+      ],
+      "x": [],
+      "ipa": "/help/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:improve",
+      "w": "improve",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "改善"
+      ],
+      "x": [],
+      "ipa": "/ɪmˈpruːv/",
+      "tags": [
+        "cet4",
+        "bec",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:include",
+      "w": "include",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "包括"
+      ],
+      "x": [],
+      "ipa": "/ɪnˈkluːd/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:increase",
+      "w": "increase",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "增加"
+      ],
+      "x": [],
+      "ipa": "/ɪnˈkriːs/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:learn",
+      "w": "learn",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "学习"
+      ],
+      "x": [],
+      "ipa": "/lɜːn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:manage",
+      "w": "manage",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "管理；设法"
+      ],
+      "x": [],
+      "ipa": "/ˈmænɪdʒ/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:mean",
+      "w": "mean",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "意味着"
+      ],
+      "x": [],
+      "ipa": "/miːn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:meet",
+      "w": "meet",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "遇见"
+      ],
+      "x": [],
+      "ipa": "/miːt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:offer",
+      "w": "offer",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "提供"
+      ],
+      "x": [],
+      "ipa": "/ˈɒfə(r)/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:provide",
+      "w": "provide",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "提供"
+      ],
+      "x": [],
+      "ipa": "/prəˈvaɪd/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:reduce",
+      "w": "reduce",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "减少"
+      ],
+      "x": [],
+      "ipa": "/rɪˈdjuːs/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:require",
+      "w": "require",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "需要"
+      ],
+      "x": [
+        {
+          "j": "The job requires good communication skills.",
+          "e": "这份工作需要良好的沟通能力。"
+        }
+      ],
+      "ipa": "/rɪˈkwaɪə(r)/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:seem",
+      "w": "seem",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "似乎"
+      ],
+      "x": [],
+      "ipa": "/siːm/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:show",
+      "w": "show",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "展示"
+      ],
+      "x": [],
+      "ipa": "/ʃəʊ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:support",
+      "w": "support",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "支持"
+      ],
+      "x": [],
+      "ipa": "/səˈpɔːt/",
+      "tags": [
+        "cet4",
+        "bec"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:understand",
+      "w": "understand",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "理解"
+      ],
+      "x": [],
+      "ipa": "/ˌʌndəˈstænd/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:use",
+      "w": "use",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "使用"
+      ],
+      "x": [],
+      "ipa": "/juːz/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:want",
+      "w": "want",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "VERB"
+      ],
+      "g": [
+        "想要"
+      ],
+      "x": [],
+      "ipa": "/wɒnt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:able",
+      "w": "able",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "能够的"
+      ],
+      "x": [],
+      "ipa": "/ˈeɪbl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:available",
+      "w": "available",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "可用的"
+      ],
+      "x": [],
+      "ipa": "/əˈveɪləbl/",
+      "tags": [
+        "cet4",
+        "bec",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:clear",
+      "w": "clear",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "清楚的"
+      ],
+      "x": [],
+      "ipa": "/klɪə(r)/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:common",
+      "w": "common",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "常见的"
+      ],
+      "x": [],
+      "ipa": "/ˈkɒmən/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:complex",
+      "w": "complex",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "复杂的"
+      ],
+      "x": [],
+      "ipa": "/ˈkɒmpleks/",
+      "tags": [
+        "cet6",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:difficult",
+      "w": "difficult",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "困难的"
+      ],
+      "x": [],
+      "ipa": "/ˈdɪfɪkəlt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:early",
+      "w": "early",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ",
+        "ADV"
+      ],
+      "g": [
+        "早的"
+      ],
+      "x": [],
+      "ipa": "/ˈɜːli/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:easy",
+      "w": "easy",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "容易的"
+      ],
+      "x": [],
+      "ipa": "/ˈiːzi/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:economic",
+      "w": "economic",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "经济的"
+      ],
+      "x": [],
+      "ipa": "/ˌiːkəˈnɒmɪk/",
+      "tags": [
+        "cet6",
+        "bec",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:effective",
+      "w": "effective",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "有效的"
+      ],
+      "x": [],
+      "ipa": "/ɪˈfektɪv/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:important",
+      "w": "important",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "重要的"
+      ],
+      "x": [],
+      "ipa": "/ɪmˈpɔːtnt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:large",
+      "w": "large",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "大的"
+      ],
+      "x": [],
+      "ipa": "/lɑːdʒ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:likely",
+      "w": "likely",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ",
+        "ADV"
+      ],
+      "g": [
+        "可能的"
+      ],
+      "x": [],
+      "ipa": "/ˈlaɪkli/",
+      "tags": [
+        "cet6",
+        "toefl"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:main",
+      "w": "main",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "主要的"
+      ],
+      "x": [],
+      "ipa": "/meɪn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:major",
+      "w": "major",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "主要的"
+      ],
+      "x": [],
+      "ipa": "/ˈmeɪdʒə(r)/",
+      "tags": [
+        "cet6",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:national",
+      "w": "national",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "国家的"
+      ],
+      "x": [],
+      "ipa": "/ˈnæʃnəl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:necessary",
+      "w": "necessary",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "必要的"
+      ],
+      "x": [],
+      "ipa": "/ˈnesəsəri/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:new",
+      "w": "new",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "新的"
+      ],
+      "x": [],
+      "ipa": "/njuː/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:possible",
+      "w": "possible",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "可能的"
+      ],
+      "x": [],
+      "ipa": "/ˈpɒsəbl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:public",
+      "w": "public",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ",
+        "NOUN"
+      ],
+      "g": [
+        "公共的"
+      ],
+      "x": [],
+      "ipa": "/ˈpʌblɪk/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:recent",
+      "w": "recent",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "最近的"
+      ],
+      "x": [],
+      "ipa": "/ˈriːsnt/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:significant",
+      "w": "significant",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "重要的；显著的"
+      ],
+      "x": [],
+      "ipa": "/sɪɡˈnɪfɪkənt/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl",
+        "kaoyan"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:simple",
+      "w": "simple",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "简单的"
+      ],
+      "x": [],
+      "ipa": "/ˈsɪmpl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:social",
+      "w": "social",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "社会的"
+      ],
+      "x": [],
+      "ipa": "/ˈsəʊʃl/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:strong",
+      "w": "strong",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "强壮的"
+      ],
+      "x": [],
+      "ipa": "/strɒŋ/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:sure",
+      "w": "sure",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "确定的"
+      ],
+      "x": [],
+      "ipa": "/ʃʊə(r)/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:true",
+      "w": "true",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "真实的"
+      ],
+      "x": [],
+      "ipa": "/truː/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:useful",
+      "w": "useful",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADJ"
+      ],
+      "g": [
+        "有用的"
+      ],
+      "x": [],
+      "ipa": "/ˈjuːsfl/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:actually",
+      "w": "actually",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADV"
+      ],
+      "g": [
+        "实际上"
+      ],
+      "x": [],
+      "ipa": "/ˈæktʃuəli/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:however",
+      "w": "however",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADV"
+      ],
+      "g": [
+        "然而"
+      ],
+      "x": [],
+      "ipa": "/haʊˈevə(r)/",
+      "tags": [
+        "cet4",
+        "ielts"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:often",
+      "w": "often",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADV"
+      ],
+      "g": [
+        "经常"
+      ],
+      "x": [],
+      "ipa": "/ˈɒfn/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:probably",
+      "w": "probably",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADV"
+      ],
+      "g": [
+        "可能"
+      ],
+      "x": [],
+      "ipa": "/ˈprɒbəbli/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:really",
+      "w": "really",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADV"
+      ],
+      "g": [
+        "真正地"
+      ],
+      "x": [],
+      "ipa": "/ˈriːəli/",
+      "tags": [
+        "cet4"
+      ],
+      "lang": "en"
+    },
+    {
+      "id": "en:therefore",
+      "w": "therefore",
+      "r": "",
+      "lv": 0,
+      "p": [
+        "ADV"
+      ],
+      "g": [
+        "因此"
+      ],
+      "x": [],
+      "ipa": "/ˈðeəfɔː(r)/",
+      "tags": [
+        "cet6",
+        "ielts",
+        "toefl"
+      ],
+      "lang": "en"
+    }
+  ]
+}
