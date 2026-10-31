@@ -1,0 +1,79 @@
+/*
+ * Semantic colour roles. Values are the ones the options page already used, so the
+ * rewrite is visually identical except where the popup's darker --bg was corrected.
+ * shadcn's --accent means "subtle hover surface"; this project's old --accent was a
+ * solid button colour and now lives in --primary.
+ */
+:root {
+  --background: #f5f5f6;
+  --foreground: #1a1a1c;
+
+  --card: #ffffff;
+  --card-foreground: #1a1a1c;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1c;
+
+  --primary: #1a1a1c;
+  --primary-foreground: #ffffff;
+  --primary-hover: #333336;
+
+  --secondary: #f3f3f4;
+  --secondary-foreground: #1a1a1c;
+  --muted: #fcfcfc;
+  --muted-foreground: #52525a;
+  --text-faint: #6e6e77;
+
+  --accent: #ededef;
+  --accent-foreground: #1a1a1c;
+
+  --destructive: #b3261e;
+  --destructive-foreground: #ffffff;
+  --success: #146c43;
+  --warning: #8a4b0f;
+
+  --border: #ededef;
+  --border-strong: #e2e2e6;
+  --input: #e2e2e6;
+  --ring: rgba(26, 26, 28, 0.07);
+
+  --switch-track: #dcdce1;
+  --switch-knob: #ffffff;
+  --switch-knob-on: #ffffff;
+}
+
+:root[data-theme='dark'] {
+  --background: #131315;
+  --foreground: #ededef;
+
+  --card: #1b1b1e;
+  --card-foreground: #ededef;
+  --popover: #1b1b1e;
+  --popover-foreground: #ededef;
+
+  --primary: #ededef;
+  --primary-foreground: #17171a;
+  --primary-hover: #d8d8dc;
+
+  --secondary: #232327;
+  --secondary-foreground: #ededef;
+  --muted: #17171a;
+  --muted-foreground: #b4b4bd;
+  --text-faint: #8e8e98;
+
+  --accent: #2b2b30;
+  --accent-foreground: #ededef;
+
+  --destructive: #ff8a7d;
+  --destructive-foreground: #17171a;
+  --success: #63d99a;
+  --warning: #e8ac5e;
+
+  --border: #29292d;
+  --border-strong: #3a3a40;
+  --input: #3a3a40;
+  --ring: rgba(255, 255, 255, 0.1);
+
+  --switch-track: #3a3a40;
+  --switch-knob: #ededef;
+  --switch-knob-on: #17171a;
+}

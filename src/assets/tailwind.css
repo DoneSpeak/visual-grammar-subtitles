@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@import '../design-system/tokens/colors.css';
+@import '../design-system/tokens/typography.css';
+@import '../design-system/tokens/spacing.css';
+@import '../design-system/tokens/themes.css';

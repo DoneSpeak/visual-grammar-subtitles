@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.cache/
+.DS_Store
+*.log
+.output/
+.wxt/
+storybook-static/
+test-results/
+playwright-report/
+public/dict/*.dat.gz
