@@ -1,44 +1,10 @@
+import { alignRuby } from '@/languages/ja/presentation';
 import type { DictEntry } from '@/shared/dictionary';
 import { underlineOffset, type ElementStyle } from '@/shared/elementStyle';
 import { READING_ELEMENT } from '@/shared/studyFeatures';
 import type { StudyPreset } from '@/shared/subtitleStyle';
 import type { Token } from '@/shared/types';
 import { tokenStyle } from './style';
-
-const KANJI = /[㐀-䶿一-鿿豈-﫿]/;
-const KANA = /[ぁ-ゖァ-ヺ]/;
-
-const toHiragana = (s: string): string =>
-  s.replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
-
-/** Trim okurigana shared by surface and reading so ruby only covers the kanji stem. */
-const alignRuby = (
-  surface: string,
-  reading: string,
-): { prefix: string; base: string; ruby: string; suffix: string } | null => {
-  const kana = toHiragana(reading);
-  let si = surface.length - 1;
-  let ri = kana.length - 1;
-  while (si >= 0 && ri >= 0 && KANA.test(surface[si]) && surface[si] === kana[ri]) {
-    si--;
-    ri--;
-  }
-  let sp = 0;
-  let rp = 0;
-  while (sp <= si && rp <= ri && KANA.test(surface[sp]) && surface[sp] === kana[rp]) {
-    sp++;
-    rp++;
-  }
-  const base = surface.slice(sp, si + 1);
-  const ruby = kana.slice(rp, ri + 1);
-  if (!base || !ruby || !KANJI.test(base)) return null;
-  return {
-    prefix: surface.slice(0, sp),
-    base,
-    ruby,
-    suffix: surface.slice(si + 1),
-  };
-};
 
 export type DictRender = {
   entries: DictEntry[];
