@@ -38,6 +38,9 @@ type LayerContent = { paragraphs: ParaContent[]; ruby: boolean };
 /** Search surfaces: one per subtitle layer, plus the online pack browser. */
 export type LibraryTarget = LayerId | 'pack';
 
+/** How long the pack box waits after local search comes up empty before it queries online. */
+const ONLINE_FALLBACK_MS = 350;
+
 const LIB_TARGETS: LibraryTarget[] = ['a', 'b', 'pack'];
 
 /** Radix-free select sentinel: choosing it swaps in a free-text language field. */
@@ -323,6 +326,8 @@ export class Overlay {
   private libOnline: Record<LibraryTarget, boolean> = { a: false, b: false, pack: false };
   /** Text a layer input shows while idle: the display label of the loaded subtitle. */
   private libCommitted: Record<LibraryTarget, string> = { a: '', b: '', pack: '' };
+  /** Pending local→online fallback for the pack box; one request per pause, not per keystroke. */
+  private onlineTimers: Partial<Record<LibraryTarget, number>> = {};
   private adState: AdState = {
     slots: [],
     seriesLabel: '',
@@ -1280,7 +1285,7 @@ export class Overlay {
       // Labels can land after the panel opened; don't overwrite a query the user is typing.
       if (input && this.shadow.activeElement !== input) this.syncLayerInput(target);
       const menu = this.libMenuEls[target];
-      if (menu && !menu.hidden && !this.libOnline[target]) this.renderLocal(target);
+      if (menu && !menu.hidden && !this.libOnline[target]) this.renderFor(target);
     }
   }
 
@@ -1294,6 +1299,7 @@ export class Overlay {
   }
 
   closeLibraryMenu(target: LibraryTarget): void {
+    this.cancelOnline(target);
     this.libOnline[target] = false;
     this.libRows[target] = [];
     this.libStatus[target] = '';
@@ -1313,7 +1319,8 @@ export class Overlay {
   }
 
   private renderFor(target: LibraryTarget): void {
-    if (target === 'pack') this.renderPackHint();
+    const input = this.libInputs[target];
+    if (target === 'pack' && !input?.value.trim()) this.renderPackHint();
     else this.renderLocal(target);
   }
 
@@ -1323,9 +1330,10 @@ export class Overlay {
     return target !== 'pack' && typed === this.libCommitted[target] ? '' : typed;
   }
 
-  private renderLocal(target: LayerId): void {
+  private renderLocal(target: LibraryTarget): void {
     const input = this.libInputs[target];
     if (!input) return;
+    this.cancelOnline(target);
     const typed = this.menuQuery(target, input);
     const query = typed.toLowerCase();
     const matches = query
@@ -1345,9 +1353,12 @@ export class Overlay {
       };
     });
     let status = '';
-    if (query && !matches.length) {
+    if (query) {
+      // Local hits stay on top; the online search is always the last row, triggered on demand.
       rows.push({ key: 'online', title: t('overlay.menu.onlineSearch', { query: typed }), meta: 'kitsunekko' });
-    } else if (!query && !this.libraryItems.length) {
+      // The pack box owns the online browser: nothing local means fall through to the network.
+      if (target === 'pack' && !matches.length) this.scheduleOnline(target, typed);
+    } else if (!this.libraryItems.length) {
       status = t('overlay.menu.noPacks');
     }
     this.libOnline[target] = false;
@@ -1357,17 +1368,33 @@ export class Overlay {
     this.renderMenu(target);
   }
 
+  /** Idle pack box (no query yet): a hint, not a result list. */
   private renderPackHint(): void {
-    const input = this.libInputs.pack;
-    if (!input) return;
-    const query = input.value.trim();
+    if (!this.libInputs.pack) return;
+    this.cancelOnline('pack');
     this.libOnline.pack = false;
     this.libRows.pack = [];
-    this.libStatus.pack = query
-      ? t('overlay.menu.enterToSearch', { query })
-      : t('overlay.menu.packHint');
+    this.libStatus.pack = t('overlay.menu.packHint');
     this.libActive.pack = -1;
     this.renderMenu('pack');
+  }
+
+  /** Local search has nothing to show: let the pack box fall back to the network once typing pauses. */
+  private scheduleOnline(target: LibraryTarget, query: string): void {
+    this.cancelOnline(target);
+    this.onlineTimers[target] = window.setTimeout(() => {
+      this.onlineTimers[target] = 0;
+      if (this.libOnline[target]) return;
+      const input = this.libInputs[target];
+      if (!input || input.value.trim() !== query) return;
+      this.cb.onOnlineSearch(query);
+    }, ONLINE_FALLBACK_MS);
+  }
+
+  private cancelOnline(target: LibraryTarget): void {
+    const timer = this.onlineTimers[target];
+    if (timer) window.clearTimeout(timer);
+    this.onlineTimers[target] = 0;
   }
 
   private renderMenu(target: LibraryTarget): void {
@@ -1421,6 +1448,7 @@ export class Overlay {
   };
 
   private pickRow(target: LibraryTarget, row: LibraryRow): void {
+    this.cancelOnline(target);
     const input = this.libInputs[target];
     if (row.key === 'online') {
       const query = input?.value.trim() ?? '';
