@@ -1,0 +1,5551 @@
+{
+  "note": "Japanese learning-output characterization. `tokens` are real kuromoji output plus the bundled JLPT dictionary lookup; `annotations`/`expected` are what the renderer must keep producing.",
+  "levels": {
+    "3": true,
+    "4": true
+  },
+  "cases": [
+    {
+      "id": "case-1",
+      "line": "もう遅いよ、こんな時間に何してるの？",
+      "tokens": [
+        {
+          "surface": "もう",
+          "pos": "副詞",
+          "posDetail1": "一般",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "もう",
+          "reading": "モウ",
+          "dictIdx": 0
+        },
+        {
+          "surface": "遅い",
+          "pos": "形容詞",
+          "posDetail1": "自立",
+          "conjType": "形容詞・アウオ段",
+          "conjForm": "基本形",
+          "baseForm": "遅い",
+          "reading": "オソイ",
+          "dictIdx": 1
+        },
+        {
+          "surface": "よ",
+          "pos": "助詞",
+          "posDetail1": "終助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "よ",
+          "reading": "ヨ"
+        },
+        {
+          "surface": "、",
+          "pos": "記号",
+          "posDetail1": "読点",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "、",
+          "reading": "、"
+        },
+        {
+          "surface": "こんな",
+          "pos": "連体詞",
+          "posDetail1": "*",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "こんな",
+          "reading": "コンナ",
+          "dictIdx": 2
+        },
+        {
+          "surface": "時間",
+          "pos": "名詞",
+          "posDetail1": "副詞可能",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "時間",
+          "reading": "ジカン",
+          "dictIdx": 3
+        },
+        {
+          "surface": "に",
+          "pos": "助詞",
+          "posDetail1": "格助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "に",
+          "reading": "ニ"
+        },
+        {
+          "surface": "何",
+          "pos": "名詞",
+          "posDetail1": "代名詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "何",
+          "reading": "ナニ"
+        },
+        {
+          "surface": "し",
+          "pos": "動詞",
+          "posDetail1": "自立",
+          "conjType": "サ変・スル",
+          "conjForm": "連用形",
+          "baseForm": "する",
+          "reading": "シ"
+        },
+        {
+          "surface": "てる",
+          "pos": "動詞",
+          "posDetail1": "非自立",
+          "conjType": "一段",
+          "conjForm": "基本形",
+          "baseForm": "てる",
+          "reading": "テル",
+          "dictIdx": 4
+        },
+        {
+          "surface": "の",
+          "pos": "助詞",
+          "posDetail1": "終助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "の",
+          "reading": "ノ"
+        },
+        {
+          "surface": "？",
+          "pos": "記号",
+          "posDetail1": "一般",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "？",
+          "reading": "？"
+        }
+      ],
+      "entries": [
+        {
+          "w": "もう",
+          "r": "もう",
+          "lv": 5,
+          "p": [
+            "副",
+            "感"
+          ],
+          "g": [
+            "already",
+            "yet",
+            "by now",
+            "soon"
+          ],
+          "x": [
+            {
+              "j": "彼はもう帰宅しました。",
+              "e": "He has already gone home."
+            },
+            {
+              "j": "君はもう子供ではない。",
+              "e": "You are not a child any more."
+            }
+          ],
+          "id": "1012480"
+        },
+        {
+          "w": "遅い",
+          "r": "おそい",
+          "lv": 5,
+          "p": [
+            "形"
+          ],
+          "g": [
+            "slow",
+            "late",
+            "too late"
+          ],
+          "x": [
+            {
+              "j": "彼は物覚えが遅い。",
+              "e": "He is slow to learn."
+            },
+            {
+              "j": "私は新しい環境に順応するのが遅い。",
+              "e": "I am slow to adapt myself to new circumstances."
+            }
+          ],
+          "id": "1421970"
+        },
+        {
+          "w": "こんな",
+          "r": "こんな",
+          "lv": 5,
+          "p": [
+            "形"
+          ],
+          "g": [
+            "this sort of",
+            "this kind of",
+            "like this"
+          ],
+          "x": [
+            {
+              "j": "こんな風に、彼は私を扱った。",
+              "e": "This is the way he treated me."
+            }
+          ],
+          "id": "1004880"
+        },
+        {
+          "w": "時間",
+          "r": "じかん",
+          "lv": 5,
+          "p": [
+            "名"
+          ],
+          "g": [
+            "time",
+            "hour",
+            "period",
+            "class"
+          ],
+          "x": [
+            {
+              "j": "いつだって読書の時間は見つけられる。",
+              "e": "We can always find time for reading."
+            },
+            {
+              "j": "彼は勤勉な生徒だ。毎日３時間彼は勉強している。",
+              "e": "He is a diligent student. He studies three hours every day."
+            }
+          ],
+          "id": "1315920"
+        },
+        {
+          "w": "照る",
+          "r": "てる",
+          "lv": 2,
+          "p": [
+            "動"
+          ],
+          "g": [
+            "to shine",
+            "to look slightly upward (of a noh mask; indicating joy, etc.)"
+          ],
+          "x": [
+            {
+              "j": "降っても照っても明日は出発します。",
+              "e": "Rain or shine, I will start tomorrow."
+            }
+          ],
+          "id": "1350860"
+        }
+      ]
+    },
+    {
+      "id": "case-2",
+      "line": "私は彼のことを全然知らない。",
+      "tokens": [
+        {
+          "surface": "私",
+          "pos": "名詞",
+          "posDetail1": "代名詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "私",
+          "reading": "ワタシ",
+          "dictIdx": 0
+        },
+        {
+          "surface": "は",
+          "pos": "助詞",
+          "posDetail1": "係助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "は",
+          "reading": "ハ"
+        },
+        {
+          "surface": "彼",
+          "pos": "名詞",
+          "posDetail1": "代名詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "彼",
+          "reading": "カレ",
+          "dictIdx": 1
+        },
+        {
+          "surface": "の",
+          "pos": "助詞",
+          "posDetail1": "連体化",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "の",
+          "reading": "ノ"
+        },
+        {
+          "surface": "こと",
+          "pos": "名詞",
+          "posDetail1": "非自立",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "こと",
+          "reading": "コト"
+        },
+        {
+          "surface": "を",
+          "pos": "助詞",
+          "posDetail1": "格助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "を",
+          "reading": "ヲ"
+        },
+        {
+          "surface": "全然",
+          "pos": "副詞",
+          "posDetail1": "助詞類接続",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "全然",
+          "reading": "ゼンゼン",
+          "dictIdx": 2
+        },
+        {
+          "surface": "知ら",
+          "pos": "動詞",
+          "posDetail1": "自立",
+          "conjType": "五段・ラ行",
+          "conjForm": "未然形",
+          "baseForm": "知る",
+          "reading": "シラ",
+          "dictIdx": 3
+        },
+        {
+          "surface": "ない",
+          "pos": "助動詞",
+          "posDetail1": "*",
+          "conjType": "特殊・ナイ",
+          "conjForm": "基本形",
+          "baseForm": "ない",
+          "reading": "ナイ"
+        },
+        {
+          "surface": "。",
+          "pos": "記号",
+          "posDetail1": "句点",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "。",
+          "reading": "。"
+        }
+      ],
+      "entries": [
+        {
+          "w": "私",
+          "r": "わたし",
+          "lv": 5,
+          "p": [
+            "代"
+          ],
+          "g": [
+            "I",
+            "me"
+          ],
+          "x": [
+            {
+              "j": "騒がしいホームで誰かが私の名前を呼んでいるのが聞こえた。",
+              "e": "I could hear someone calling my name on the noisy platform."
+            }
+          ],
+          "id": "1311110"
+        },
+        {
+          "w": "彼",
+          "r": "かれ",
+          "lv": 4,
+          "p": [
+            "代",
+            "名"
+          ],
+          "g": [
+            "he",
+            "him",
+            "boyfriend"
+          ],
+          "x": [
+            {
+              "j": "彼のスイングは実に見事だ。",
+              "e": "He has a perfect swing."
+            },
+            {
+              "j": "毎朝朝食をとっている間、彼の犬は彼をじっと見つめていた。",
+              "e": "His dog stared at him every morning while he had his breakfast."
+            }
+          ],
+          "id": "1483070"
+        },
+        {
+          "w": "全然",
+          "r": "ぜんぜん",
+          "lv": 4,
+          "p": [
+            "副"
+          ],
+          "g": [
+            "(not) at all",
+            "(not) in the slightest",
+            "wholly",
+            "entirely"
+          ],
+          "x": [
+            {
+              "j": "「長い１日だったのでお疲れでしょう」「いいえ、全然」",
+              "e": "\"You must be tired after a long day.\" \"No, not in the least.\""
+            },
+            {
+              "j": "あなたの作文は全然だめだというわけではない。",
+              "e": "Your composition is not altogether bad."
+            }
+          ],
+          "id": "1395620"
+        },
+        {
+          "w": "知る",
+          "r": "しる",
+          "lv": 5,
+          "p": [
+            "動"
+          ],
+          "g": [
+            "to know",
+            "to be aware (of)",
+            "to be conscious (of)",
+            "to sense"
+          ],
+          "x": [
+            {
+              "j": "あなたは１９９０年から彼女を知っているのですか？",
+              "e": "Have you known her since 1990?"
+            },
+            {
+              "j": "私は自分が感じたことを言えるのが必要であることを知った。",
+              "e": "I find it necessary to be able to say what I feel."
+            }
+          ],
+          "id": "1420470"
+        }
+      ]
+    },
+    {
+      "id": "case-3",
+      "line": "食べなければならない。",
+      "tokens": [
+        {
+          "surface": "食べ",
+          "pos": "動詞",
+          "posDetail1": "自立",
+          "conjType": "一段",
+          "conjForm": "未然形",
+          "baseForm": "食べる",
+          "reading": "タベ",
+          "dictIdx": 0
+        },
+        {
+          "surface": "なけれ",
+          "pos": "助動詞",
+          "posDetail1": "*",
+          "conjType": "特殊・ナイ",
+          "conjForm": "仮定形",
+          "baseForm": "ない",
+          "reading": "ナケレ"
+        },
+        {
+          "surface": "ば",
+          "pos": "助詞",
+          "posDetail1": "接続助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "ば",
+          "reading": "バ"
+        },
+        {
+          "surface": "なら",
+          "pos": "動詞",
+          "posDetail1": "非自立",
+          "conjType": "五段・ラ行",
+          "conjForm": "未然形",
+          "baseForm": "なる",
+          "reading": "ナラ",
+          "dictIdx": 1
+        },
+        {
+          "surface": "ない",
+          "pos": "助動詞",
+          "posDetail1": "*",
+          "conjType": "特殊・ナイ",
+          "conjForm": "基本形",
+          "baseForm": "ない",
+          "reading": "ナイ"
+        },
+        {
+          "surface": "。",
+          "pos": "記号",
+          "posDetail1": "句点",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "。",
+          "reading": "。"
+        }
+      ],
+      "entries": [
+        {
+          "w": "食べる",
+          "r": "たべる",
+          "lv": 5,
+          "p": [
+            "動"
+          ],
+          "g": [
+            "to eat",
+            "to live on (e.g. a salary)",
+            "to live off",
+            "to subsist on"
+          ],
+          "x": [
+            {
+              "j": "もっと果物を食べるべきです。",
+              "e": "You should eat more fruit."
+            },
+            {
+              "j": "僕は脚本家で食べていく決心をした。",
+              "e": "I am determined to make a living as a playwright."
+            }
+          ],
+          "id": "1358280"
+        },
+        {
+          "w": "なる",
+          "r": "なる",
+          "lv": 5,
+          "p": [
+            "形",
+            "感"
+          ],
+          "g": [
+            "that is in",
+            "who is called",
+            "that is called",
+            "that is"
+          ],
+          "x": [
+            {
+              "j": "ちまたではインターネットなるものがはやっています。",
+              "e": "People are talking about this Internet phenomenon."
+            },
+            {
+              "j": "いかにも敬虔なるクリスチャンが送る、礼節重き言葉です。",
+              "e": "So characteristic of what a pious Christian would say, this courteous phrase."
+            }
+          ],
+          "id": "2138260"
+        }
+      ]
+    },
+    {
+      "id": "case-4",
+      "line": "静かな夜が続いていた。",
+      "tokens": [
+        {
+          "surface": "静か",
+          "pos": "名詞",
+          "posDetail1": "形容動詞語幹",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "静か",
+          "reading": "シズカ",
+          "dictIdx": 0
+        },
+        {
+          "surface": "な",
+          "pos": "助動詞",
+          "posDetail1": "*",
+          "conjType": "特殊・ダ",
+          "conjForm": "体言接続",
+          "baseForm": "だ",
+          "reading": "ナ"
+        },
+        {
+          "surface": "夜",
+          "pos": "名詞",
+          "posDetail1": "副詞可能",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "夜",
+          "reading": "ヨル",
+          "dictIdx": 1
+        },
+        {
+          "surface": "が",
+          "pos": "助詞",
+          "posDetail1": "格助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "が",
+          "reading": "ガ"
+        },
+        {
+          "surface": "続い",
+          "pos": "動詞",
+          "posDetail1": "自立",
+          "conjType": "五段・カ行イ音便",
+          "conjForm": "連用タ接続",
+          "baseForm": "続く",
+          "reading": "ツヅイ",
+          "dictIdx": 2
+        },
+        {
+          "surface": "て",
+          "pos": "助詞",
+          "posDetail1": "接続助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "て",
+          "reading": "テ"
+        },
+        {
+          "surface": "い",
+          "pos": "動詞",
+          "posDetail1": "非自立",
+          "conjType": "一段",
+          "conjForm": "連用形",
+          "baseForm": "いる",
+          "reading": "イ"
+        },
+        {
+          "surface": "た",
+          "pos": "助動詞",
+          "posDetail1": "*",
+          "conjType": "特殊・タ",
+          "conjForm": "基本形",
+          "baseForm": "た",
+          "reading": "タ"
+        },
+        {
+          "surface": "。",
+          "pos": "記号",
+          "posDetail1": "句点",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "。",
+          "reading": "。"
+        }
+      ],
+      "entries": [
+        {
+          "w": "静か",
+          "r": "しずか",
+          "lv": 5,
+          "p": [
+            "形"
+          ],
+          "g": [
+            "quiet",
+            "silent",
+            "slow",
+            "unhurried"
+          ],
+          "x": [
+            {
+              "j": "キャプテンは静かにするように命じた。",
+              "e": "The captain commanded silence."
+            }
+          ],
+          "id": "1381820"
+        },
+        {
+          "w": "夜",
+          "r": "よる",
+          "lv": 5,
+          "p": [
+            "名",
+            "副"
+          ],
+          "g": [
+            "night",
+            "evening",
+            "dinner"
+          ],
+          "x": [
+            {
+              "j": "あなたは夜よく寝れませんか。",
+              "e": "Don't you sleep well at night?"
+            }
+          ],
+          "id": "1536350"
+        },
+        {
+          "w": "続く",
+          "r": "つづく",
+          "lv": 4,
+          "p": [
+            "動"
+          ],
+          "g": [
+            "to continue",
+            "to last",
+            "to go on",
+            "to continue (without a break)"
+          ],
+          "x": [
+            {
+              "j": "どれくらいこの寒い天気は続きますか。",
+              "e": "How long will this cold weather go on?"
+            },
+            {
+              "j": "延々と続く車の列があった。",
+              "e": "There was a continuous line of cars."
+            }
+          ],
+          "id": "1405790"
+        }
+      ]
+    },
+    {
+      "id": "case-5",
+      "line": "彼女はとても綺麗だった。",
+      "tokens": [
+        {
+          "surface": "彼女",
+          "pos": "名詞",
+          "posDetail1": "代名詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "彼女",
+          "reading": "カノジョ",
+          "dictIdx": 0
+        },
+        {
+          "surface": "は",
+          "pos": "助詞",
+          "posDetail1": "係助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "は",
+          "reading": "ハ"
+        },
+        {
+          "surface": "とても",
+          "pos": "副詞",
+          "posDetail1": "助詞類接続",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "とても",
+          "reading": "トテモ"
+        },
+        {
+          "surface": "綺麗",
+          "pos": "名詞",
+          "posDetail1": "形容動詞語幹",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "綺麗",
+          "reading": "キレイ",
+          "dictIdx": 1
+        },
+        {
+          "surface": "だっ",
+          "pos": "助動詞",
+          "posDetail1": "*",
+          "conjType": "特殊・ダ",
+          "conjForm": "連用タ接続",
+          "baseForm": "だ",
+          "reading": "ダッ"
+        },
+        {
+          "surface": "た",
+          "pos": "助動詞",
+          "posDetail1": "*",
+          "conjType": "特殊・タ",
+          "conjForm": "基本形",
+          "baseForm": "た",
+          "reading": "タ"
+        },
+        {
+          "surface": "。",
+          "pos": "記号",
+          "posDetail1": "句点",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "。",
+          "reading": "。"
+        }
+      ],
+      "entries": [
+        {
+          "w": "彼女",
+          "r": "かのじょ",
+          "lv": 4,
+          "p": [
+            "代",
+            "名"
+          ],
+          "g": [
+            "she",
+            "her",
+            "girlfriend"
+          ],
+          "x": [
+            {
+              "j": "「あの音で考え事ができないわ」と、彼女はタイプライターを見つめながら言った。",
+              "e": "\"I can't think with that noise,\" she said, staring at the typewriter."
+            },
+            {
+              "j": "僕の彼女はカナダへいってしまった。",
+              "e": "My girlfriend has gone to Canada."
+            }
+          ],
+          "id": "1483150"
+        },
+        {
+          "w": "綺麗",
+          "r": "きれい",
+          "lv": 5,
+          "p": [
+            "形"
+          ],
+          "g": [
+            "pretty",
+            "lovely",
+            "beautiful",
+            "clean"
+          ],
+          "x": [
+            {
+              "j": "この芋虫がきれいな蝶になるのだ。",
+              "e": "This caterpillar will become a beautiful butterfly."
+            },
+            {
+              "j": "この辺りは空気がきれいだよ。",
+              "e": "The air is pure around here."
+            }
+          ],
+          "id": "1591900"
+        }
+      ]
+    },
+    {
+      "id": "case-6",
+      "line": "ちょっと待ってください！",
+      "tokens": [
+        {
+          "surface": "ちょっと",
+          "pos": "副詞",
+          "posDetail1": "助詞類接続",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "ちょっと",
+          "reading": "チョット"
+        },
+        {
+          "surface": "待っ",
+          "pos": "動詞",
+          "posDetail1": "自立",
+          "conjType": "五段・タ行",
+          "conjForm": "連用タ接続",
+          "baseForm": "待つ",
+          "reading": "マッ",
+          "dictIdx": 0
+        },
+        {
+          "surface": "て",
+          "pos": "助詞",
+          "posDetail1": "接続助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "て",
+          "reading": "テ"
+        },
+        {
+          "surface": "ください",
+          "pos": "動詞",
+          "posDetail1": "非自立",
+          "conjType": "五段・ラ行特殊",
+          "conjForm": "命令ｉ",
+          "baseForm": "くださる",
+          "reading": "クダサイ",
+          "dictIdx": 1
+        },
+        {
+          "surface": "！",
+          "pos": "記号",
+          "posDetail1": "一般",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "！",
+          "reading": "！"
+        }
+      ],
+      "entries": [
+        {
+          "w": "待つ",
+          "r": "まつ",
+          "lv": 5,
+          "p": [
+            "動"
+          ],
+          "g": [
+            "to wait",
+            "to await",
+            "to look forward to",
+            "to anticipate"
+          ],
+          "x": [
+            {
+              "j": "しばらく電話を切らずにお待ちください。",
+              "e": "Please hold the line a moment."
+            }
+          ],
+          "id": "1410590"
+        },
+        {
+          "w": "下さい",
+          "r": "ください",
+          "lv": 5,
+          "p": [
+            "表"
+          ],
+          "g": [
+            "please (give me)",
+            "please (do for me)"
+          ],
+          "x": [
+            {
+              "j": "熱いココアを下さい。",
+              "e": "I'd like to have some hot chocolate."
+            },
+            {
+              "j": "あなたの切手帳を見せてください。",
+              "e": "Please show me your stamp album."
+            }
+          ],
+          "id": "1184270"
+        }
+      ]
+    },
+    {
+      "id": "case-7",
+      "line": "本当にそう思う？",
+      "tokens": [
+        {
+          "surface": "本当に",
+          "pos": "副詞",
+          "posDetail1": "一般",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "本当に",
+          "reading": "ホントウニ"
+        },
+        {
+          "surface": "そう",
+          "pos": "副詞",
+          "posDetail1": "助詞類接続",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "そう",
+          "reading": "ソウ",
+          "dictIdx": 0
+        },
+        {
+          "surface": "思う",
+          "pos": "動詞",
+          "posDetail1": "自立",
+          "conjType": "五段・ワ行促音便",
+          "conjForm": "基本形",
+          "baseForm": "思う",
+          "reading": "オモウ",
+          "dictIdx": 1
+        },
+        {
+          "surface": "？",
+          "pos": "記号",
+          "posDetail1": "一般",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "？",
+          "reading": "？"
+        }
+      ],
+      "entries": [
+        {
+          "w": "そう",
+          "r": "そう",
+          "lv": 4,
+          "p": [
+            "助",
+            "形"
+          ],
+          "g": [
+            "appearing that",
+            "seeming that",
+            "looking like"
+          ],
+          "x": [
+            {
+              "j": "まもなく雨が降りそうだ。",
+              "e": "It is going to rain soon."
+            }
+          ],
+          "id": "1006610"
+        },
+        {
+          "w": "思う",
+          "r": "おもう",
+          "lv": 4,
+          "p": [
+            "動"
+          ],
+          "g": [
+            "to think",
+            "to consider",
+            "to believe",
+            "to think (of doing)"
+          ],
+          "x": [
+            {
+              "j": "晴れだと思うよ。",
+              "e": "I think it will be sunny."
+            },
+            {
+              "j": "状況は深刻だと思いますか。",
+              "e": "Do you regard the situation as serious?"
+            }
+          ],
+          "id": "1589350"
+        }
+      ]
+    },
+    {
+      "id": "case-8",
+      "line": "東京に行ったことがありますか。",
+      "tokens": [
+        {
+          "surface": "東京",
+          "pos": "名詞",
+          "posDetail1": "固有名詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "東京",
+          "reading": "トウキョウ"
+        },
+        {
+          "surface": "に",
+          "pos": "助詞",
+          "posDetail1": "格助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "に",
+          "reading": "ニ"
+        },
+        {
+          "surface": "行っ",
+          "pos": "動詞",
+          "posDetail1": "自立",
+          "conjType": "五段・カ行促音便",
+          "conjForm": "連用タ接続",
+          "baseForm": "行く",
+          "reading": "イッ"
+        },
+        {
+          "surface": "た",
+          "pos": "助動詞",
+          "posDetail1": "*",
+          "conjType": "特殊・タ",
+          "conjForm": "基本形",
+          "baseForm": "た",
+          "reading": "タ"
+        },
+        {
+          "surface": "こと",
+          "pos": "名詞",
+          "posDetail1": "非自立",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "こと",
+          "reading": "コト"
+        },
+        {
+          "surface": "が",
+          "pos": "助詞",
+          "posDetail1": "格助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "が",
+          "reading": "ガ"
+        },
+        {
+          "surface": "あり",
+          "pos": "動詞",
+          "posDetail1": "自立",
+          "conjType": "五段・ラ行",
+          "conjForm": "連用形",
+          "baseForm": "ある",
+          "reading": "アリ"
+        },
+        {
+          "surface": "ます",
+          "pos": "助動詞",
+          "posDetail1": "*",
+          "conjType": "特殊・マス",
+          "conjForm": "基本形",
+          "baseForm": "ます",
+          "reading": "マス"
+        },
+        {
+          "surface": "か",
+          "pos": "助詞",
+          "posDetail1": "副助詞／並立助詞／終助詞",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "か",
+          "reading": "カ"
+        },
+        {
+          "surface": "。",
+          "pos": "記号",
+          "posDetail1": "句点",
+          "conjType": "*",
+          "conjForm": "*",
+          "baseForm": "。",
+          "reading": "。"
+        }
+      ],
+      "entries": []
+    }
+  ],
+  "annotations": {
+    "case-1": [
+      {
+        "surface": "もう",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "遅い",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "よ",
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "、"
+      },
+      {
+        "surface": "こんな",
+        "groups": {
+          "chunk.bunsetsu": "rule-3"
+        }
+      },
+      {
+        "surface": "時間",
+        "groups": {
+          "chunk.bunsetsu": "rule-3"
+        }
+      },
+      {
+        "surface": "に",
+        "groups": {
+          "chunk.bunsetsu": "rule-3"
+        }
+      },
+      {
+        "surface": "何",
+        "groups": {
+          "chunk.bunsetsu": "rule-4"
+        }
+      },
+      {
+        "surface": "し",
+        "groups": {
+          "chunk.bunsetsu": "rule-4"
+        }
+      },
+      {
+        "surface": "てる",
+        "groups": {
+          "chunk.bunsetsu": "rule-5"
+        }
+      },
+      {
+        "surface": "の",
+        "groups": {
+          "chunk.bunsetsu": "rule-6"
+        }
+      },
+      {
+        "surface": "？"
+      }
+    ],
+    "case-2": [
+      {
+        "surface": "私",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "は",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "彼",
+        "grammar": [
+          "token.level:plan"
+        ],
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "の",
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "こと",
+        "groups": {
+          "chunk.bunsetsu": "rule-2"
+        }
+      },
+      {
+        "surface": "を",
+        "groups": {
+          "chunk.bunsetsu": "rule-2"
+        }
+      },
+      {
+        "surface": "全然",
+        "grammar": [
+          "token.level:plan"
+        ],
+        "groups": {
+          "chunk.bunsetsu": "rule-3"
+        }
+      },
+      {
+        "surface": "知ら",
+        "groups": {
+          "chunk.bunsetsu": "rule-3"
+        }
+      },
+      {
+        "surface": "ない",
+        "groups": {
+          "chunk.bunsetsu": "rule-4"
+        }
+      },
+      {
+        "surface": "。"
+      }
+    ],
+    "case-3": [
+      {
+        "surface": "食べ",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "なけれ",
+        "grammar": [
+          "expression.grammar:all"
+        ],
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "ば",
+        "grammar": [
+          "expression.grammar:all"
+        ],
+        "groups": {
+          "chunk.bunsetsu": "rule-2"
+        }
+      },
+      {
+        "surface": "なら",
+        "grammar": [
+          "expression.grammar:all"
+        ],
+        "groups": {
+          "chunk.bunsetsu": "rule-3"
+        }
+      },
+      {
+        "surface": "ない",
+        "grammar": [
+          "expression.grammar:all"
+        ],
+        "groups": {
+          "chunk.bunsetsu": "rule-4"
+        }
+      },
+      {
+        "surface": "。"
+      }
+    ],
+    "case-4": [
+      {
+        "surface": "静か",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "な",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "夜",
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "が",
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "続い",
+        "grammar": [
+          "token.level:plan"
+        ],
+        "groups": {
+          "chunk.bunsetsu": "rule-2"
+        }
+      },
+      {
+        "surface": "て",
+        "groups": {
+          "chunk.bunsetsu": "rule-3"
+        }
+      },
+      {
+        "surface": "い",
+        "groups": {
+          "chunk.bunsetsu": "rule-4"
+        }
+      },
+      {
+        "surface": "た",
+        "groups": {
+          "chunk.bunsetsu": "rule-5"
+        }
+      },
+      {
+        "surface": "。"
+      }
+    ],
+    "case-5": [
+      {
+        "surface": "彼女",
+        "grammar": [
+          "token.level:plan"
+        ],
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "は",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "とても",
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "綺麗",
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "だっ",
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "た",
+        "groups": {
+          "chunk.bunsetsu": "rule-2"
+        }
+      },
+      {
+        "surface": "。"
+      }
+    ],
+    "case-6": [
+      {
+        "surface": "ちょっと",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "待っ",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "て",
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "ください",
+        "groups": {
+          "chunk.bunsetsu": "rule-2"
+        }
+      },
+      {
+        "surface": "！"
+      }
+    ],
+    "case-7": [
+      {
+        "surface": "本当に",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "そう",
+        "grammar": [
+          "token.level:plan"
+        ],
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "思う",
+        "grammar": [
+          "token.level:plan"
+        ],
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "？"
+      }
+    ],
+    "case-8": [
+      {
+        "surface": "東京",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "に",
+        "groups": {
+          "chunk.bunsetsu": "rule-0"
+        }
+      },
+      {
+        "surface": "行っ",
+        "groups": {
+          "chunk.bunsetsu": "rule-1"
+        }
+      },
+      {
+        "surface": "た",
+        "groups": {
+          "chunk.bunsetsu": "rule-2"
+        }
+      },
+      {
+        "surface": "こと",
+        "groups": {
+          "chunk.bunsetsu": "rule-3"
+        }
+      },
+      {
+        "surface": "が",
+        "groups": {
+          "chunk.bunsetsu": "rule-3"
+        }
+      },
+      {
+        "surface": "あり",
+        "groups": {
+          "chunk.bunsetsu": "rule-4"
+        }
+      },
+      {
+        "surface": "ます",
+        "groups": {
+          "chunk.bunsetsu": "rule-5"
+        }
+      },
+      {
+        "surface": "か",
+        "groups": {
+          "chunk.bunsetsu": "rule-6"
+        }
+      },
+      {
+        "surface": "。"
+      }
+    ]
+  },
+  "expected": {
+    "case-1": {
+      "pos-basic": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADJ"
+            }
+          ],
+          "style": {
+            "color": "#B8860B"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADJ"
+            }
+          ],
+          "style": {
+            "color": "#B8860B"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "opacity": 0.78,
+            "underline": {
+              "enabled": true,
+              "style": "solid"
+            }
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C"
+          }
+        }
+      ],
+      "chunk-focus": [
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 0
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "expression-focus": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "reading-assist": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "custom": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADJ"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#B8860B",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADJ"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#B8860B",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "opacity": 0.6,
+            "radiusPx": 0
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "opacity": 0.6,
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C",
+            "opacity": 0.35
+          }
+        }
+      ]
+    },
+    "case-2": {
+      "pos-basic": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "opacity": 0.78,
+            "underline": {
+              "enabled": true,
+              "style": "solid"
+            }
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C"
+          }
+        }
+      ],
+      "chunk-focus": [
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "expression-focus": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "reading-assist": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "custom": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "opacity": 0.6,
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "level",
+              "element": "token.level:plan"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#FBBF2433",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#FF00FF"
+            },
+            "opacity": 0.6,
+            "radiusPx": 3,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "opacity": 0.6,
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            },
+            {
+              "feature": "level",
+              "element": "token.level:plan"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58",
+            "backgroundColor": "#FBBF2433",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#FF00FF"
+            },
+            "radiusPx": 3,
+            "radiusSides": "start",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C",
+            "opacity": 0.35
+          }
+        }
+      ]
+    },
+    "case-3": {
+      "pos-basic": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "opacity": 0.78,
+            "underline": {
+              "enabled": true,
+              "style": "solid"
+            }
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "opacity": 0.78,
+            "underline": {
+              "enabled": true,
+              "style": "solid"
+            }
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C"
+          }
+        }
+      ],
+      "chunk-focus": [
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "expression-focus": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [
+            {
+              "feature": "expression",
+              "element": "expression.grammar:all"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#F472B640",
+            "radiusPx": 4
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "expression",
+              "element": "expression.grammar:all"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#F472B640",
+            "radiusPx": 4
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "expression",
+              "element": "expression.grammar:all"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#F472B640",
+            "radiusPx": 4
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "expression",
+              "element": "expression.grammar:all"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#F472B640",
+            "radiusPx": 4
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "reading-assist": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "custom": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "expression",
+              "element": "expression.grammar:all"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#ABCDEF",
+            "backgroundColor": "#F472B640",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 4,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "expression",
+              "element": "expression.grammar:all"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#ABCDEF",
+            "backgroundColor": "#F472B640",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 4,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "expression",
+              "element": "expression.grammar:all"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#ABCDEF",
+            "backgroundColor": "#F472B640",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 4,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "expression",
+              "element": "expression.grammar:all"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#ABCDEF",
+            "backgroundColor": "#F472B640",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 4,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C",
+            "opacity": 0.35
+          }
+        }
+      ]
+    },
+    "case-4": {
+      "pos-basic": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "opacity": 0.78,
+            "underline": {
+              "enabled": true,
+              "style": "solid"
+            }
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "opacity": 0.78,
+            "underline": {
+              "enabled": true,
+              "style": "solid"
+            }
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C"
+          }
+        }
+      ],
+      "chunk-focus": [
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "expression-focus": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "reading-assist": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "custom": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "opacity": 0.6,
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "opacity": 0.6,
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "level",
+              "element": "token.level:plan"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#FBBF2433",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#FF00FF"
+            },
+            "radiusPx": 3,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C",
+            "opacity": 0.35
+          }
+        }
+      ]
+    },
+    "case-5": {
+      "pos-basic": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C"
+          }
+        }
+      ],
+      "chunk-focus": [
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 0
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "expression-focus": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "reading-assist": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "custom": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "level",
+              "element": "token.level:plan"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#FBBF2433",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#FF00FF"
+            },
+            "opacity": 0.6,
+            "radiusPx": 3,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "opacity": 0.6,
+            "radiusPx": 0
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C",
+            "opacity": 0.35
+          }
+        }
+      ]
+    },
+    "case-6": {
+      "pos-basic": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "opacity": 0.78,
+            "underline": {
+              "enabled": true,
+              "style": "solid"
+            }
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "opacity": 0.78,
+            "underline": {
+              "enabled": true,
+              "style": "solid"
+            }
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C"
+          }
+        }
+      ],
+      "chunk-focus": [
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "expression-focus": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "reading-assist": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "custom": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C",
+            "opacity": 0.35
+          }
+        }
+      ]
+    },
+    "case-7": {
+      "pos-basic": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C"
+          }
+        }
+      ],
+      "chunk-focus": [
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 0
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "expression-focus": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "reading-assist": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "custom": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADV"
+            },
+            {
+              "feature": "level",
+              "element": "token.level:plan"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:middle"
+            }
+          ],
+          "style": {
+            "color": "#0F9D58",
+            "backgroundColor": "#FBBF2433",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#FF00FF"
+            },
+            "radiusPx": 3,
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "level",
+              "element": "token.level:plan"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#FBBF2433",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#FF00FF"
+            },
+            "radiusPx": 3,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C",
+            "opacity": 0.35
+          }
+        }
+      ]
+    },
+    "case-8": {
+      "pos-basic": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "opacity": 0.78,
+            "underline": {
+              "enabled": true,
+              "style": "solid"
+            }
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            }
+          ],
+          "style": {
+            "color": "#1E90FF"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "opacity": 0.78,
+            "underline": {
+              "enabled": true,
+              "style": "solid"
+            }
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C"
+          }
+        }
+      ],
+      "chunk-focus": [
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all"
+          }
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "expression-focus": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "reading-assist": [
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        },
+        {
+          "matched": [],
+          "style": null
+        }
+      ],
+      "custom": [
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "opacity": 0.6,
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:NOUN"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:first"
+            }
+          ],
+          "style": {
+            "color": "#112233",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "opacity": 0.6,
+            "radiusPx": 6,
+            "radiusSides": "start"
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:last"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "end",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:VERB"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#E5533D",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:ADP"
+            },
+            {
+              "feature": "chunk-rule",
+              "element": "chunk.bunsetsu:only"
+            }
+          ],
+          "style": {
+            "color": "#8A8F98",
+            "backgroundColor": "#38BDF84D",
+            "underline": {
+              "enabled": true,
+              "style": "solid",
+              "color": "#7DD3FC",
+              "thicknessPx": 2,
+              "offsetPx": 4
+            },
+            "radiusPx": 6,
+            "radiusSides": "all",
+            "opacity": 0.35
+          }
+        },
+        {
+          "matched": [
+            {
+              "feature": "pos",
+              "element": "token.pos:PUNCT"
+            }
+          ],
+          "style": {
+            "color": "#6E737C",
+            "opacity": 0.35
+          }
+        }
+      ]
+    }
+  }
+}
