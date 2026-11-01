@@ -56,7 +56,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
 
-      # 同时产出 .output/chrome-mv3 与 .output/jp-subtitle-overlay-<version>-chrome.zip
+      # 同时产出 .output/chrome-mv3 与 .output/visual-grammar-subtitles-<version>-chrome.zip
       - run: pnpm build
       - run: pnpm zip
 

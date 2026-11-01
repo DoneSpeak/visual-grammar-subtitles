@@ -17,8 +17,8 @@
 
 ## 提交前必须完成
 
-1. **Pages 上线**：Settings → Pages → Source 选 GitHub Actions，否则隐私政策 URL 打不开。
-2. **联系邮箱**已填 `guanrong.young@foxmail.com`（`privacy/index.html:83,146`），换地址改这两处。
+1. **Pages 上线**：Settings → Pages → Source 选 GitHub Actions，否则隐私政策 URL 打不开。截至 2026-11-01，`https://donespeak.github.io/visual-grammar-subtitles/privacy/` 仍返回 **404**，提交前必须确认变 200。
+2. **联系邮箱**已填 `guanrong.young@foxmail.com`（`privacy/index.html:85,150`），换地址改这两处。
 
 截图与宣传图已生成；改 UI 后执行 `node scripts/capture-store-assets.mjs` 重出。
 
@@ -30,7 +30,7 @@
 2. 推一次 `main`，等 `pages` workflow 变绿。
 3. URL 为 `https://donespeak.github.io/visual-grammar-subtitles/privacy/`；示例字幕在 `.../privacy/sample.ja.srt`。
 
-私有仓库的 Pages 需要付费计划（Pro/Team）。不想开 Pages 的替代方案：
+当前仓库是公开仓库，Pages 免费。不想用 Pages 的替代方案：
 
 | 方案 | 成本 | 说明 |
 |---|---|---|
@@ -52,11 +52,11 @@ Chrome Web Store **不要求上传 EULA 或服务条款文件**。需要签的�
 ```bash
 pnpm install
 make check                 # typecheck + test
-make zip                   # prezip 复制词典 → build → .output/jp-subtitle-overlay-<version>-chrome.zip
+make zip                   # prezip 复制词典 → build → .output/visual-grammar-subtitles-<version>-chrome.zip
 ls -lh .output/*-chrome.zip
 ```
 
-1. 开发者后台 →「新增项」→ 上传 zip（首次上传即创建条目，版本取 `package.json` 的 `0.4.0`）。
+1. 开发者后台 →「新增项」→ 上传 zip（首次上传即创建条目，版本取 `package.json` 的 `0.5.0`）。
 2. 填 `listing.md`、`privacy-questionnaire.md`、隐私政策 URL、截图，粘贴 `reviewer-notes.md`。
 3. 提交审核。`<all_urls>` 的新条目通常数天到数周；之后小版本更快。
 
@@ -76,8 +76,9 @@ CI 路径：推 `v*` tag，见 `DEVOPS.md` 第 4 节。商店不允许降级回�
 | 项 | 值 |
 |---|---|
 | 产物目录 | `.output/chrome-mv3` |
-| zip | `.output/jp-subtitle-overlay-<version>-chrome.zip` |
-| 当前 zip 大小 | 16.71 MB（解压 21.5 MB，含 ~14 MB kuromoji 词典） |
+| zip | `.output/visual-grammar-subtitles-<version>-chrome.zip` |
+| 当前 zip 大小 | 18.85 MB（解压约 28.6 MB，其中离线词典 ~28 MB：ja kuromoji + en/th lexicon） |
+| 当前版本 | `0.5.0`（取自 `package.json`，zip 文件名同源） |
 | manifest | `manifest_version 3`，`minimum_chrome_version 120` |
 | 权限 | `storage`、`unlimitedStorage`、`host_permissions: <all_urls>` |
 | 远程代码 | 无 |

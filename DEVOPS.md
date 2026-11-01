@@ -239,7 +239,7 @@ git push origin main --tags
 
 ```bash
 make verify        # typecheck + test + build + e2e，与 verify job 同一条路径
-make zip           # 产物 .output/jp-subtitle-overlay-<version>-chrome.zip
+make zip           # 产物 .output/visual-grammar-subtitles-<version>-chrome.zip
 make publish-dry   # 只校验凭据与条目状态
 make publish       # 与 CI publish job 同一条路径
 ```

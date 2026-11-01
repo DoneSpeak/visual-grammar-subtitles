@@ -8,7 +8,7 @@
 Thank you for reviewing.
 
 WHAT IT DOES
-Visual Grammar Subtitles draws a subtitle layer over a <video> element and colours words by part of speech. It ships no videos and no subtitles; the user provides a subtitle file or imports one from the public kitsunekko.net catalogue. Nothing is unlocked, decrypted, or bypassed. The extension is free, has no account and no ads.
+Visual Grammar Subtitles draws a subtitle layer over a <video> element and colours words by part of speech. It ships no videos and no subtitles; the user provides a subtitle file or imports one from a public catalogue (kitsunekko.net for Japanese, SubDL for other languages). Nothing is unlocked, decrypted, or bypassed. The extension is free, has no account and no ads. Annotatable language packs: Japanese, English and Thai.
 
 HOW TO TEST (about 2 minutes)
 1. Install the extension. No sign-in is required.
@@ -27,7 +27,8 @@ Videos can appear on any site, so the content script is registered for all URLs.
 
 NETWORK USE
 - No requests at all during the test above, except the user-initiated download of the sample file.
-- kitsunekko.net is contacted only when the user searches or imports from the online catalogue.
+- kitsunekko.net is contacted only when the user searches or imports Japanese subtitles from the online catalogue.
+- api.subdl.com / dl.subdl.com are contacted only when the user searches or downloads non-Japanese subtitles through SubDL. This is opt-in and requires the user's own API key: no key is bundled and the feature cannot be used without one. We cannot supply a reviewer key; the rest of the extension works without it.
 - translate.googleapis.com receives the search query only when it contains Japanese or Chinese characters.
 - api.bilibili.com is contacted only on Bilibili pages.
 - An optional analysis server (default http://127.0.0.1:8765) is used only if the user enables it. The developer operates no server.
@@ -47,6 +48,8 @@ The full privacy policy is linked on the listing and in the extension's options 
 5. 选项页 → 字幕包 → 导入该文件 → 在面板或工具栏弹窗中套用。
 6. 视频上出现带词性颜色的日语字幕；悬停单词弹出词典卡（离线词典，断网可用）。
 7. `Alt+[` / `Alt+]` 调整时间偏移，左上角手柄拖动位置。
+
+审核备注中需主动说明：SubDL 搜索需要用户自备 API key，扩展不内置 key，也无法提供审核用 key；其余功能均可离线验证。
 
 ## 提交前核对
 

@@ -4,7 +4,7 @@
     "description": "Extension name in the browser UI"
   },
   "extDescription": {
-    "message": "Visual Grammar & Color-Coded Language Learning — overlay local subtitles on any web video with colour-coded grammar, word cards and display-duration control",
+    "message": "Overlay local subtitles on any web video with colour-coded grammar, word cards and display-time control for language learning.",
     "description": "Extension description in the browser UI"
   },
   "extActionTitle": {

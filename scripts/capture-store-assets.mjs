@@ -270,7 +270,7 @@ async function captureOverlay(page, origin, outDir, lang, reseed) {
   await word.waitFor({ timeout: 10_000 });
   await word.click();
   await page.waitForFunction(() => {
-    const card = document.querySelector('#jp-sub-host')?.shadowRoot?.querySelector('.card');
+    const card = document.querySelector('#jp-sub-host')?.shadowRoot?.querySelector('.dict-card');
     return card && !card.hidden && card.textContent?.includes('天気');
   }, { timeout: 10_000 });
   await page.waitForTimeout(600);
